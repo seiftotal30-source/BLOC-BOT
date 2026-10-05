@@ -22,6 +22,10 @@ Images are in `CAD/out/`. LaTeX blocks are in `thesis/figures.tex`.
 | F10 | angle_bracket_under_rear.png | fig:bracket-angles (d) | Fusion iso bottom-left, bracket only | 2026-10-05 | ready |
 | F11 | angle_assembly_under_front.png | fig:assembly-below (a) | Fusion iso bottom-right; bracket, motor, disc, LM393 | 2026-10-05 | ready |
 | F12 | angle_assembly_under_rear.png | fig:assembly-below (b) | Fusion iso bottom-left; bracket, motor, disc, LM393 | 2026-10-05 | ready |
+| F13 | controller_iso.png | fig:controller-iso | Fusion iso top-right, closed case with references, 1800x1100 (CAD/scripts/ctl_shots.py) | 2026-10-05 | ready |
+| F14 | controller_top.png | fig:controller-top | Fusion top view, closed case (ctl_shots.py) | 2026-10-05 | ready |
+| F15 | controller_exploded.png | fig:controller-exploded | Custom-graphics copies lifted 0/35/75/100 mm (bottom/parts/top/caps), camera (30,-38,26) (ctl_shots.py) | 2026-10-05 | ready |
+| F16 | controller_section.png | fig:controller-section | Custom-graphics copies cut by the vertical plane through the D-pad (59.5,-9.5) and display (0,19.7) centres (ctl_shots.py) | 2026-10-05 | ready |
 
 ## Graphs
 
@@ -42,6 +46,13 @@ Entries are in `thesis/references.bib`.
 | fusion360 | Autodesk Fusion | CAD modelling, checks, renders | yes |
 | fusion_api | Fusion API Reference Manual | Scripted modelling and checks | URL missing |
 | git | Git 2.55.0 | Version control of the project | yes |
+| grabcad_rc_model | GrabCAD Remote Controller (Slyman Rambo) | Controller shell shape (chamfered outline) | URL missing |
+| esp32_devkit_model | ESP32 DevKit V1 STEP model | ESP32 board, holes, micro-USB | author, URL missing |
+| oled_242_model | 2.42" 12864 OLED STEP model | Display window, lip, bosses | author, URL missing |
+| ky023_model | KY-023 joystick STEP model | Opening, travel, posts | author, URL missing |
+| b3f_switch_model | OMRON B3F-4050 STEP model | Switch heights, pegs, caps | author, URL missing |
+| tp4056_model | TP4056 Type-C STEP model | Charger pocket, USB-C opening | author, URL missing |
+| mt3608_model | MT3608 STEP model | Boost board pocket | author, URL missing |
 
 ## Searches and lookups
 
@@ -57,3 +68,9 @@ Every search or data lookup that fed a design decision, with what it found.
 | S06 | 2026-10-05 | Encoder disc model | Faces | Ø24, 1.4 thick, 16 windows r 6.61–11.5, hub Ø7.2 x 4 | Disc position, flange relief |
 | S07 | 2026-10-05 | Fusion API docs | Member search `readonly\|editable` | PersonalUseLimits can be read but not changed by scripts | Document-limit troubleshooting |
 | S08 | 2026-10-05 | Fusion licensing | Licence query | Personal Use: 10 editable documents | Document-limit troubleshooting |
+| S09 | 2026-10-05 | OLED model | Bodies and faces | PCB 72 x 42.8 x 1.2; holes Ø3.0 on 68 x 38.8; glass 62 x 39.8 x 3.7; active area (grey face) 56.6 x 29.5, 2.65 off PCB centre; header pins 8.54 behind the PCB | Window, lip, bosses |
+| S10 | 2026-10-05 | KY-023 model | Faces; cap rotated about the gimbal pivot | Pivot at the pin axes; cap skirt torus = sphere r 13.65 about the pivot; cap meets the module case at 30 deg -> 29 deg travel; holes Ø3.0 at (-12.5/14, -11.25/9.25) | Opening Ø28.5, posts |
+| S11 | 2026-10-05 | B3F-4050 model | Bodies and horizontal faces | Seating plane z 0; plunger top 7.35; pegs Ø1.6 x 1.35 at y ±4.5; model includes a 13 x 13 keycap (ignored) | Pillars, cap heights |
+| S12 | 2026-10-05 | ESP32 model | Bodies, PCB holes | PCB 28.3 x 51.2 x 1.6; holes Ø2.9 at 23.5 x 46.6; pins 8.2 below; micro-USB 7.98 x 2.94 protruding 0.57 | Standoffs, side USB opening |
+| S13 | 2026-10-05 | TP4056 / MT3608 models | Bodies, PCB holes | TP4056 28.3 x 17.4 x 1.5, USB-C 8.42 x 2.79, no mounting holes; MT3608 37.2 x 17.23 x 1.52, 6.45 tall, no mounting holes | Clip pockets, USB-C opening |
+| S14 | 2026-10-05 | GrabCAD RC Transmitter | Import and outline | 200 x 170 x 36 box with chamfered corners, two halves, no grips | Shell shape |
