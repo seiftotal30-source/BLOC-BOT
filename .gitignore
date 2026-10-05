@@ -1,0 +1,9 @@
+# Python bytecode from running scripts locally
+__pycache__/
+*.pyc
+
+# Editor / OS clutter
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
