@@ -1,0 +1,53 @@
+% Bibliography for the BLOC-BOT thesis (biblatex + biber).
+% Only sources actually used in the work go here. Every entry is also listed in
+% tracking/log.md with what it was used for. Fields marked TODO still need checking
+% before submission.
+
+@misc{ttmotor_model,
+  author       = {Simpson, Oj},
+  title        = {{TT Motor Dual Shaft}},
+  howpublished = {CAD model (Fusion .f3d and STEP), downloaded as
+                  \texttt{tt-motor-dual-shaft-1.snapshot.1.zip}},
+  note         = {Source of all TT motor dimensions: gearbox 22.5 x 18.8~mm,
+                  through-holes 20.6~mm behind the shaft at $\pm$8.75~mm.
+                  TODO: add download URL},
+  urldate      = {2026-10-05}
+}
+
+@misc{lm393_sensor_model,
+  author       = {Pennel, Patrice},
+  title        = {{Speed sensor MH-Sensor-Series}},
+  howpublished = {CAD model (STEP) of the LM393 slotted speed-sensor board and a
+                  16-slot encoder disc, downloaded as
+                  \texttt{speed-sensor-mh-sensor-series-1.snapshot.6.zip}},
+  note         = {Source of the board, fork and disc dimensions.
+                  TODO: add download URL},
+  urldate      = {2026-10-05}
+}
+
+@misc{fusion360,
+  author       = {{Autodesk, Inc.}},
+  title        = {{Autodesk Fusion}},
+  howpublished = {Computer-aided design software, Personal Use licence},
+  year         = {2026},
+  note         = {Used for all CAD modelling, clearance checks and rendering}
+}
+
+@misc{fusion_api,
+  author       = {{Autodesk, Inc.}},
+  title        = {{Fusion API Reference Manual}},
+  howpublished = {Online documentation},
+  year         = {2026},
+  note         = {Classes used: TemporaryBRepManager, MeasureManager,
+                  PersonalUseLimits, ExportManager. TODO: add URL},
+  urldate      = {2026-10-05}
+}
+
+@misc{git,
+  author       = {{The Git Project}},
+  title        = {{Git}},
+  howpublished = {Distributed version control system, version 2.55.0},
+  year         = {2026},
+  url          = {https://git-scm.com},
+  note         = {Used to track the design's progress}
+}

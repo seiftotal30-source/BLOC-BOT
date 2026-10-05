@@ -2,6 +2,21 @@
 __pycache__/
 *.pyc
 
+# LaTeX build files (sources and the final PDF are tracked)
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
 # Editor / OS clutter
 .vscode/
 .idea/

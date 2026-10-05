@@ -1,0 +1,36 @@
+% BLOC-BOT thesis -- main file. Compile with: latexmk -pdf main.tex (uses biber).
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\usepackage[style=ieee,backend=biber]{biblatex}
+\addbibresource{references.bib}
+
+% Figures are read straight from the CAD output folder, so re-rendered images are
+% picked up automatically.
+\graphicspath{{../CAD/out/}}
+
+\title{BLOC-BOT}
+\author{TODO: author}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\chapter{Motor bracket design}
+% Placeholder chapter: shows how to use the figure library and the bibliography.
+The motor and sensor dimensions are taken from the reference models
+\cite{ttmotor_model,lm393_sensor_model}, and the bracket was modelled in
+Autodesk Fusion \cite{fusion360}. Figure~\ref{fig:sensor-side} shows the encoder
+disc in the sensor fork.
+
+\input{figures}
+
+\printbibliography
+\end{document}
