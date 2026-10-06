@@ -99,9 +99,19 @@ The engine is run with `-m4` (4 threads) and the search path set to Cura's
 |---|---|---|
 | Layers | 318 | 400 |
 | Estimated time | about 1 h 43 min | about 2 h |
-| Filament | 7.1 m (about 21 g) | 8.0 m (about 24 g) |
+| Filament | 4.0 m (about 11.8 g) | 4.65 m (about 13.9 g) |
+| - base | 7.0 g | 7.5 g |
+| - sliding jaw | 2.1 g | 3.3 g |
+| - lead screw | 1.7 g | 2.0 g |
+| - thumb screw | 0.5 g | 0.5 g |
+| - brim | 0.6 g | 0.6 g |
 | Print area | X 67-162, Y 76-141 mm | X 67-160, Y 65-146 mm |
 | Thread print clearance | 0.2 mm added | not yet (may bind) |
 
+Weights are for PLA (1.24 g/cm3, 1.75 mm filament); PETG would be about 2 % heavier. Both
+vises fall inside the 10-15 g per bloc estimated in the weight and motor sizing session.
+
 The G-code header shows "Filament used: 0m": the Cura app normally writes that line, the
-command-line engine doesn't. It doesn't affect the print.
+command-line engine doesn't. It doesn't affect the print. The filament was counted from the
+G-code's extrusion moves, leaving out retraction re-primes; an earlier count that included
+them gave 7.1 m / 21 g and 8.0 m / 24 g, which was wrong (more than the solid parts weigh).
