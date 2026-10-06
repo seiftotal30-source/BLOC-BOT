@@ -26,6 +26,7 @@ Images are in `CAD/out/`. LaTeX blocks are in `thesis/figures.tex`.
 | F14 | controller_top.png | fig:controller-top | Fusion top view, closed case (ctl_shots.py) | 2026-10-05 | ready |
 | F15 | controller_exploded.png | fig:controller-exploded | Custom-graphics copies lifted 0/35/75/100 mm (bottom/parts/top/caps), camera (30,-38,26) (ctl_shots.py) | 2026-10-05 | ready |
 | F16 | controller_section.png | fig:controller-section | Custom-graphics copies cut by the vertical plane through the D-pad (59.5,-9.5) and display (0,19.7) centres (ctl_shots.py) | 2026-10-05 | ready |
+| F17 | electronics/robot_circuit.svg | (not added yet) | Hand-written SVG block diagram of the proposed ESP32-S3 robot circuit; convert to PDF before including | 2026-10-06 | draft |
 
 ## Graphs
 
