@@ -16,6 +16,7 @@ plate"** document and never modified.
 | `CAD/out/` | Printable STLs, the `.f3d` backup of the design, screenshots |
 | `CAD/ref/` | Reference models extracted from the zips (motor, sensor, encoder disc) |
 | `CAD/*.zip` | The reference models as downloaded |
+| `electronics/` | Proposed circuit: power, ESP32-S3 pin map, build steps, risks, sim tools |
 | `File 1` to `File 4` | Saved design session transcripts |
 
 ## Scripts (run inside Fusion, with "Motor Bracket" as the active document)
