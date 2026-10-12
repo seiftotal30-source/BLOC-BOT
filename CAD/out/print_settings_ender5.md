@@ -1,11 +1,20 @@
 # Print settings for H bloc and VBloc
 
-## Ender 5 Plus with the professional's settings (current default for VBloc)
+## Ender 3 Pro and Ender 5 Plus with the professional's settings (current default)
 
 The professional's motor bracket G-code (Cura 5.13, Creality "Low Quality" profile, infill
-60 %) is now the default. `CAD/scripts/slice_ender5plus.sh` uses it with the Ender 5 Plus
-printer profile, so every print starts with G28 + G29 (BLTouch bed levelling) and the parts
-sit in the middle of the 350 x 350 bed:
+60 %, printed on his Ender 3 Pro) is now the default. `CAD/scripts/slice_pro.sh` uses it
+with Cura's printer profile for either printer, and the parts sit in the middle of the bed:
+
+- `ender3pro`: Creality Ender 3 Pro, 220 x 220 bed, no bed levelling probe.
+- `ender5plus`: Creality Ender 5 Plus, 350 x 350 bed, starts with G28 + G29 (BLTouch).
+  (`slice_ender5plus.sh` is the same as `slice_pro.sh ender5plus`.)
+
+Cura's start and end G-code for these printers contain `{setting}` placeholders that only the
+Cura app fills in (the Ender 3 Pro heat-up, and the "present print" move at the end on both).
+The command-line engine leaves them as text, which a printer can't read, so the script writes
+those lines out with the real values (bed 50 C, nozzle 200 C; end move to Y 220 or X/Y 350).
+The first Ender 5 Plus VBloc files had the unfilled end line; they were re-sliced.
 
 | Setting | Value |
 |---|---|
@@ -17,10 +26,12 @@ sit in the middle of the 350 x 350 bed:
 | Retraction | 5 mm at 45 mm/s |
 | Adhesion | skirt, 3 lines, 10 mm away |
 
-| VBloc file | What | Result |
+| VBloc file (`_Ender3Pro` and `_Ender5Plus` versions) | What | Result |
 |---|---|---|
-| `vbloc/VBloc_Ender5Plus.gcode` | all parts (arm, fixed jaw, sliding jaw, both screw halves, thumb screw, 6 pins), his settings | 29 layers, about 1 h 03 min, 5.4 m (16.2 g) |
-| `vbloc/VBloc_threads_test_0.16_Ender5Plus.gcode` | screw halves, sliding jaw and pins at 0.16 mm with a brim, to test the M6 thread first | 49 layers, about 46 min, 2.4 m (7.3 g) |
+| `vbloc/VBloc_<printer>.gcode` | all parts (arm, fixed jaw, sliding jaw, both screw halves, thumb screw, 6 pins), his settings | 29 layers, about 1 h 03 min, 5.4 m (16.2 g) |
+| `vbloc/VBloc_threads_test_0.16_<printer>.gcode` | screw halves, sliding jaw and pins at 0.16 mm with a brim, to test the M6 thread first | 49 layers, about 46 min, 2.4 m (7.3 g) |
+
+The same plates are in `CAD/3mf/` as `VBloc.3mf` and `VBloc_threads_test.3mf`.
 
 The lead screw is split lengthwise into two identical halves that print cut face down; they
 are glued together with 4 pins (two 3.8 mm in the knob, two 2.2 mm along the thread, plus a

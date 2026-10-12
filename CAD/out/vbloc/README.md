@@ -1,16 +1,21 @@
 # VBloc print files
 
 VBloc is the vertical vise. It is printed as 7 parts plus small pins, all lying flat with no
-supports, then glued. The G-code is for a **Creality Ender 5 Plus** (350 x 350 bed, starts
-with G28 + G29 bed levelling) with the professional's settings: 0.28 mm layers, 2 walls,
-60 % infill, 200 C nozzle, 50 C bed (60 C is better on the glass bed; set it on the printer).
+supports, then glued. All G-code uses the professional's settings: 0.28 mm layers, 2 walls,
+60 % infill, 200 C nozzle, 50 C bed (60 C is better on a glass bed; set it on the printer).
+The same plates as 3MF (to slice for any printer) are `CAD/3mf/VBloc.3mf` and
+`CAD/3mf/VBloc_threads_test.3mf`.
 
 ## Which file is what
 
+Pick the G-code for your printer: **Ender3Pro** = Creality Ender 3 Pro (the professional's
+printer, 220 x 220 bed), **Ender5Plus** = Creality Ender 5 Plus (350 x 350 bed, starts with
+G29 bed levelling). Both are centred on their bed.
+
 | File | What it is |
 |---|---|
-| `VBloc_Ender5Plus.gcode` | **Print this.** Every part below on one plate, 0.28 mm layers, skirt. About 1 h 03 min, 16 g PLA, centred on the bed. |
-| `VBloc_threads_test_0.16_Ender5Plus.gcode` | **Optional test first.** Only the two screw halves, the sliding jaw and the pins, at finer 0.16 mm layers with a brim, to check the M6 thread. About 46 min, 7 g. |
+| `VBloc_Ender3Pro.gcode` / `VBloc_Ender5Plus.gcode` | **Print this.** Every part below on one plate, 0.28 mm layers, skirt. About 1 h 03 min, 16 g PLA. |
+| `VBloc_threads_test_0.16_Ender3Pro.gcode` / `..._Ender5Plus.gcode` | **Optional test first.** Only the two screw halves, the sliding jaw and the pins, at finer 0.16 mm layers with a brim, to check the M6 thread. About 46 min, 7 g. |
 | `vbloc_base.stl` | Arm (the long rail the sliding jaw runs on), with the M4 mounting hole underneath. Prints flat. |
 | `vbloc_fixedjaw.stl` | Fixed jaw. Glues onto the end of the arm with its two tenons. Prints on its outer face. |
 | `vbloc_slidingjaw.stl` | Sliding jaw with the M6 thread. Prints on its back face. |
@@ -32,5 +37,5 @@ if you slice them yourself.
 3. Slide the sliding jaw onto the arm (tongue in the groove), push the lead screw through
    the fixed jaw and screw it into the sliding jaw.
 
-Re-slice with `CAD/scripts/slice_ender5plus.sh` (settings and file list are in
+Re-slice with `CAD/scripts/slice_pro.sh ender3pro|ender5plus ...` (settings are in
 `CAD/out/print_settings_ender5.md`).
