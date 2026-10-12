@@ -1,4 +1,37 @@
-# Ender-5 print settings for H bloc and VBloc
+# Print settings for H bloc and VBloc
+
+## Ender 5 Plus with the professional's settings (current default for VBloc)
+
+The professional's motor bracket G-code (Cura 5.13, Creality "Low Quality" profile, infill
+60 %) is now the default. `CAD/scripts/slice_ender5plus.sh` uses it with the Ender 5 Plus
+printer profile, so every print starts with G28 + G29 (BLTouch bed levelling) and the parts
+sit in the middle of the 350 x 350 bed:
+
+| Setting | Value |
+|---|---|
+| Layers | 0.28 mm (first 0.28) |
+| Walls / top / bottom | 2 walls (0.8 mm), 4 top and 4 bottom layers |
+| Infill | 60 %, lines |
+| Speeds | 80 mm/s print and infill, 40 walls and skin, 20 first layer, 200 travel |
+| Temperatures | 200 C nozzle, 50 C bed (raise to 55-60 C if corners lift on the glass bed) |
+| Retraction | 5 mm at 45 mm/s |
+| Adhesion | skirt, 3 lines, 10 mm away |
+
+| VBloc file | What | Result |
+|---|---|---|
+| `vbloc/VBloc_Ender5Plus.gcode` | all parts (arm, fixed jaw, sliding jaw, both screw halves, thumb screw, 6 pins), his settings | 29 layers, about 1 h 03 min, 5.4 m (16.2 g) |
+| `vbloc/VBloc_threads_test_0.16_Ender5Plus.gcode` | screw halves, sliding jaw and pins at 0.16 mm with a brim, to test the M6 thread first | 49 layers, about 46 min, 2.4 m (7.3 g) |
+
+The lead screw is split lengthwise into two identical halves that print cut face down; they
+are glued together with 4 pins (two 3.8 mm in the knob, two 2.2 mm along the thread, plus a
+spare of each in `vbloc_pins.stl`; 1.75 mm filament works as pins too). At 0.28 mm the
+thread is coarse, which is why the 0.16 mm test file exists.
+
+## Ender-5 (university printer), first settings
+
+These are the settings H bloc was sliced with (`hbloc/HBloc_Ender5_PLA.gcode`). The VBloc
+Ender-5 G-code that used them has been replaced by the Ender 5 Plus files above; the VBloc
+rows below are kept as the record of that earlier slice.
 
 The G-code files in `hbloc/` and `vbloc/` were sliced for a **Creality Ender-5** with the
 CuraEngine that ships with **UltiMaker Cura 5.13** (printer profile `creality_ender5`).
@@ -86,27 +119,38 @@ The engine is run with `-m4` (4 threads) and the search path set to Cura's
 
 ## Part orientation on the plate
 
-| Part | Orientation | Why |
-|---|---|---|
-| Base | flat on its bottom | largest flat face; only short bridges |
-| Sliding jaw | on its back face | thread hole is vertical, so the thread prints cleanly with no support |
-| Lead screw | standing on its knob | thread is vertical; the brim keeps the tall, thin screw steady |
-| Thumb screw | head down | thread is vertical |
+VBloc follows the motor bracket redesign's rules: every part prints flat on a face with no
+supports, its layers run along the direction it's loaded, round parts got a flat along their
+length so they can lie down, and a part that needs two print directions is split and glued.
+
+| Part | H bloc | VBloc | Why (VBloc) |
+|---|---|---|---|
+| Base | flat on its bottom | **split in two and glued**: the arm flat on its bottom, the fixed jaw on its outer face | the jaw's layers run along the jaw, which bends when clamping; its screw hole prints round; no overhangs; both pieces 6 mm tall |
+| Sliding jaw | on its back face | on its back face | thread hole vertical; layers along the jaw |
+| Lead screw | standing on its knob | **lying on a 0.44 mm flat** cut along the thread and knob | layers along the screw, which is pulled when clamping; 9.5 mm tall instead of 64; overhang 50 mm2 instead of 576 |
+| Thumb screw | head down | **lying on a 0.35 mm flat** along the shank and head | same as the lead screw; overhang 2 mm2 instead of 99 |
+
+**Gluing the VBloc base:** the fixed jaw has two 4 x 6 x 4 mm tenons that drop into notches
+at the end of the arm (0.14 mm clearance per side, notches 0.2 mm deeper than the tenons,
+about 245 mm2 of glue surface). Dry-fit first, then glue with CA (super glue) or epoxy,
+with the jaw's outer face flush with the arm's end. When clamping, the knob's push and the
+clamped part's push meet inside the jaw itself, so the glued joint carries little load.
 
 ## Results
 
 | | H bloc | VBloc |
 |---|---|---|
-| Layers | 318 | 400 |
-| Estimated time | about 1 h 43 min | about 2 h |
-| Filament | 4.0 m (about 11.8 g) | 4.65 m (about 13.9 g) |
-| - base | 7.0 g | 7.5 g |
+| Layers | 318 | 59 |
+| Estimated time | about 1 h 43 min | about 1 h 47 min |
+| Filament | 4.0 m (about 11.8 g) | 4.73 m (about 14.1 g) |
+| - base (VBloc: arm) | 7.0 g | 4.9 g |
+| - fixed jaw (VBloc only) | - | 2.7 g |
 | - sliding jaw | 2.1 g | 3.3 g |
-| - lead screw | 1.7 g | 2.0 g |
-| - thumb screw | 0.5 g | 0.5 g |
-| - brim | 0.6 g | 0.6 g |
-| Print area | X 67-162, Y 76-141 mm | X 67-160, Y 65-146 mm |
-| Thread print clearance | 0.2 mm added | not yet (may bind) |
+| - lead screw | 1.7 g | 1.9 g |
+| - thumb screw | 0.5 g | 0.4 g |
+| - brim | 0.6 g | 1.0 g |
+| Print area | X 67-162, Y 76-141 mm | X 57-161, Y 59-170 mm |
+| Thread print clearance | 0.2 mm added | 0.2 mm added |
 
 Weights are for PLA (1.24 g/cm3, 1.75 mm filament); PETG would be about 2 % heavier. Both
 vises fall inside the 10-15 g per bloc estimated in the weight and motor sizing session.
