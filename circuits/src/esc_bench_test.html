@@ -1,0 +1,232 @@
+<title>ESC Bench Test Circuit</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one wide schematic sheet, then wiring notes and a pulse table in two columns that stack on phones */
+:root {
+  --bg: #eef2f4;
+  --sheet: #fbfcfd;
+  --ink: #1b242b;
+  --muted: #5b6a75;
+  --grid: #dfe6ea;
+  --casing: #3a4650;
+  --w-red: #d7322f;
+  --w-black: #1d1f22;
+  --w-white: #f7f7f5;
+  --pcb-buck: #1f5ea8;
+  --pcb-esp: #2b3036;
+  --pcb-esc: #c8343a;
+  --pcb-supply: #6b7680;
+  --on-pcb: #ffffff;
+  --warn: #b25e00;
+  --warn-bg: #fff3e0;
+  --ok: #2e7d4f;
+  --font-display: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161a; --sheet: #182026; --ink: #e4eaee; --muted: #93a3ae; --grid: #222c33;
+    --casing: #9fb0bb; --w-black: #23262a; --w-white: #f2f2ef;
+    --pcb-buck: #2b6cb8; --pcb-esp: #3a414a; --pcb-esc: #c23a40; --pcb-supply: #56616b;
+    --warn: #ffb560; --warn-bg: #2b2114; --ok: #62c48a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161a; --sheet: #182026; --ink: #e4eaee; --muted: #93a3ae; --grid: #222c33;
+  --casing: #9fb0bb; --w-black: #23262a; --w-white: #f2f2ef;
+  --pcb-buck: #2b6cb8; --pcb-esp: #3a414a; --pcb-esc: #c23a40; --pcb-supply: #56616b;
+  --warn: #ffb560; --warn-bg: #2b2114; --ok: #62c48a;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--font-display); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 48px; display: grid; gap: 24px; }
+header { display: grid; gap: 4px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { margin: 0; font-size: clamp(26px, 4vw, 36px); font-weight: 700; text-wrap: balance; }
+.lede { margin: 0; color: var(--muted); max-width: 65ch; }
+.sheet { background: var(--sheet); border: 1px solid var(--grid); border-radius: 10px; overflow-x: auto; }
+.sheet svg { display: block; width: 100%; min-width: 760px; height: auto; }
+svg text { font-family: var(--font-display); fill: var(--ink); }
+svg .mono { font-family: var(--font-mono); }
+svg .muted { fill: var(--muted); }
+svg .onpcb { fill: var(--on-pcb); }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.cols > section { min-width: 0; display: grid; gap: 10px; align-content: start; }
+h2 { margin: 0; font-size: 19px; font-weight: 600; }
+ol, ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+code { font-family: var(--font-mono); font-size: .9em; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 14px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.sw { width: 28px; height: 6px; border-radius: 3px; outline: 1.5px solid var(--casing); }
+.warn { border-left: 4px solid var(--warn); background: var(--warn-bg); padding: 10px 14px; border-radius: 4px; }
+.warn strong { color: var(--warn); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--grid); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">BLOC-BOT · bench test · one TT motor</div>
+    <h1>ESC bench test circuit</h1>
+    <p class="lede">The ESP32 drives the brushed ESC with a servo pulse on one wire. It takes only signal and ground from the ESC's thin lead. The thin red 5&nbsp;V wire stays unconnected because the buck already powers the ESP32.</p>
+  </header>
+
+  <div class="sheet" role="img" aria-label="Wiring diagram: supply feeds the buck converter and the ESC power input; buck 5 V output feeds the ESP32; ESP32 GPIO 13 and GND go to the ESC signal white and black wires; ESC red 5 V wire is not connected; ESC motor output goes to the TT motor.">
+    <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M20 0H0V20" fill="none" stroke="var(--grid)" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="1000" height="600" fill="url(#g)"/>
+
+      <!-- ===== Wires (casing + core) ===== -->
+      <g fill="none" stroke-linejoin="round" stroke-linecap="round">
+        <!-- Supply + to buck IN+ -->
+        <path d="M210 110H330" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M210 110H330" stroke="var(--w-red)" stroke-width="6"/>
+        <!-- Supply - to buck IN- -->
+        <path d="M210 180H330" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M210 180H330" stroke="var(--w-black)" stroke-width="6"/>
+        <!-- Supply + to ESC BAT+ (over the top, down the left) -->
+        <path d="M240 110V30H24V510H440" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M240 110V30H24V510H440" stroke="var(--w-red)" stroke-width="6"/>
+        <!-- Supply - to ESC BAT- -->
+        <path d="M270 180V450H440" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M270 180V450H440" stroke="var(--w-black)" stroke-width="6"/>
+        <!-- Buck OUT+ to ESP32 5V -->
+        <path d="M500 110H620" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M500 110H620" stroke="var(--w-red)" stroke-width="6"/>
+        <!-- Buck OUT- to ESP32 GND -->
+        <path d="M500 180H620" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M500 180H620" stroke="var(--w-black)" stroke-width="6"/>
+        <!-- GPIO 13 to ESC signal (white) -->
+        <path d="M690 300V410" stroke="var(--casing)" stroke-width="6"/>
+        <path d="M690 300V410" stroke="var(--w-white)" stroke-width="3.5"/>
+        <!-- ESP32 GND to ESC signal ground (black) -->
+        <path d="M770 300V410" stroke="var(--casing)" stroke-width="6"/>
+        <path d="M770 300V410" stroke="var(--w-black)" stroke-width="3.5"/>
+        <!-- ESC thin red BEC: not connected -->
+        <path d="M610 410V362" stroke="var(--casing)" stroke-width="6" stroke-dasharray="2 9"/>
+        <path d="M610 410V362" stroke="var(--w-red)" stroke-width="3.5" stroke-dasharray="2 9"/>
+        <!-- Motor out -->
+        <path d="M800 450H880" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M800 450H880" stroke="var(--w-red)" stroke-width="6"/>
+        <path d="M800 510H880" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M800 510H880" stroke="var(--w-black)" stroke-width="6"/>
+      </g>
+
+      <!-- Junction dots -->
+      <g fill="var(--casing)">
+        <circle cx="240" cy="110" r="6"/>
+        <circle cx="270" cy="180" r="6"/>
+      </g>
+
+      <!-- Not-connected mark -->
+      <g stroke="var(--warn)" stroke-width="3.5" stroke-linecap="round">
+        <path d="M600 342L620 362M620 342L600 362"/>
+      </g>
+      <text x="598" y="334" text-anchor="end" font-size="13" font-weight="600" style="fill: var(--warn)">thin RED (5 V BEC)</text>
+      <text x="598" y="350" text-anchor="end" font-size="13" style="fill: var(--warn)">not connected, tape it</text>
+
+      <!-- ===== Supply ===== -->
+      <rect x="40" y="60" width="170" height="160" rx="8" fill="var(--pcb-supply)"/>
+      <text x="56" y="92" class="onpcb" font-size="17" font-weight="700">Supply</text>
+      <text x="56" y="114" class="onpcb" font-size="13">7.3 V generator</text>
+      <text x="56" y="132" class="onpcb" font-size="13">or 2S pack</text>
+      <text x="56" y="158" class="onpcb mono" font-size="12">limit ≈ 2 A</text>
+      <text x="196" y="115" class="onpcb mono" font-size="15" font-weight="600" text-anchor="end">+</text>
+      <text x="196" y="185" class="onpcb mono" font-size="15" font-weight="600" text-anchor="end">−</text>
+
+      <!-- ===== Buck ===== -->
+      <rect x="330" y="60" width="170" height="160" rx="8" fill="var(--pcb-buck)"/>
+      <text x="415" y="92" class="onpcb" font-size="17" font-weight="700" text-anchor="middle">Buck converter</text>
+      <text x="415" y="145" class="onpcb mono" font-size="20" font-weight="600" text-anchor="middle">5.0 V</text>
+      <text x="415" y="164" class="onpcb" font-size="12" text-anchor="middle">already set, don't touch</text>
+      <text x="340" y="115" class="onpcb mono" font-size="11">IN+</text>
+      <text x="340" y="185" class="onpcb mono" font-size="11">IN−</text>
+      <text x="490" y="115" class="onpcb mono" font-size="11" text-anchor="end">OUT+</text>
+      <text x="490" y="185" class="onpcb mono" font-size="11" text-anchor="end">OUT−</text>
+
+      <!-- ===== ESP32 ===== -->
+      <rect x="620" y="40" width="220" height="260" rx="8" fill="var(--pcb-esp)"/>
+      <text x="730" y="76" class="onpcb" font-size="17" font-weight="700" text-anchor="middle">ESP32</text>
+      <text x="730" y="96" class="onpcb" font-size="12" text-anchor="middle">S3 or DevKit V1</text>
+      <rect x="690" y="130" width="80" height="60" rx="3" fill="none" stroke="var(--on-pcb)" stroke-opacity=".35"/>
+      <text x="730" y="165" class="onpcb mono" font-size="11" text-anchor="middle" opacity=".7">MCU</text>
+      <text x="630" y="115" class="onpcb mono" font-size="11">5V/VIN</text>
+      <text x="630" y="185" class="onpcb mono" font-size="11">GND</text>
+      <text x="690" y="288" class="onpcb mono" font-size="11" text-anchor="middle">GPIO 13</text>
+      <text x="770" y="288" class="onpcb mono" font-size="11" text-anchor="middle">GND</text>
+      <circle cx="690" cy="300" r="4" fill="var(--on-pcb)"/>
+      <circle cx="770" cy="300" r="4" fill="var(--on-pcb)"/>
+
+      <!-- ===== ESC ===== -->
+      <rect x="440" y="410" width="360" height="150" rx="8" fill="var(--pcb-esc)"/>
+      <text x="620" y="470" class="onpcb" font-size="18" font-weight="700" text-anchor="middle">Brushed ESC</text>
+      <text x="620" y="492" class="onpcb" font-size="12" text-anchor="middle">switch OFF until the ESP32</text>
+      <text x="620" y="508" class="onpcb" font-size="12" text-anchor="middle">is sending 1500 µs</text>
+      <text x="452" y="455" class="onpcb mono" font-size="11">BAT−</text>
+      <text x="452" y="515" class="onpcb mono" font-size="11">BAT+</text>
+      <text x="452" y="545" class="onpcb" font-size="11" opacity=".85">thick JST pair</text>
+      <text x="610" y="430" class="onpcb mono" font-size="11" text-anchor="middle">5V</text>
+      <text x="690" y="430" class="onpcb mono" font-size="11" text-anchor="middle">S (white)</text>
+      <text x="770" y="430" class="onpcb mono" font-size="11" text-anchor="middle">− (black)</text>
+      <text x="788" y="455" class="onpcb mono" font-size="11" text-anchor="end">M+</text>
+      <text x="788" y="515" class="onpcb mono" font-size="11" text-anchor="end">M−</text>
+
+      <!-- Wire labels -->
+      <text x="700" y="360" class="mono" font-size="12">signal</text>
+      <text x="780" y="360" class="mono" font-size="12">ground</text>
+      <text x="34" y="300" class="mono muted" font-size="12" transform="rotate(-90 34 300)" text-anchor="middle">battery + to ESC</text>
+      <text x="280" y="320" class="mono muted" font-size="12" transform="rotate(-90 280 320)" text-anchor="middle">battery − to ESC</text>
+
+      <!-- ===== Motor ===== -->
+      <circle cx="920" cy="480" r="44" fill="var(--sheet)" stroke="var(--casing)" stroke-width="3"/>
+      <text x="920" y="488" font-size="24" font-weight="700" text-anchor="middle">M</text>
+      <path d="M880 450V462M880 510V498" stroke="var(--casing)" stroke-width="3"/>
+      <text x="920" y="548" font-size="13" font-weight="600" text-anchor="middle">TT motor</text>
+      <text x="920" y="566" font-size="12" class="muted" text-anchor="middle">+ 0.1 µF across</text>
+      <text x="920" y="582" font-size="12" class="muted" text-anchor="middle">wheel off the table</text>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><i class="sw" style="background:var(--w-red)"></i>positive</span>
+    <span><i class="sw" style="background:var(--w-black)"></i>ground (all tied together)</span>
+    <span><i class="sw" style="background:var(--w-white);height:4px"></i>signal, thin servo lead</span>
+    <span><i class="sw" style="background:repeating-linear-gradient(90deg,var(--w-red) 0 3px,transparent 3px 9px)"></i>not connected</span>
+  </div>
+
+  <div class="warn"><strong>Check before plugging in:</strong> both thick pairs on this ESC end in red JST plugs. Confirm on the board's printed labels or the seller listing which pair is battery and which is motor. Battery on the motor output can kill the ESC.</div>
+
+  <div class="cols">
+    <section>
+      <h2>Test order</h2>
+      <ol>
+        <li>Lift the wheel off the table.</li>
+        <li>Power the supply with the ESC switched off. The ESP32 boots from the buck.</li>
+        <li>Upload the test sketch. It sends <code>1500 µs</code> (neutral) first.</li>
+        <li>Switch the ESC on. Wait for the arming beeps.</li>
+        <li>Watch for forward, stop, reverse, stop.</li>
+        <li>No beeps or no movement: measure white-to-black on the signal lead. About <code>0.25 V</code> DC means the pulse is there.</li>
+      </ol>
+    </section>
+    <section>
+      <h2>Pulse widths</h2>
+      <table>
+        <thead><tr><th>Pulse</th><th>Motor</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1500 µs</td><td>Stop (neutral, arm here)</td></tr>
+          <tr><td class="num">1650 µs</td><td>Slow forward</td></tr>
+          <tr><td class="num">1350 µs</td><td>Slow reverse, if the ESC is bidirectional</td></tr>
+          <tr><td class="num">1150–1850 µs</td><td>Safe range. Past it the TT motor gets more than about 6 V.</td></tr>
+        </tbody>
+      </table>
+      <p style="margin:0;color:var(--muted);font-size:14px">If it only arms at <code>1000 µs</code>, it's a forward-only ESC: 1000 µs is stop, 1000–1700 µs is forward.</p>
+    </section>
+  </div>
+</div>
