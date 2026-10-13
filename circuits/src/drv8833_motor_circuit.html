@@ -1,0 +1,295 @@
+<title>DRV8833 Motor Circuit</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one wide schematic sheet, then wiring and control tables in two columns that stack on phones */
+:root {
+  --bg: #eef2f4;
+  --sheet: #fbfcfd;
+  --ink: #1b242b;
+  --muted: #5b6a75;
+  --grid: #dfe6ea;
+  --casing: #3a4650;
+  --w-red: #d7322f;
+  --w-black: #1d1f22;
+  --w-yellow: #e6b400;
+  --w-green: #2f9e44;
+  --w-blue: #2f6fd6;
+  --w-purple: #8a4fd0;
+  --w-orange: #f07c00;
+  --pcb-buck: #1f5ea8;
+  --pcb-esp: #2b3036;
+  --pcb-drv: #c8343a;
+  --pcb-supply: #6b7680;
+  --on-pcb: #ffffff;
+  --warn: #b25e00;
+  --warn-bg: #fff3e0;
+  --font-display: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161a; --sheet: #182026; --ink: #e4eaee; --muted: #93a3ae; --grid: #222c33;
+    --casing: #9fb0bb; --w-black: #23262a;
+    --pcb-buck: #2b6cb8; --pcb-esp: #3a414a; --pcb-drv: #c23a40; --pcb-supply: #56616b;
+    --warn: #ffb560; --warn-bg: #2b2114;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161a; --sheet: #182026; --ink: #e4eaee; --muted: #93a3ae; --grid: #222c33;
+  --casing: #9fb0bb; --w-black: #23262a;
+  --pcb-buck: #2b6cb8; --pcb-esp: #3a414a; --pcb-drv: #c23a40; --pcb-supply: #56616b;
+  --warn: #ffb560; --warn-bg: #2b2114;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--font-display); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 48px; display: grid; gap: 24px; }
+header { display: grid; gap: 4px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { margin: 0; font-size: clamp(26px, 4vw, 36px); font-weight: 700; text-wrap: balance; }
+.lede { margin: 0; color: var(--muted); max-width: 65ch; }
+.sheet { background: var(--sheet); border: 1px solid var(--grid); border-radius: 10px; overflow-x: auto; }
+.sheet svg { display: block; width: 100%; min-width: 800px; height: auto; }
+svg text { font-family: var(--font-display); fill: var(--ink); }
+svg .mono { font-family: var(--font-mono); }
+svg .muted { fill: var(--muted); }
+svg .onpcb { fill: var(--on-pcb); }
+.wires path { fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+.cols > section { min-width: 0; display: grid; gap: 10px; align-content: start; }
+h2 { margin: 0; font-size: 19px; font-weight: 600; }
+code { font-family: var(--font-mono); font-size: .9em; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 14px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.sw { width: 28px; height: 6px; border-radius: 3px; outline: 1.5px solid var(--casing); }
+.warns { display: grid; gap: 10px; }
+.warn { border-left: 4px solid var(--warn); background: var(--warn-bg); padding: 10px 14px; border-radius: 4px; }
+.warn strong { color: var(--warn); }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+td.pin { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; outline: 1px solid var(--casing); }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">BLOC-BOT · drive circuit · 2 TT motors</div>
+    <h1>DRV8833 motor circuit</h1>
+    <p class="lede">One DRV8833 board drives both TT motors from the 2S battery. The ESP32 sends PWM straight to the four IN pins, and STBY is tied to 3.3&nbsp;V so the driver stays awake. It needs no 5&nbsp;V supply of its own.</p>
+  </header>
+
+  <div class="sheet" role="img" aria-label="Wiring diagram: supply feeds the buck converter and the DRV8833 VM pin with an optional 470 microfarad capacitor; buck 5 V powers the ESP32; ESP32 GPIO 13, 16, 17, 18 go to AIN1, AIN2, BIN1, BIN2; ESP32 3.3 V goes to STBY; ESP32 GND goes to driver GND; AO1 and AO2 go to the left motor; BO1 and BO2 go to the right motor.">
+    <svg viewBox="0 0 1100 680" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M20 0H0V20" fill="none" stroke="var(--grid)" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="1100" height="680" fill="url(#g)"/>
+
+      <!-- ===== Power wires ===== -->
+      <g class="wires">
+        <path d="M210 110H330" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M210 110H330" stroke="var(--w-red)" stroke-width="6"/>
+        <path d="M210 180H330" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M210 180H330" stroke="var(--w-black)" stroke-width="6"/>
+        <!-- battery + to VM -->
+        <path d="M240 110V30H24V590H600" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M240 110V30H24V590H600" stroke="var(--w-red)" stroke-width="6"/>
+        <!-- battery - to driver GND -->
+        <path d="M270 180V490H600" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M270 180V490H600" stroke="var(--w-black)" stroke-width="6"/>
+        <!-- buck to ESP32 -->
+        <path d="M500 110H620" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M500 110H620" stroke="var(--w-red)" stroke-width="6"/>
+        <path d="M500 180H620" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M500 180H620" stroke="var(--w-black)" stroke-width="6"/>
+        <!-- capacitor leads -->
+        <path d="M560 490V530M560 550V590" stroke="var(--casing)" stroke-width="3" stroke-dasharray="4 5"/>
+      </g>
+
+      <!-- ===== Logic wires (jumpers) ===== -->
+      <g class="wires">
+        <path d="M650 340V440" stroke="var(--casing)" stroke-width="6"/>
+        <path d="M650 340V440" stroke="var(--w-yellow)" stroke-width="3.5"/>
+        <path d="M690 340V440" stroke="var(--casing)" stroke-width="6"/>
+        <path d="M690 340V440" stroke="var(--w-green)" stroke-width="3.5"/>
+        <path d="M730 340V440" stroke="var(--casing)" stroke-width="6"/>
+        <path d="M730 340V440" stroke="var(--w-blue)" stroke-width="3.5"/>
+        <path d="M770 340V440" stroke="var(--casing)" stroke-width="6"/>
+        <path d="M770 340V440" stroke="var(--w-purple)" stroke-width="3.5"/>
+        <path d="M810 340V440" stroke="var(--casing)" stroke-width="6"/>
+        <path d="M810 340V440" stroke="var(--w-orange)" stroke-width="3.5"/>
+        <path d="M850 340V440" stroke="var(--casing)" stroke-width="6"/>
+        <path d="M850 340V440" stroke="var(--w-black)" stroke-width="3.5"/>
+      </g>
+
+      <!-- ===== Motor wires ===== -->
+      <g class="wires">
+        <path d="M900 470H982" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M900 470H982" stroke="var(--w-red)" stroke-width="6"/>
+        <path d="M900 510H982" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M900 510H982" stroke="var(--w-black)" stroke-width="6"/>
+        <path d="M900 580H982" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M900 580H982" stroke="var(--w-red)" stroke-width="6"/>
+        <path d="M900 620H982" stroke="var(--casing)" stroke-width="9"/>
+        <path d="M900 620H982" stroke="var(--w-black)" stroke-width="6"/>
+      </g>
+
+      <!-- Junctions -->
+      <g fill="var(--casing)">
+        <circle cx="240" cy="110" r="6"/>
+        <circle cx="270" cy="180" r="6"/>
+        <circle cx="560" cy="490" r="5"/>
+        <circle cx="560" cy="590" r="5"/>
+      </g>
+
+      <!-- Bulk capacitor (positive plate toward VM), optional for the bench test -->
+      <path d="M544 534Q560 524 576 534" fill="none" stroke="var(--muted)" stroke-width="3" stroke-dasharray="4 4"/>
+      <path d="M544 550H576" stroke="var(--muted)" stroke-width="3" stroke-dasharray="4 4"/>
+      <text x="584" y="566" font-size="12" font-weight="700" class="mono">+</text>
+      <text x="536" y="538" font-size="13" font-weight="600" text-anchor="end">470 µF</text>
+      <text x="536" y="554" font-size="11" class="muted" text-anchor="end">≥ 16 V, optional now</text>
+      <text x="536" y="570" font-size="11" class="muted" text-anchor="end">add before floor tests</text>
+
+      <!-- Wire labels -->
+      <text x="38" y="330" class="mono muted" font-size="12" transform="rotate(-90 38 330)" text-anchor="middle">battery + to VM</text>
+      <text x="284" y="340" class="mono muted" font-size="12" transform="rotate(-90 284 340)" text-anchor="middle">battery − to GND</text>
+
+      <!-- ===== Supply ===== -->
+      <rect x="40" y="60" width="170" height="160" rx="8" fill="var(--pcb-supply)"/>
+      <text x="56" y="92" class="onpcb" font-size="17" font-weight="700">Power in</text>
+      <text x="56" y="114" class="onpcb" font-size="13">7.3 V bench supply</text>
+      <text x="56" y="132" class="onpcb" font-size="13">or 2S, 6.4–8.4 V</text>
+      <text x="56" y="158" class="onpcb mono" font-size="12">via fuse + switch</text>
+      <text x="196" y="115" class="onpcb mono" font-size="15" font-weight="600" text-anchor="end">+</text>
+      <text x="196" y="185" class="onpcb mono" font-size="15" font-weight="600" text-anchor="end">−</text>
+
+      <!-- ===== Buck ===== -->
+      <rect x="330" y="60" width="170" height="160" rx="8" fill="var(--pcb-buck)"/>
+      <text x="415" y="92" class="onpcb" font-size="17" font-weight="700" text-anchor="middle">Mini360 buck</text>
+      <text x="415" y="145" class="onpcb mono" font-size="20" font-weight="600" text-anchor="middle">5.0 V</text>
+      <text x="415" y="164" class="onpcb" font-size="12" text-anchor="middle">ESP32 only</text>
+      <text x="340" y="115" class="onpcb mono" font-size="11">IN+</text>
+      <text x="340" y="185" class="onpcb mono" font-size="11">IN−</text>
+      <text x="490" y="115" class="onpcb mono" font-size="11" text-anchor="end">OUT+</text>
+      <text x="490" y="185" class="onpcb mono" font-size="11" text-anchor="end">OUT−</text>
+
+      <!-- ===== ESP32 ===== -->
+      <rect x="620" y="40" width="260" height="300" rx="8" fill="var(--pcb-esp)"/>
+      <text x="750" y="76" class="onpcb" font-size="17" font-weight="700" text-anchor="middle">ESP32-S3</text>
+      <text x="750" y="96" class="onpcb" font-size="12" text-anchor="middle">DevKitC-1 N16R8 · tested 13 Oct</text>
+      <rect x="705" y="140" width="90" height="70" rx="3" fill="none" stroke="var(--on-pcb)" stroke-opacity=".35"/>
+      <text x="750" y="180" class="onpcb mono" font-size="11" text-anchor="middle" opacity=".7">MCU</text>
+      <text x="630" y="115" class="onpcb mono" font-size="11">5V/VIN</text>
+      <text x="630" y="185" class="onpcb mono" font-size="11">GND</text>
+      <g class="onpcb mono" font-size="11" text-anchor="middle">
+        <text x="650" y="326" class="onpcb">13</text>
+        <text x="690" y="326" class="onpcb">16</text>
+        <text x="730" y="326" class="onpcb">17</text>
+        <text x="770" y="326" class="onpcb">18</text>
+        <text x="810" y="326" class="onpcb">3V3</text>
+        <text x="850" y="326" class="onpcb">GND</text>
+      </g>
+      <text x="750" y="306" class="onpcb" font-size="11" text-anchor="middle" opacity=".75">GPIO</text>
+      <g fill="var(--on-pcb)">
+        <circle cx="650" cy="340" r="4"/><circle cx="690" cy="340" r="4"/><circle cx="730" cy="340" r="4"/>
+        <circle cx="770" cy="340" r="4"/><circle cx="810" cy="340" r="4"/><circle cx="850" cy="340" r="4"/>
+      </g>
+
+      <!-- Jumper labels in the gap -->
+      <text x="611" y="395" font-size="12" class="muted" text-anchor="end">left motor</text>
+      <text x="611" y="410" font-size="12" class="muted" text-anchor="end">pins 13 + 16</text>
+      <text x="866" y="395" font-size="12" class="muted">keep awake</text>
+      <text x="866" y="410" font-size="12" class="muted">+ shared GND</text>
+
+      <!-- ===== DRV8833 ===== -->
+      <rect x="600" y="440" width="300" height="200" rx="8" fill="var(--pcb-drv)"/>
+      <g class="onpcb mono" font-size="11" text-anchor="middle">
+        <text x="650" y="458" class="onpcb">AIN1</text>
+        <text x="690" y="458" class="onpcb">AIN2</text>
+        <text x="730" y="458" class="onpcb">BIN1</text>
+        <text x="770" y="458" class="onpcb">BIN2</text>
+        <text x="810" y="458" class="onpcb">STBY</text>
+        <text x="850" y="458" class="onpcb">GND</text>
+      </g>
+      <text x="612" y="495" class="onpcb mono" font-size="11">GND</text>
+      <text x="612" y="595" class="onpcb mono" font-size="11">VM</text>
+      <text x="888" y="475" class="onpcb mono" font-size="11" text-anchor="end">AO1</text>
+      <text x="888" y="515" class="onpcb mono" font-size="11" text-anchor="end">AO2</text>
+      <text x="888" y="585" class="onpcb mono" font-size="11" text-anchor="end">BO1</text>
+      <text x="888" y="625" class="onpcb mono" font-size="11" text-anchor="end">BO2</text>
+      <text x="750" y="530" class="onpcb" font-size="18" font-weight="700" text-anchor="middle">DRV8833</text>
+      <text x="750" y="550" class="onpcb" font-size="12" text-anchor="middle">VM 2.7–10.8 V</text>
+      <text x="750" y="566" class="onpcb" font-size="12" text-anchor="middle">1.5 A per motor, 2 A peak</text>
+      <text x="750" y="590" class="onpcb" font-size="12" text-anchor="middle" opacity=".85">NC pins: leave empty</text>
+
+      <!-- ===== Motors ===== -->
+      <text x="1022" y="432" font-size="13" font-weight="600" text-anchor="middle">TT motors</text>
+      <circle cx="1022" cy="490" r="40" fill="var(--sheet)" stroke="var(--casing)" stroke-width="3"/>
+      <text x="1022" y="489" font-size="20" font-weight="700" text-anchor="middle">M</text>
+      <text x="1022" y="507" font-size="12" class="muted" text-anchor="middle">left</text>
+      <circle cx="1022" cy="600" r="40" fill="var(--sheet)" stroke="var(--casing)" stroke-width="3"/>
+      <text x="1022" y="599" font-size="20" font-weight="700" text-anchor="middle">M</text>
+      <text x="1022" y="617" font-size="12" class="muted" text-anchor="middle">right</text>
+      <text x="1022" y="664" font-size="11" class="muted" text-anchor="middle">0.1 µF across each (later)</text>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><i class="sw" style="background:var(--w-red)"></i>battery / 5 V positive</span>
+    <span><i class="sw" style="background:var(--w-black)"></i>ground (all tied together)</span>
+    <span><i class="sw" style="background:var(--w-orange);height:4px"></i>3.3 V to STBY</span>
+    <span><i class="sw" style="background:repeating-linear-gradient(90deg,var(--muted) 0 4px,transparent 4px 9px);outline:none"></i>optional for the bench test</span>
+    <span><i class="sw" style="background:linear-gradient(90deg,var(--w-yellow) 25%,var(--w-green) 25% 50%,var(--w-blue) 50% 75%,var(--w-purple) 75%);height:4px"></i>PWM signals</span>
+  </div>
+
+  <div class="warns">
+    <div class="warn"><strong>STBY must be HIGH.</strong> The chip pulls it low inside. If STBY is left unconnected, nothing moves.</div>
+    <div class="warn"><strong>Check the chip marking.</strong> This wiring is for a DRV8833. If the black chip says TB6612, the NC pins are PWMA, PWMB and VCC, and the wiring changes.</div>
+    <div class="warn"><strong>No capacitor yet?</strong> Fine for the bench test with the wheels in the air. The board already has a 10&nbsp;µF capacitor on VM. Add the 470&nbsp;µF and the 0.1&nbsp;µF motor capacitors before floor tests.</div>
+    <div class="warn"><strong>Do not use GPIO 15.</strong> It would not drive AIN1 forward on two different drivers and motors, so AIN1 moved to GPIO 13. Also avoid GPIO 35–37 (used by the octal PSRAM).</div>
+    <div class="warn"><strong>Right motor is flipped in code.</strong> Wire BIN1 to 17 and BIN2 to 18 as shown. The firmware swaps them (<code>MOTOR_RIGHT_IN1 = 18</code>) so both wheels drive forward together.</div>
+  </div>
+
+  <div class="cols">
+    <section>
+      <h2>Wiring</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Driver pin</th><th>Connect to</th></tr></thead>
+          <tbody>
+            <tr><td class="pin">VM</td><td>Battery + after the fuse and switch</td></tr>
+            <tr><td class="pin">GND</td><td>Battery −, and ESP32 GND</td></tr>
+            <tr><td class="pin"><i class="dot" style="background:var(--w-yellow)"></i>AIN1</td><td>GPIO 13 (not 15)</td></tr>
+            <tr><td class="pin"><i class="dot" style="background:var(--w-green)"></i>AIN2</td><td>GPIO 16</td></tr>
+            <tr><td class="pin"><i class="dot" style="background:var(--w-blue)"></i>BIN1</td><td>GPIO 17</td></tr>
+            <tr><td class="pin"><i class="dot" style="background:var(--w-purple)"></i>BIN2</td><td>GPIO 18</td></tr>
+            <tr><td class="pin"><i class="dot" style="background:var(--w-orange)"></i>STBY</td><td>ESP32 3.3 V, or a spare GPIO such as 14 set HIGH</td></tr>
+            <tr><td class="pin">AO1 / AO2</td><td>Left motor</td></tr>
+            <tr><td class="pin">BO1 / BO2</td><td>Right motor</td></tr>
+            <tr><td class="pin">NC</td><td>Nothing</td></tr>
+            <tr><td class="pin">Link LED</td><td>GPIO 4 → long leg, short leg → GND (on while the controller is connected)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section>
+      <h2>Control, per motor</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>IN1</th><th>IN2</th><th>Motor</th></tr></thead>
+          <tbody>
+            <tr><td class="pin">PWM</td><td class="pin">LOW</td><td>Forward, speed from duty</td></tr>
+            <tr><td class="pin">LOW</td><td class="pin">PWM</td><td>Reverse</td></tr>
+            <tr><td class="pin">LOW</td><td class="pin">LOW</td><td>Coast</td></tr>
+            <tr><td class="pin">HIGH</td><td class="pin">HIGH</td><td>Brake</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin:0;color:var(--muted);font-size:14px">Keep duty at or below about 70&nbsp;% (firmware caps it at 178/255). Lower than about 150 and the right motor may not start. Full duty puts up to 8.4&nbsp;V on motors rated 3–6&nbsp;V. If a motor spins the wrong way, swap its two wires at AO or BO.</p>
+    </section>
+  </div>
+</div>
