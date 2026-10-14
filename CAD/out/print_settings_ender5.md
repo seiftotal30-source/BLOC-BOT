@@ -49,9 +49,9 @@ thread is coarse, which is why the 0.16 mm test file exists.
 
 ## Ender-5 (university printer), first settings
 
-These are the settings H bloc was sliced with (`hbloc/HBloc_Ender5_PLA.gcode`). The VBloc
-Ender-5 G-code that used them has been replaced by the Ender 5 Plus files above; the VBloc
-rows below are kept as the record of that earlier slice.
+These are the settings H bloc and VBloc were first sliced with. Both vises have since been
+reworked and re-sliced with the profile above; the old Ender-5 G-code files were removed, and
+the rows below are kept as the record of that earlier slice.
 
 The G-code files in `hbloc/` and `vbloc/` were sliced for a **Creality Ender-5** with the
 CuraEngine that ships with **UltiMaker Cura 5.13** (printer profile `creality_ender5`).

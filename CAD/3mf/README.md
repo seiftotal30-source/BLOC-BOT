@@ -12,7 +12,7 @@ waffle plate (see `CAD/out/print_settings_ender5.md`).
 |---|---|---|
 | `VBloc.3mf` | vertical vise, reworked for printing | arm, fixed jaw, sliding jaw, lead screw top half, lead screw bottom half, M4 thumb screw, 6 pins |
 | `VBloc_threads_test.3mf` | VBloc thread test: print first to check the M6 thread (slice at 0.16 mm) | sliding jaw, both lead screw halves, pins |
-| `HBloc.3mf` | horizontal vise (not yet reworked like VBloc; lead screw prints standing) | base, sliding jaw, lead screw, M4 thumb screw |
+| `HBloc.3mf` | horizontal vise, reworked like VBloc | arm, fixed jaw, sliding jaw, lead screw top half, lead screw bottom half, M4 thumb screw, 6 pins |
 | `MotorBracket_right.3mf` | the professional's 3-part TT motor bracket, right-hand | flange (top face down), motor tab (nut traps up), sensor column (on its flat) |
 | `MotorBracket_left.3mf` | the same, left-hand (mirrored) | flange, motor tab, sensor column |
 | `FlyingFish_mount.3mf` | rear holder for the Flying Fish IR sensor | 1 part, standing on its end face |
@@ -20,8 +20,8 @@ waffle plate (see `CAD/out/print_settings_ender5.md`).
 | `Controller_case.3mf` | Bloc-Con controller case | bottom, top |
 | `Controller_caps.3mf` | Bloc-Con button caps | 1 part |
 
-Glued parts: VBloc's fixed jaw onto the arm and its two screw halves (with the pins), and the
-motor bracket's tab and column into the flange. Use CA (super glue) or epoxy.
+Glued parts: on VBloc and H bloc, the fixed jaw onto the arm and the two screw halves (with the
+pins); on the motor bracket, the tab and column into the flange. Use CA (super glue) or epoxy.
 
 `from_professional/` holds the professional's own files as he sent them: `Bracket.3mf` and
 `Bracket(Mirror).3mf` (exported from Fusion in the assembled position, not turned for

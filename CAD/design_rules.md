@@ -1,7 +1,8 @@
 # Design rules for BLOC-BOT printed parts
 
 What we learned from the professional's motor bracket redesign and from the first VBloc
-print. Follow these for every new printed part, and when reworking an old one (H bloc next).
+print. Follow these for every new printed part and when reworking an old one (VBloc and H bloc
+are both reworked this way).
 
 ## Print direction first
 
@@ -33,13 +34,13 @@ Socket and slot ends are rounded with the clearance carried round the radius.
 
 - **Round (fillet) only edges that stand upright while printing**: the bracket's flange
   corners R4, tab corners R2, slot and pocket ends; VBloc's jaw and arm corners.
-- **Edges lying flat (parallel to the bed) get 45 deg chamfers**, 0.4 mm on hole and slot
-  rims and outlines, bigger 45 deg slopes for ribs. A fillet on a flat edge prints as an
-  overhang underneath and a staircase on top.
-- A 0.4 mm chamfer round the **bottom edge** also takes up the squashed first layer (elephant
-  foot), so tenons, tongues and holes that start on the bed still fit.
-- Leave edges sharp where they meet a glued face, and on walls too thin to chamfer (VBloc's
-  1.2 mm rail).
+- **Chamfer only where something goes in, and use 45 deg, never a fillet, on flat edges.**
+  On his bracket the only chamfers are 0.4 mm on the rims of the slots, holes and sockets
+  that a tab, bolt or column enters (both faces), plus the rib's 45 deg slope so it prints
+  without support. No outer outline, bed edge or big face is chamfered. On the vises that
+  means the screw hole, the thread, the board slot or groove, and the mouth of the slide
+  groove; nothing else. (A fillet on a flat edge would print as an overhang underneath and a
+  staircase on top.)
 - Exception: rounds on the **top** of a part are fine when nothing hangs below them, e.g. a
   split screw lying on its cut face.
 

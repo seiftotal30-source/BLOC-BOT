@@ -17,9 +17,9 @@ G29 bed levelling). Both are centred on their bed.
 |---|---|
 | `VBloc_Ender3Pro.gcode` / `VBloc_Ender5Plus.gcode` | **Print this.** Every part below on one plate, 0.28 mm layers, skirt. About 42 min, 15 g. |
 | `VBloc_threads_test_0.16_Ender3Pro.gcode` / `..._Ender5Plus.gcode` | **Optional test first.** Only the two screw halves, the sliding jaw and the pins, at finer 0.16 mm layers with a brim, to check the M6 thread. About 41 min, 8.5 g. |
-| `vbloc_base.stl` | Arm (the long rail the sliding jaw runs on), with the M4 mounting hole underneath. Prints flat. Outer corners rounded R2; 0.4 mm chamfers round the bottom edge, the exposed top edges and the slide groove (rims and entry). |
-| `vbloc_fixedjaw.stl` | Fixed jaw. Glues onto the end of the arm with its two tenons. Prints on its outer face. Its screw hole is Ø6.2 (was 6.6, which let the screw wobble on the first print) with 0.4 mm chamfers on both rims. Top corners R1, tenon tips R0.5; 0.4 mm chamfers round both big faces. |
-| `vbloc_slidingjaw.stl` | Sliding jaw with the M6 thread. Prints on its back face. Corners R1, tongue edges R0.5; 0.4 mm chamfers round both big faces and both thread rims. |
+| `vbloc_base.stl` | Arm (the long rail the sliding jaw runs on), with the M4 mounting hole underneath. Prints flat. Outer corners rounded R2; 0.4 mm chamfer at the mouth of the slide groove, where the sliding jaw goes in. |
+| `vbloc_fixedjaw.stl` | Fixed jaw. Glues onto the end of the arm with its two tenons. Prints on its outer face. Its screw hole is Ø6.2 (was 6.6, which let the screw wobble on the first print) with 0.4 mm chamfers on both rims. Top corners R1, tenon tips R0.5; 0.4 mm chamfers on the board slot rims. |
+| `vbloc_slidingjaw.stl` | Sliding jaw with the M6 thread. Prints on its back face. Corners R1, tongue edges R0.5; 0.4 mm chamfers on both thread rims and the board slot rims. |
 | `vbloc_leadscrew_top.stl` | Lead screw, top half (thread + half the knob). Prints on its flat cut face. The knob is an octagon, 14 mm across the flats, with R2 corners and R1 rims so it does not dig into your fingers (the first version had sharp notches). |
 | `vbloc_leadscrew_bottom.stl` | Lead screw, bottom half. Identical shape, also on its cut face. |
 | `vbloc_cap.stl` | M4 thumb screw that fixes the vise to the plate from below. A steel M4 screw is stronger. |
@@ -28,11 +28,9 @@ G29 bed levelling). Both are centred on their bed.
 The STLs are already turned to their print positions and laid out together; don't rotate them
 if you slice them yourself.
 
-Edges follow the motor bracket's rule: only edges that stand upright while printing are
-rounded; edges that lie flat on the bed or face up get 45 deg chamfers (a rounded flat edge
-prints as an overhang underneath and a staircase on top). The bottom chamfers also take up
-the squashed first layer ("elephant foot"), so the tenons, tongue and thread start clean.
-Edges under the glued fixed jaw and the thin rail beside the groove are left sharp.
+Edges follow the motor bracket: corners that stand upright while printing are rounded, and
+45 deg chamfers (0.4 mm) go only where something goes in: the screw hole, the thread, the
+board slot and the mouth of the slide groove. Outer outlines stay sharp, as on his bracket.
 
 ## Assembly
 
