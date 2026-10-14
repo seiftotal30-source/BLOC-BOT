@@ -3,8 +3,10 @@
 Every BLOC-BOT part we print, as 3MF. Open one in Cura (or any slicer), pick your printer and
 slice: the parts are already turned to the face they print on (no supports needed) and laid
 out together, centred on a 220 x 220 mm bed (Ender 3 Pro). On a bigger bed (Ender 5 Plus) use
-the slicer's arrange/centre command. Default slicer settings are the professional's: 0.28 mm
-layers, 2 walls, 60 % infill, 200 C / 50 C bed, skirt (see `CAD/out/print_settings_ender5.md`).
+the slicer's arrange/centre command. Default slicer settings are the professional's Cura profile
+(`CAD/out/print_profiles/CE3PRO_pro.curaprofile`: 0.28 mm adaptive layers, 3 walls, 238 C /
+70 C bed, fan off, skirt) with 40 % infill on small parts and 20 % on big ones such as the
+waffle plate (see `CAD/out/print_settings_ender5.md`).
 
 | File | What it is | Parts (each a separate object) |
 |---|---|---|

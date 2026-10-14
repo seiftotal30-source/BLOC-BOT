@@ -1,8 +1,9 @@
 # VBloc print files
 
 VBloc is the vertical vise. It is printed as 7 parts plus small pins, all lying flat with no
-supports, then glued. All G-code uses the professional's settings: 0.28 mm layers, 2 walls,
-60 % infill, 200 C nozzle, 50 C bed (60 C is better on a glass bed; set it on the printer).
+supports, then glued. All G-code uses the professional's Cura profile (`CAD/out/print_profiles/
+CE3PRO_pro.curaprofile`): 0.28 mm adaptive layers, 3 walls, 238 C nozzle, 70/67 C bed, fan off
+(PETG temperatures), with 40 % triangles infill.
 The same plates as 3MF (to slice for any printer) are `CAD/3mf/VBloc.3mf` and
 `CAD/3mf/VBloc_threads_test.3mf`.
 
@@ -14,18 +15,24 @@ G29 bed levelling). Both are centred on their bed.
 
 | File | What it is |
 |---|---|
-| `VBloc_Ender3Pro.gcode` / `VBloc_Ender5Plus.gcode` | **Print this.** Every part below on one plate, 0.28 mm layers, skirt. About 1 h 03 min, 16 g PLA. |
-| `VBloc_threads_test_0.16_Ender3Pro.gcode` / `..._Ender5Plus.gcode` | **Optional test first.** Only the two screw halves, the sliding jaw and the pins, at finer 0.16 mm layers with a brim, to check the M6 thread. About 46 min, 7 g. |
-| `vbloc_base.stl` | Arm (the long rail the sliding jaw runs on), with the M4 mounting hole underneath. Prints flat. |
-| `vbloc_fixedjaw.stl` | Fixed jaw. Glues onto the end of the arm with its two tenons. Prints on its outer face. |
-| `vbloc_slidingjaw.stl` | Sliding jaw with the M6 thread. Prints on its back face. |
-| `vbloc_leadscrew_top.stl` | Lead screw, top half (thread + half the knob). Prints on its flat cut face. |
+| `VBloc_Ender3Pro.gcode` / `VBloc_Ender5Plus.gcode` | **Print this.** Every part below on one plate, 0.28 mm layers, skirt. About 42 min, 15 g. |
+| `VBloc_threads_test_0.16_Ender3Pro.gcode` / `..._Ender5Plus.gcode` | **Optional test first.** Only the two screw halves, the sliding jaw and the pins, at finer 0.16 mm layers with a brim, to check the M6 thread. About 41 min, 8.5 g. |
+| `vbloc_base.stl` | Arm (the long rail the sliding jaw runs on), with the M4 mounting hole underneath. Prints flat. Outer corners rounded R2; 0.4 mm chamfers round the bottom edge, the exposed top edges and the slide groove (rims and entry). |
+| `vbloc_fixedjaw.stl` | Fixed jaw. Glues onto the end of the arm with its two tenons. Prints on its outer face. Its screw hole is Ø6.2 (was 6.6, which let the screw wobble on the first print) with 0.4 mm chamfers on both rims. Top corners R1, tenon tips R0.5; 0.4 mm chamfers round both big faces. |
+| `vbloc_slidingjaw.stl` | Sliding jaw with the M6 thread. Prints on its back face. Corners R1, tongue edges R0.5; 0.4 mm chamfers round both big faces and both thread rims. |
+| `vbloc_leadscrew_top.stl` | Lead screw, top half (thread + half the knob). Prints on its flat cut face. The knob is an octagon, 14 mm across the flats, with R2 corners and R1 rims so it does not dig into your fingers (the first version had sharp notches). |
 | `vbloc_leadscrew_bottom.stl` | Lead screw, bottom half. Identical shape, also on its cut face. |
 | `vbloc_cap.stl` | M4 thumb screw that fixes the vise to the plate from below. A steel M4 screw is stronger. |
 | `vbloc_pins.stl` | 6 alignment pins, 1.75 mm: 3 long (3.8 mm) and 3 short (2.2 mm). You need 2 of each; the third is a spare. 1.75 mm filament cut to length works too. |
 
 The STLs are already turned to their print positions and laid out together; don't rotate them
 if you slice them yourself.
+
+Edges follow the motor bracket's rule: only edges that stand upright while printing are
+rounded; edges that lie flat on the bed or face up get 45 deg chamfers (a rounded flat edge
+prints as an overhang underneath and a staircase on top). The bottom chamfers also take up
+the squashed first layer ("elephant foot"), so the tenons, tongue and thread start clean.
+Edges under the glued fixed jaw and the thin rail beside the groove are left sharp.
 
 ## Assembly
 

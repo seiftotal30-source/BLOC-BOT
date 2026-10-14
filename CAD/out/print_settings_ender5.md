@@ -1,10 +1,11 @@
 # Print settings for H bloc and VBloc
 
-## Ender 3 Pro and Ender 5 Plus with the professional's settings (current default)
+## Ender 3 Pro and Ender 5 Plus with the professional's profile (current default)
 
-The professional's motor bracket G-code (Cura 5.13, Creality "Low Quality" profile, infill
-60 %, printed on his Ender 3 Pro) is now the default. `CAD/scripts/slice_pro.sh` uses it
-with Cura's printer profile for either printer, and the parts sit in the middle of the bed:
+The professional's own Cura profile, `CAD/out/print_profiles/CE3PRO_pro.curaprofile` (Cura
+5.13, Creality "Standard" quality, made for his Ender 3 Pro), is the default. Import it in the
+Cura app under Preferences > Profiles > Import. `CAD/scripts/slice_pro.sh` slices with the same
+values for either printer, and the parts sit in the middle of the bed:
 
 - `ender3pro`: Creality Ender 3 Pro, 220 x 220 bed, no bed levelling probe.
 - `ender5plus`: Creality Ender 5 Plus, 350 x 350 bed, starts with G28 + G29 (BLTouch).
@@ -13,23 +14,31 @@ with Cura's printer profile for either printer, and the parts sit in the middle 
 Cura's start and end G-code for these printers contain `{setting}` placeholders that only the
 Cura app fills in (the Ender 3 Pro heat-up, and the "present print" move at the end on both).
 The command-line engine leaves them as text, which a printer can't read, so the script writes
-those lines out with the real values (bed 50 C, nozzle 200 C; end move to Y 220 or X/Y 350).
-The first Ender 5 Plus VBloc files had the unfilled end line; they were re-sliced.
+those lines out with the real values (bed 70 C, nozzle 238 C; end move to Y 220 or X/Y 350).
 
 | Setting | Value |
 |---|---|
-| Layers | 0.28 mm (first 0.28) |
-| Walls / top / bottom | 2 walls (0.8 mm), 4 top and 4 bottom layers |
-| Infill | 60 %, lines |
-| Speeds | 80 mm/s print and infill, 40 walls and skin, 20 first layer, 200 travel |
-| Temperatures | 200 C nozzle, 50 C bed (raise to 55-60 C if corners lift on the glass bed) |
-| Retraction | 5 mm at 45 mm/s |
-| Adhesion | skirt, 3 lines, 10 mm away |
+| Layers | 0.28 mm, adaptive (Cura picks 0.24-0.32 mm by shape; VBloc comes out 0.24 after a 0.28 first layer) |
+| Lines | 0.45 mm (inner walls 0.5, infill 0.57), first layer 120 % |
+| Walls / top / bottom | 3 walls, 4 top and 4 bottom layers, zigzag top/bottom |
+| Infill | triangles: 40 % on small parts (VBloc, H bloc, brackets), 20 % on big ones such as the waffle plate (his profile had 60 %; user rule) |
+| Speeds | 65 mm/s print, infill and inner walls; 50 outer wall; 45 top/bottom; 25 first layer; 162.5 travel |
+| Temperatures | 238 C nozzle; bed 70 C first layer, then 67 C |
+| Cooling | fan off |
+| Retraction | 5 mm at 45 mm/s, at most 12 per 6 mm of filament |
+| Adhesion | skirt, 2 lines, 10 mm away (thread test: brim, 25 lines) |
+
+238 C nozzle, a 67-70 C bed and no fan are PETG settings. For PLA they are too hot: use about
+200-210 C, a 55-60 C bed and the fan on, or the PLA will string and sag.
+
+Settings the profile leaves to Cura formulas were worked out the way Cura does (comments in
+`slice_pro.sh`). One of them matters: from 40 % infill up Cura turns "infill skin support" off;
+the command-line engine left it on, which also switched the fan on under the top skins.
 
 | VBloc file (`_Ender3Pro` and `_Ender5Plus` versions) | What | Result |
 |---|---|---|
-| `vbloc/VBloc_<printer>.gcode` | all parts (arm, fixed jaw, sliding jaw, both screw halves, thumb screw, 6 pins), his settings | 29 layers, about 1 h 03 min, 5.4 m (16.2 g) |
-| `vbloc/VBloc_threads_test_0.16_<printer>.gcode` | screw halves, sliding jaw and pins at 0.16 mm with a brim, to test the M6 thread first | 49 layers, about 46 min, 2.4 m (7.3 g) |
+| `vbloc/VBloc_<printer>.gcode` | all parts (arm, fixed jaw, sliding jaw, both screw halves, thumb screw, 6 pins), his settings | 33 layers, about 42 min, 4.8 m (14.8 g PETG, 14.4 g PLA) |
+| `vbloc/VBloc_threads_test_0.16_<printer>.gcode` | screw halves, sliding jaw and pins at 0.16 mm with a brim, to test the M6 thread first | 64 layers, about 41 min, 2.8 m (8.5 g PETG) |
 
 The same plates are in `CAD/3mf/` as `VBloc.3mf` and `VBloc_threads_test.3mf`.
 
