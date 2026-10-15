@@ -26,7 +26,7 @@ Images are in `CAD/out/`. LaTeX blocks are in `thesis/figures.tex`.
 | F14 | controller_top.png | fig:controller-top | Fusion top view, closed case (ctl_shots.py) | 2026-10-05 | ready |
 | F15 | controller_exploded.png | fig:controller-exploded | Custom-graphics copies lifted 0/35/75/100 mm (bottom/parts/top/caps), camera (30,-38,26) (ctl_shots.py) | 2026-10-05 | ready |
 | F16 | controller_section.png | fig:controller-section | Custom-graphics copies cut by the vertical plane through the directional cross (57.5,-9.5) and display (0,19.7) centres (ctl_shots.py); F13-F16 re-shot 2026-10-14 (cross of 4 + 2 buttons, rim chamfer) | 2026-10-05 | ready |
-| F17 | electronics/robot_circuit.svg | (not added yet) | Hand-written SVG block diagram of the proposed ESP32-S3 robot circuit; convert to PDF before including | 2026-10-06 | draft |
+| F17 | electronics/robot_circuit.svg | (not added yet) | Hand-written SVG block diagram of the proposed ESP32-S3 robot circuit; convert to PDF before including. 2026-10-10: two DRV8871 boxes replaced by one DRV8833, GPIO 13/14 added | 2026-10-06 | draft |
 
 ## Graphs
 
@@ -54,6 +54,7 @@ Entries are in `thesis/references.bib`.
 | b3f_switch_model | OMRON B3F-4050 STEP model | Switch heights, pegs, caps | author, URL missing |
 | tp4056_model | TP4056 Type-C STEP model | Charger pocket, USB-C opening | author, URL missing |
 | mt3608_model | MT3608 STEP model | Boost board pocket | author, URL missing |
+| drv8833_datasheet | TI DRV8833 datasheet (SLVSAR1E) | Motor driver limits, wiring, control tables | yes |
 
 ## Searches and lookups
 
@@ -75,3 +76,4 @@ Every search or data lookup that fed a design decision, with what it found.
 | S12 | 2026-10-05 | ESP32 model | Bodies, PCB holes | PCB 28.3 x 51.2 x 1.6; holes Ø2.9 at 23.5 x 46.6; pins 8.2 below; micro-USB 7.98 x 2.94 protruding 0.57 | Standoffs, side USB opening |
 | S13 | 2026-10-05 | TP4056 / MT3608 models | Bodies, PCB holes | TP4056 28.3 x 17.4 x 1.5, USB-C 8.42 x 2.79, no mounting holes; MT3608 37.2 x 17.23 x 1.52, 6.45 tall, no mounting holes | Clip pockets, USB-C opening |
 | S14 | 2026-10-05 | GrabCAD RC Transmitter | Import and outline | 200 x 170 x 36 box with chamfered corners, two halves, no grips | Shell shape |
+| S15 | 2026-10-10 | ti.com, DRV8833 product page and datasheet SLVSAR1E (Rev. E, Jul 2015) | Supply range, current, protection, logic levels, pin functions, control tables | VM 2.7–10.8 V (11.8 V abs. max); 1.5 A RMS / 2 A peak per bridge (HTSSOP/WQFN), 0.5 A RMS (TSSOP); OCP 2–3.3 A, retry 1.35 ms; UVLO below 2.5 V; VIH 2 V (nSLEEP 2.5 V); nSLEEP high to enable, 500 kΩ pull-down; xISEN to GND without current control | Switch from DRV8871 to DRV8833: wiring, pin map, risks |
