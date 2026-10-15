@@ -29,6 +29,7 @@ def leaf(o):
     return r
 
 
+root.isOriginFolderLightBulbOn = False  # origin axes and planes would show in the shots
 case, caps = occ('Controller_Case'), occ('Controller_Caps')
 refs = [o for o in root.occurrences if o.isLightBulbOn and o.component.name.startswith('REF_')]
 shot('controller_iso.png', VO.IsoTopRightViewOrientation)
@@ -74,7 +75,7 @@ g = draw(items)
 shot('controller_exploded.png', eye_dir=(30, -38, 26))
 g.deleteMe()
 
-# section: vertical plane through the D-pad centre and the display centre; keep the near half
+# section: vertical plane through the directional cross and the display centre; keep the near half
 p0 = (pv('dpad_x'), pv('dpad_y')); p1 = (pv('oled_cx'), pv('oled_cy'))
 dx, dy = p1[0] - p0[0], p1[1] - p0[1]; L = math.hypot(dx, dy); d = (dx / L, dy / L); n = (d[1], -d[0])
 if n[1] > 0: n = (-n[0], -n[1])                      # keep the half toward the viewer (-Y side)
@@ -92,7 +93,7 @@ for b, m, k in scene:
 g = draw(items)
 shot('controller_section.png', eye_dir=(-n[0] * 30 + d[0] * 8, -n[1] * 30 + d[1] * 8, 14))  # from the removed side, onto the cut face
 g.deleteMe()
-print('section plane through D-pad', [round(v, 1) for v in p0], 'and display', [round(v, 1) for v in p1])
+print('section plane through cross', [round(v, 1) for v in p0], 'and display', [round(v, 1) for v in p1])
 
 for o, v in vis: o.isLightBulbOn = v
 vp.refresh()

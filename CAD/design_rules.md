@@ -1,8 +1,8 @@
 # Design rules for BLOC-BOT printed parts
 
 What we learned from the professional's motor bracket redesign and from the first VBloc
-print. Follow these for every new printed part and when reworking an old one (VBloc and H bloc
-are both reworked this way).
+print. Follow these for every new printed part and when reworking an old one (VBloc, HBloc
+and the controller case are reworked this way).
 
 ## Print direction first
 
@@ -43,6 +43,10 @@ Socket and slot ends are rounded with the clearance carried round the radius.
   staircase on top.)
 - Exception: rounds on the **top** of a part are fine when nothing hangs below them, e.g. a
   split screw lying on its cut face.
+- Check which way each part prints before rounding an outer rim. A shell prints with one
+  rim on the bed (the controller's bottom shell on its floor, its top shell upside down), so
+  a rounded rim there starts as an overhang. The controller's 3 mm rim rounds became 3 mm
+  45 deg chamfers: same width, still smooth in the hand, and printable.
 
 ## Parts you touch
 
@@ -71,3 +75,13 @@ For anyone scripting the designs through the Fusion API:
   (`CAD/out/*.f3d`) before heavy exports.
 - Fusion's STL export call can report success and write nothing; the scripts write STLs from
   the mesh calculator instead.
+- To swap a feature in the middle of the timeline (the controller's rim fillet for a
+  chamfer): roll the timeline to it, delete it, add the new feature, move the marker back to
+  the end, then check every later feature is still healthy.
+- A fillet's edge list can only be read with the timeline rolled back to it; to see what a
+  fillet rounded without rolling back, look at the body's faces instead (cylinders along Z
+  are upright corners, cylinders along X/Y and corner spheres are flat rims).
+- Ending a design session: save a new version in Fusion, export the `.f3d` backup to
+  `CAD/out/`, re-export the changed STLs and 3MFs. Slice only when asked.
+- Renaming a design: change its file name (`dataFile.name`), which keeps all versions; the
+  search index takes a few minutes to show the new name.

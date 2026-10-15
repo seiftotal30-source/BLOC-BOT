@@ -45,7 +45,7 @@ case = occ('Controller_Case'); caps = occ('Controller_Caps')
 G = {}
 for b in case.bRepBodies: G[b.name] = [b]
 for b in caps.bRepBodies: G[b.name] = [b]
-sw_names = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'BACK', 'FORWARD']
+sw_names = [n.upper() for n, _, _ in buttons()]
 k = 0
 for o in root.occurrences:
     if not o.isLightBulbOn or not o.component.name.startswith('REF_'): continue
@@ -78,7 +78,7 @@ if not hits: print('   none')
 others = [g for g in names if not g.startswith('cap_')]
 print('2. CAP TRAVEL (free play %.2f + switch travel %.2f)' % (pv('cap_gap'), pv('sw_travel')))
 mm_ = app.measureManager
-for cn, sn in zip(['cap_up', 'cap_down', 'cap_left', 'cap_right', 'cap_back', 'cap_forward'], sw_names):
+for cn, sn in zip(['cap_' + n for n, _, _ in buttons()], sw_names):
     cap = G[cn][0]
     plunger = [b for b in G['REF_Switch_' + sn] if b.name == 'Body3'][0]
     gap = mm_.measureMinimumDistance(cap, plunger).value * 10
