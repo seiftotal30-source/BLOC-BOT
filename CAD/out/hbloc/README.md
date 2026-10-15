@@ -15,7 +15,7 @@ are centred on their bed.
 
 | File | What it is |
 |---|---|
-| `HBloc_Ender3Pro.gcode` / `HBloc_Ender5Plus.gcode` | **Print this** (not sliced yet for the current design). Every part below on one plate, sliced from `CAD/3mf/HBloc.3mf`. |
+| `HBloc_Ender3Pro.gcode` / `HBloc_Ender5Plus.gcode` | **Print this**. Every part below on one plate, sliced from `CAD/3mf/HBloc.3mf`. |
 | `hbloc_base.stl` | Arm (the base the sliding jaw runs on), with the M4 mounting hole underneath. Prints flat. Corners R2; 0.4 mm chamfer at the mouth of the slide groove, where the sliding jaw goes in. |
 | `hbloc_fixedjaw.stl` | Fixed jaw. Glues onto the end of the arm with its two tenons. Prints on its outer face, so its screw hole prints round. Screw hole Ø6.2 (was 6.6, which let VBloc's screw wobble) with 0.4 mm rim chamfers. Top corners R1, tenon tips R0.5; 0.4 mm chamfers on the board groove rims. |
 | `hbloc_slidingjaw.stl` | Sliding jaw with the M6 thread. Prints on its back face. Corners R1, tongue edges R0.5; 0.4 mm chamfers on both thread rims and the board groove rims. |
