@@ -4,12 +4,12 @@
 # with brim, bed 60 C, 40 % infill, 3 walls and -0.15 mm initial layer horizontal expansion.
 # The command-line engine doesn't compute derived values, so the profile's values are set here.
 #
-# Usage (Git Bash):  sh BlocBot-Sim/cad/slice_ffmount_ender5.sh
+# Usage (Git Bash):  sh CAD/designs/flyingfish_mount/slice_ffmount_ender5.sh
 # The STL is centred on x = y = 0; the engine moves it to the bed centre (110, 110).
 
 CURA="/d/UltiMaker Cura 5.13.0"
 RES="$CURA/share/cura/resources"
-DIR="/e/Claude Stuff/BlocBot-Sim/cad"
+DIR="/e/Claude Stuff/CAD/designs/flyingfish_mount"
 export CURA_ENGINE_SEARCH_PATH="$(cygpath -w "$RES/definitions");$(cygpath -w "$RES/extruders")"
 W() { cygpath -w "$1"; }
 
@@ -36,5 +36,5 @@ MESH="-s roofing_layer_count=0 -s flooring_layer_count=0"
  -s cool_fan_full_layer=3 -s cool_min_layer_time=10 -s cool_min_speed=10 \
  -s support_enable=false -s adhesion_type=brim -s brim_width=8 -s brim_line_count=20 -s magic_spiralize=false \
  $MESH -e0 \
- -l "$(W "$DIR/flyingfish_mount.stl")" $MESH \
- -o "$(W "$DIR/ffmount_ender5.gcode")"
+ -l "$(W "$DIR/stl/flyingfish_mount.stl")" $MESH \
+ -o "$(W "$DIR/gcode/ffmount_ender5.gcode")"

@@ -1,10 +1,10 @@
-# Screenshots of both caster supports for the README and the thesis, into CAD/out/caster/.
+# Screenshots of both caster supports for the README and the thesis, into CAD/designs/caster_support/images/.
 #   caster_<v>_iso.png   from below and behind, under the plate
 #   caster_<v>_side.png  from the left side, plate edge to floor
 #   caster_<v>_part.png  the support alone, underside up
 exec(open(r'E:\Claude Stuff\CAD\scripts\cst_helpers.py').read())
 import os
-out = r'E:\Claude Stuff\CAD\out\caster'
+out = r'E:\Claude Stuff\CAD\designs\caster_support\images'
 os.makedirs(out, exist_ok=True)
 vp = app.activeViewport
 for c in [root] + [o.component for o in root.occurrences]:

@@ -6,7 +6,7 @@
 # open upward and the countersinks narrow upward at 45 deg, so nothing needs supports.
 exec(open(r'E:\Claude Stuff\CAD\scripts\cst_helpers.py').read())
 import struct, os, collections
-out = r'E:\Claude Stuff\CAD\out\caster'
+out = r'E:\Claude Stuff\CAD\designs\caster_support\stl'
 os.makedirs(out, exist_ok=True)
 body = occ('Support_' + PART).bRepBodies.item(0)
 path = os.path.join(out, 'caster_support_%s.stl' % PART)

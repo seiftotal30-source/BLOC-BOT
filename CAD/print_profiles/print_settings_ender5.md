@@ -2,7 +2,7 @@
 
 ## Ender 3 Pro and Ender 5 Plus with the professional's profile (current default)
 
-The professional's own Cura profile, `CAD/out/print_profiles/CE3PRO_pro.curaprofile` (Cura
+The professional's own Cura profile, `CAD/print_profiles/CE3PRO_pro.curaprofile` (Cura
 5.13, Creality "Standard" quality, made for his Ender 3 Pro), is the default. Import it in the
 Cura app under Preferences > Profiles > Import. `CAD/scripts/slice_pro.sh` slices with the same
 values for either printer, and the parts sit in the middle of the bed:
@@ -40,7 +40,7 @@ the command-line engine left it on, which also switched the fan on under the top
 | `vbloc/VBloc_<printer>.gcode` | all parts (arm, fixed jaw, sliding jaw, both screw halves, thumb screw, 6 pins), his settings | 33 layers, about 42 min, 4.8 m (14.8 g PETG, 14.4 g PLA) |
 | `vbloc/VBloc_threads_test_0.16_<printer>.gcode` | screw halves, sliding jaw and pins at 0.16 mm with a brim, to test the M6 thread first | 64 layers, about 41 min, 2.8 m (8.5 g PETG) |
 
-The same plates are in `CAD/3mf/` as `VBloc.3mf` and `VBloc_threads_test.3mf`.
+The same plates are in `CAD/designs/vbloc/3mf/` as `VBloc.3mf` and `VBloc_threads_test.3mf`.
 
 The lead screw is split lengthwise into two identical halves that print cut face down; they
 are glued together with 4 pins (two 3.8 mm in the knob, two 2.2 mm along the thread, plus a

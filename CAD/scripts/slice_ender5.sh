@@ -3,9 +3,9 @@
 # CuraEngine that ships with UltiMaker Cura 5.13 (PLA, 0.4 mm nozzle).
 #
 # Usage (Git Bash):  sh slice_ender5.sh hbloc   or   sh slice_ender5.sh vbloc
-# Reads   every CAD/out/<part>/<part>_*.stl  (already print-oriented and placed on the bed;
+# Reads   every CAD/designs/<part>/stl/<part>_*.stl  (already print-oriented and placed on the bed;
 #         VBloc has a fifth part, the fixed jaw, since its base was split for gluing)
-# Writes  CAD/out/<part>/<HBloc|VBloc>_Ender5_PLA.gcode
+# Writes  CAD/designs/<part>/gcode/<HBloc|VBloc>_Ender5_PLA.gcode
 #
 # The command-line engine only reads default values, so every setting the Cura app
 # normally computes is given here. The engine also shifts parts by half the bed size,
@@ -20,7 +20,8 @@ esac
 
 CURA="/d/UltiMaker Cura 5.13.0"
 RES="$CURA/share/cura/resources"
-OUT="/e/Claude Stuff/CAD/out/$PART"
+STL="/e/Claude Stuff/CAD/designs/$PART/stl"
+OUT="/e/Claude Stuff/CAD/designs/$PART/gcode"
 export CURA_ENGINE_SEARCH_PATH="$(cygpath -w "$RES/definitions");$(cygpath -w "$RES/extruders")"
 W() { cygpath -w "$1"; }
 
@@ -29,8 +30,8 @@ MESH="-s roofing_layer_count=0 -s flooring_layer_count=0 -s mesh_position_x=-110
 
 # one "-l <stl> <mesh settings>" group per part file
 set --
-for f in "$OUT"/${PART}_*.stl; do
-  [ -f "$f" ] || { echo "no STL files in $OUT"; exit 1; }
+for f in "$STL"/${PART}_*.stl; do
+  [ -f "$f" ] || { echo "no STL files in $STL"; exit 1; }
   set -- "$@" -l "$(W "$f")" $MESH
 done
 

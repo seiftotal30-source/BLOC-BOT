@@ -3,9 +3,9 @@
 H bloc is the horizontal vise: it holds a board flat in the grooves near the top of its jaws.
 It is reworked the same way as VBloc, so it prints as 7 parts plus small pins, all lying flat
 with no supports, then glued. All G-code uses the professional's Cura profile
-(`CAD/out/print_profiles/CE3PRO_pro.curaprofile`): 0.28 mm adaptive layers, 3 walls, 238 C
+(`CAD/print_profiles/CE3PRO_pro.curaprofile`): 0.28 mm adaptive layers, 3 walls, 238 C
 nozzle, 70/67 C bed, fan off (PETG temperatures), with 40 % triangles infill.
-The same plate as 3MF (to slice for any printer) is `CAD/3mf/HBloc.3mf`.
+The same plate as 3MF (to slice for any printer) is `CAD/designs/hbloc/3mf/HBloc.3mf`.
 
 ## Which file is what
 
@@ -15,7 +15,7 @@ are centred on their bed.
 
 | File | What it is |
 |---|---|
-| `HBloc_Ender3Pro.gcode` / `HBloc_Ender5Plus.gcode` | **Print this**. Every part below on one plate, sliced from `CAD/3mf/HBloc.3mf`. |
+| `HBloc_Ender3Pro.gcode` / `HBloc_Ender5Plus.gcode` | **Print this**. Every part below on one plate, sliced from `CAD/designs/hbloc/3mf/HBloc.3mf`. |
 | `hbloc_base.stl` | Arm (the base the sliding jaw runs on), with the M4 mounting hole underneath. Prints flat. Corners R2; 0.4 mm chamfer at the mouth of the slide groove, where the sliding jaw goes in. |
 | `hbloc_fixedjaw.stl` | Fixed jaw. Glues onto the end of the arm with its two tenons. Prints on its outer face, so its screw hole prints round. Screw hole Ø6.2 (was 6.6, which let VBloc's screw wobble) with 0.4 mm rim chamfers. Top corners R1, tenon tips R0.5; 0.4 mm chamfers on the board groove rims. |
 | `hbloc_slidingjaw.stl` | Sliding jaw with the M6 thread. Prints on its back face. Corners R1, tongue edges R0.5; 0.4 mm chamfers on both thread rims and the board groove rims. |
@@ -43,4 +43,4 @@ board groove and the mouth of the slide groove. Outer outlines stay sharp, as on
    the fixed jaw and screw it into the sliding jaw.
 
 Re-slice with `CAD/scripts/slice_pro.sh ender3pro|ender5plus ...` (settings are in
-`CAD/out/print_settings_ender5.md`).
+`CAD/print_profiles/print_settings_ender5.md`).

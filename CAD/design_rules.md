@@ -57,10 +57,11 @@ Socket and slot ends are rounded with the clearance carried round the radius.
 
 ## Print settings
 
-The professional's Cura profile `CAD/out/print_profiles/CE3PRO_pro.curaprofile`, with infill
+The professional's Cura profile `CAD/print_profiles/CE3PRO_pro.curaprofile`, with infill
 **40 % on small parts and 20 % on big ones** such as the waffle plate. Details and the
-command-line slicer: `CAD/out/print_settings_ender5.md` and `CAD/scripts/slice_pro.sh`.
-Every printable plate is also saved as a 3MF in `CAD/3mf/`.
+command-line slicer: `CAD/print_profiles/print_settings_ender5.md` and `CAD/scripts/slice_pro.sh`.
+Every design has its own folder in `CAD/designs/<design>/` with `stl/`, `gcode/`, `3mf/`
+and `images/`; every printable plate is also saved there as a 3MF.
 
 ## Fusion scripting notes
 
@@ -72,7 +73,7 @@ For anyone scripting the designs through the Fusion API:
   chain on a straight edge or chamfer a face's whole outline.
 - Meshing several bodies with "high quality" in one script froze Fusion for 30+ minutes.
   Export one body per script with a set surface tolerance (0.01 mm), and keep a backup
-  (`CAD/out/*.f3d`) before heavy exports.
+  (the `.f3d` in `CAD/designs/<design>/`) before heavy exports.
 - Fusion's STL export call can report success and write nothing; the scripts write STLs from
   the mesh calculator instead.
 - To swap a feature in the middle of the timeline (the controller's rim fillet for a
@@ -82,6 +83,6 @@ For anyone scripting the designs through the Fusion API:
   fillet rounded without rolling back, look at the body's faces instead (cylinders along Z
   are upright corners, cylinders along X/Y and corner spheres are flat rims).
 - Ending a design session: save a new version in Fusion, export the `.f3d` backup to
-  `CAD/out/`, re-export the changed STLs and 3MFs. Slice only when asked.
+  `CAD/designs/<design>/`, re-export the changed STLs and 3MFs into its `stl/` and `3mf/`. Slice only when asked.
 - Renaming a design: change its file name (`dataFile.name`), which keeps all versions; the
   search index takes a few minutes to show the new name.

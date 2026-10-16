@@ -2,7 +2,7 @@ import cadquery as cq
 from OCP.StlAPI import StlAPI_Reader
 from OCP.TopoDS import TopoDS_Shape
 
-OUT = r"C:\Users\Wassim\Desktop\PROJECT\BLOC-BOT\CAD\out"
+OUT = r"C:\Users\Wassim\Desktop\PROJECT\BLOC-BOT\CAD\designs\controller\stl"
 GAP = 25  # mm between parts in the exploded view
 
 

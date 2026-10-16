@@ -1,5 +1,5 @@
 // BLOC-BOT: rear mount for the MH-Sensor-Series "Flying Fish" IR obstacle module.
-// Test part (BlocBot-Sim). Units: mm.
+// Rear Flying Fish sensor mount. Units: mm.
 //
 // Robot frame: x right, y forward, z up, floor at z = 0. Plate rear edge at y = -89.75
 // (the plate's own edge; only the hex pillar tabs reach out to y = -104).

@@ -1,10 +1,10 @@
-# Screenshots into CAD\out: iso, top, exploded, and a section through the D-pad and the display.
+# Screenshots into CAD\designs\controller\images: iso, top, exploded, and a section through the D-pad and the display.
 # Exploded and section views are drawn with custom graphics (temporary copies of the bodies), so
 # the design itself is never moved or cut; visibility is restored at the end.
 exec(open(r'E:\Claude Stuff\CAD\scripts\ctl_helpers.py', encoding='utf-8').read())
 import os
 print('ACTIVE:', app.activeDocument.name)
-out = r'E:\Claude Stuff\CAD\out'
+out = r'E:\Claude Stuff\CAD\designs\controller\images'
 vp = app.activeViewport
 IW, IH = 1800, 1100
 VO = adsk.core.ViewOrientations

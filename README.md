@@ -13,7 +13,8 @@ plate"** document and never modified.
 | Path | What it is |
 |---|---|
 | `CAD/scripts/` | Fusion Python scripts that build, check and export the bracket |
-| `CAD/out/` | Printable STLs, the `.f3d` backup of the design, screenshots |
+| `CAD/designs/` | One folder per design (motor bracket, controller, waffle plate, HBloc, HBloc L, VBloc, caster support, Flying Fish mount), each with `stl/`, `gcode/`, `3mf/`, `images/` and its `.f3d` backup |
+| `CAD/print_profiles/` | The professional's Cura profile and the print settings notes |
 | `CAD/ref/` | Reference models extracted from the zips (motor, sensor, encoder disc) |
 | `CAD/*.zip` | The reference models as downloaded |
 | `electronics/` | Proposed circuit: power, ESP32-S3 pin map, build steps, risks, sim tools |
@@ -24,7 +25,7 @@ plate"** document and never modified.
 - `helpers.py`: shared sketch/extrude helpers; refuses to run in any other document.
 - `build_bracket.py`: rebuilds the bracket component from the User Parameters.
 - `checks.py`: clearance and interference checks against the reference parts.
-- `export_stl.py`: writes print-oriented, watertight STLs to `CAD/out/`.
+- `export_stl.py`: writes print-oriented, watertight STLs to `CAD/designs/motor_bracket/stl/`.
 
 ## Current design (right side; the left is a mirror)
 
@@ -56,7 +57,7 @@ plate"** document and never modified.
 - Motor bolts: M3x30 work, but their tails stick out 6.9 mm past the tab; **M3x25** is enough
   with the nut traps. Use low heads on the wheel side (the gap to the wheel is 5 mm).
 - Board screw: the sensor model's hole is Ø2.7. Use M3 if it fits your board, else M2.5.
-- Print `CAD/out/test_tab.stl` first and fit it on a real motor before printing the brackets.
+- Print `CAD/designs/motor_bracket/stl/test_tab.stl` first and fit it on a real motor before printing the brackets.
 
 ## Still unverified
 

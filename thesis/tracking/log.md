@@ -6,7 +6,7 @@ dropped (mark it `dropped`).
 
 ## Figures
 
-Images are in `CAD/out/`. LaTeX blocks are in `thesis/figures.tex`.
+Images are in `CAD/designs/<design>/images/`. LaTeX blocks are in `thesis/figures.tex`.
 
 | ID | File | LaTeX label | How it was made | Date | Status |
 |---|---|---|---|---|---|
@@ -85,5 +85,5 @@ Every search or data lookup that fed a design decision, with what it found.
 | S14 | 2026-10-05 | GrabCAD RC Transmitter | Import and outline | 200 x 170 x 36 box with chamfered corners, two halves, no grips | Shell shape |
 | S15 | 2026-10-10 | ti.com, DRV8833 product page and datasheet SLVSAR1E (Rev. E, Jul 2015) | Supply range, current, protection, logic levels, pin functions, control tables | VM 2.7–10.8 V (11.8 V abs. max); 1.5 A RMS / 2 A peak per bridge (HTSSOP/WQFN), 0.5 A RMS (TSSOP); OCP 2–3.3 A, retry 1.35 ms; UVLO below 2.5 V; VIH 2 V (nSLEEP 2.5 V); nSLEEP high to enable, 500 kΩ pull-down; xISEN to GND without current control | Switch from DRV8871 to DRV8833: wiring, pin map, risks |
 | S16 | 2026-10-14 | grabcad.com/library/nylon-caster-wheel-1 (built-in browser; plain fetch got 403) | Caster sizes | Fixing plate 38 x 32, holes Ø4 on 30 x 23, overall height 34, wheel Ø25.5; files need a login | Both caster supports |
-| S17 | 2026-10-14 | CAD/3mf/from_professional/Bracket.3mf | Vertex heights of the three parts | Flange 4 mm thick (12 mm only at the tab socket); flange X 33..90, Y 47.45..101.06 | Support plate thickness (flange_t) |
+| S17 | 2026-10-14 | CAD/designs/motor_bracket/from_professional/Bracket.3mf | Vertex heights of the three parts | Flange 4 mm thick (12 mm only at the tab socket); flange X 33..90, Y 47.45..101.06 | Support plate thickness (flange_t) |
 | S18 | 2026-10-14 | Waffle plate (copied into "Caster Mount") | Holes near the rear centre line; underside solid fraction | Plate turned 90 deg as on the real robot; Ø4.5 holes at (±27, -71) and (±7, -34) used; underside flat with holes; 77 % of the support top on solid plate, bracket flange area 38 % | Fixing screw positions, contact check |

@@ -1,5 +1,5 @@
 % Figure library for the thesis. \input{figures} where needed, or copy single blocks.
-% Images live in ../CAD/out/ (see \graphicspath in main.tex), so re-rendering them in
+% Images live in ../CAD/designs/<design>/images/ (see \graphicspath in main.tex), so re-rendering them in
 % Fusion updates the thesis without copying files.
 % Every figure is also registered in tracking/log.md with how it was produced.
 % Naming: label fig:<topic>-<view>.
@@ -112,8 +112,8 @@
 % F18-F19 -- rear caster supports under the waffle plate (cst_shots.py)
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.48\textwidth]{caster/caster_A_iso.png}\hfill
-  \includegraphics[width=0.48\textwidth]{caster/caster_B_iso.png}
+  \includegraphics[width=0.48\textwidth]{caster_A_iso.png}\hfill
+  \includegraphics[width=0.48\textwidth]{caster_B_iso.png}
   \caption{Rear caster under the plate, from below and behind. Left: version A, a 4~mm plate
            (the motor bracket flange's thickness) with four printed pillars the caster screws to.
            Right: version B, the same plate with a 9.75~mm boss, caster screwed straight on.}
@@ -123,8 +123,8 @@
 % F20-F21 -- side views, plate underside to floor
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.48\textwidth]{caster/caster_A_side.png}\hfill
-  \includegraphics[width=0.48\textwidth]{caster/caster_B_side.png}
+  \includegraphics[width=0.48\textwidth]{caster_A_side.png}\hfill
+  \includegraphics[width=0.48\textwidth]{caster_B_side.png}
   \caption{Side views. Plate underside to floor is 47.75~mm (bracket + TT motor + \O 65 wheel):
            A and B both 4 + 9.75 + 34 (caster) = 47.75~mm.}
   \label{fig:caster-side}
@@ -133,8 +133,8 @@
 % F22-F23 -- the printed supports alone, underside up
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.48\textwidth]{caster/caster_A_part.png}\hfill
-  \includegraphics[width=0.48\textwidth]{caster/caster_B_part.png}
+  \includegraphics[width=0.48\textwidth]{caster_A_part.png}\hfill
+  \includegraphics[width=0.48\textwidth]{caster_B_part.png}
   \caption{The two supports, underside up: nut traps for the four M3 plate screws, countersunk
            M3 holes for the caster through the pillars (A) or the boss (B).}
   \label{fig:caster-parts}

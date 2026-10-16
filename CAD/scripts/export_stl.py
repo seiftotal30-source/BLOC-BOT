@@ -7,7 +7,7 @@
 exec(open(r'E:\Claude Stuff\CAD\scripts\helpers.py').read())
 import struct, os, collections
 print('ACTIVE:', app.activeDocument.name)
-out = r'E:\Claude Stuff\CAD\out'
+out = r'E:\Claude Stuff\CAD\designs\motor_bracket\stl'
 os.makedirs(out, exist_ok=True)
 
 

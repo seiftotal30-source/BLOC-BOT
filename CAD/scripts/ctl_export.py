@@ -5,7 +5,7 @@
 exec(open(r'E:\Claude Stuff\CAD\scripts\ctl_helpers.py', encoding='utf-8').read())
 import struct, os, collections
 print('ACTIVE:', app.activeDocument.name)
-out = r'E:\Claude Stuff\CAD\out'
+out = r'E:\Claude Stuff\CAD\designs\controller\stl'
 os.makedirs(out, exist_ok=True)
 
 

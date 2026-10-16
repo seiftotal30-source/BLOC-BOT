@@ -1,5 +1,5 @@
 #!/bin/sh
-# Slice parts with the professional's Ender 3 Pro Cura profile (CAD/out/print_profiles/
+# Slice parts with the professional's Ender 3 Pro Cura profile (CAD/print_profiles/
 # CE3PRO_pro.curaprofile, Cura 5.13, Creality "Standard" quality): 0.28 mm adaptive layers,
 # 3 walls, 4 top/bottom layers, triangles infill, 238 C nozzle, bed 70 C first layer then
 # 67 C, fan off, 65 mm/s print, 50 mm/s outer wall, 45 mm/s top/bottom, 0.45 mm lines, 5 mm

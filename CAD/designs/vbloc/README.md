@@ -1,11 +1,11 @@
 # VBloc print files
 
 VBloc is the vertical vise. It is printed as 7 parts plus small pins, all lying flat with no
-supports, then glued. All G-code uses the professional's Cura profile (`CAD/out/print_profiles/
+supports, then glued. All G-code uses the professional's Cura profile (`CAD/print_profiles/
 CE3PRO_pro.curaprofile`): 0.28 mm adaptive layers, 3 walls, 238 C nozzle, 70/67 C bed, fan off
 (PETG temperatures), with 40 % triangles infill.
-The same plates as 3MF (to slice for any printer) are `CAD/3mf/VBloc.3mf` and
-`CAD/3mf/VBloc_threads_test.3mf`.
+The same plates as 3MF (to slice for any printer) are `CAD/designs/vbloc/3mf/VBloc.3mf` and
+`CAD/designs/vbloc/3mf/VBloc_threads_test.3mf`.
 
 ## Which file is what
 
@@ -43,4 +43,4 @@ board slot and the mouth of the slide groove. Outer outlines stay sharp, as on h
    the fixed jaw and screw it into the sliding jaw.
 
 Re-slice with `CAD/scripts/slice_pro.sh ender3pro|ender5plus ...` (settings are in
-`CAD/out/print_settings_ender5.md`).
+`CAD/print_profiles/print_settings_ender5.md`).
