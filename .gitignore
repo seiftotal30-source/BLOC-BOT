@@ -22,3 +22,11 @@ __pycache__/
 .idea/
 Thumbs.db
 desktop.ini
+
+.pio/
+
+# Superseded designs kept locally only
+old designs/
+
+# Third-party installer (324 MB, exceeds GitHub 100 MB limit)
+CAD/out/CrealityPrint_*.exe
