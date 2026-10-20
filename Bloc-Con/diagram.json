@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "author": "Bloc-Con",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "board-ssd1306", "id": "oled", "top": -150, "left": 20, "attrs": { "i2cAddress": "0x3c" } },
+    { "type": "wokwi-analog-joystick", "id": "joy", "top": 170, "left": -190, "attrs": {} },
+    { "type": "wokwi-hc-sr04", "id": "us", "top": -140, "left": 220, "attrs": {} },
+    { "type": "wokwi-pushbutton", "id": "btn_up", "top": 260, "left": 40, "attrs": { "color": "green", "label": "UP", "key": "ArrowUp" } },
+    { "type": "wokwi-pushbutton", "id": "btn_down", "top": 260, "left": 120, "attrs": { "color": "green", "label": "DOWN", "key": "ArrowDown" } },
+    { "type": "wokwi-pushbutton", "id": "btn_fwd", "top": 260, "left": 200, "attrs": { "color": "blue", "label": "FWD", "key": "ArrowRight" } },
+    { "type": "wokwi-pushbutton", "id": "btn_back", "top": 260, "left": 280, "attrs": { "color": "red", "label": "BACK", "key": "ArrowLeft" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+
+    [ "oled:GND", "esp:GND.2", "black", [ "v0" ] ],
+    [ "oled:VCC", "esp:3V3", "red", [ "v0" ] ],
+    [ "oled:SDA", "esp:21", "green", [ "v0" ] ],
+    [ "oled:SCL", "esp:22", "yellow", [ "v0" ] ],
+
+    [ "joy:VCC", "esp:3V3", "red", [ "v0" ] ],
+    [ "joy:GND", "esp:GND.1", "black", [ "v0" ] ],
+    [ "joy:HORIZ", "esp:34", "orange", [ "v0" ] ],
+    [ "joy:VERT", "esp:35", "purple", [ "v0" ] ],
+
+    [ "us:VCC", "esp:5V", "red", [ "v0" ] ],
+    [ "us:GND", "esp:GND.2", "black", [ "v0" ] ],
+    [ "us:TRIG", "esp:5", "green", [ "v0" ] ],
+    [ "us:ECHO", "esp:18", "blue", [ "v0" ] ],
+
+    [ "btn_up:1.l", "esp:12", "green", [ "v0" ] ],
+    [ "btn_up:2.l", "esp:GND.1", "black", [ "v0" ] ],
+    [ "btn_down:1.l", "esp:13", "green", [ "v0" ] ],
+    [ "btn_down:2.l", "esp:GND.1", "black", [ "v0" ] ],
+    [ "btn_fwd:1.l", "esp:14", "blue", [ "v0" ] ],
+    [ "btn_fwd:2.l", "esp:GND.1", "black", [ "v0" ] ],
+    [ "btn_back:1.l", "esp:27", "red", [ "v0" ] ],
+    [ "btn_back:2.l", "esp:GND.1", "black", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}
