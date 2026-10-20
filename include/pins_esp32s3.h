@@ -7,12 +7,12 @@
 // ESP32-S3 has many more available GPIOs compared to ESP32-CAM
 // =====================================================
 
-// DRV8871 Motor Drivers (2 required for differential drive)
-// Left motor (DRV8871 #1)
+// DRV8833 dual motor driver (replaced 2x DRV8871)
+// Left motor (AIN1/AIN2)
 #define MOTOR_LEFT_IN1   13  // moved off GPIO 15, which kept failing on forward
 #define MOTOR_LEFT_IN2   16
 
-// Right motor (DRV8871 #2)
+// Right motor (BIN1/BIN2)
 #define MOTOR_RIGHT_IN1  18  // 17/18 swapped so the right motor turns the right way
 #define MOTOR_RIGHT_IN2  17
 

@@ -9,7 +9,7 @@
 // =====================================================
 // Differential drive robot motor bench test
 // Hardware:
-// - 2x DRV8871 motor drivers (one per TT motor)
+// - 1x DRV8833 dual motor driver (replaced 2x DRV8871)
 // - ESP32-CAM (current) or ESP32-S3 (future)
 // - 18650 battery or lab power supply
 //
@@ -55,7 +55,7 @@ struct DrivePacket {
 const int MAX_DRIVE_SPEED = 204;  // 0-255; 80% (~6.2 V to the motors on a 7.7 V pack)
 
 volatile bool newPacket = false;
-volatile unsigned long lastPacketTime = 0;  // any packet from the controller (drive or heartbeat)
+volatile unsigned long lastPacketTime = 0;  // last drive packet from the controller
 volatile int8_t rxFwd = 0;
 volatile int8_t rxTurn = 0;
 
@@ -64,10 +64,6 @@ void onReceive(const esp_now_recv_info_t*, const uint8_t* data, int len) {
 #else
 void onReceive(const uint8_t*, const uint8_t* data, int len) {
 #endif
-    if (len == 1 && data[0] == 0xB3) {  // heartbeat: link only, never moves the motors
-        lastPacketTime = millis();
-        return;
-    }
     if (len != sizeof(DrivePacket)) return;
     DrivePacket p;
     memcpy(&p, data, sizeof(p));
@@ -85,7 +81,7 @@ void onReceive(const uint8_t*, const uint8_t* data, int len) {
 // Plain red LED: long leg -> GPIO 4, short leg -> GND.
 // No resistor, so the pin is set to its weakest drive strength to limit current.
 const int LINK_LED_PIN = 4;
-const unsigned long LINK_TIMEOUT = 500;  // ms without a packet = disconnected (heartbeat every 100 ms)
+const unsigned long LINK_TIMEOUT = 500;  // ms without a drive packet = disconnected (controller sends every 50 ms)
 bool linkLedOn = false;
 
 void initLinkLed() {

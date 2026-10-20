@@ -4,9 +4,9 @@
 #include <Arduino.h>
 
 // =====================================================
-// MOTOR CONTROL FOR DRV8871 DRIVERS
+// MOTOR CONTROL FOR THE DRV8833 DRIVER
 // =====================================================
-// DRV8871 is a single H-bridge driver (one motor per chip)
+// DRV8833 is a dual H-bridge driver (one bridge per motor, same IN1/IN2 logic)
 // Control modes:
 // IN1=HIGH, IN2=LOW  -> Forward
 // IN1=LOW,  IN2=HIGH -> Reverse
