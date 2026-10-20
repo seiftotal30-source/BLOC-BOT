@@ -40,7 +40,7 @@ Plots made from data (with the data file and the script that made them).
 
 | ID | File | LaTeX label | Data source | Script | Date | Status |
 |---|---|---|---|---|---|---|
-| (none yet) | | | | | | |
+| G01 | results/print_cost/print_cost.csv (table, not a plot) | (not added yet) | Latest Cura G-code in CAD/out (MotorBracket, HBlocL, VBloc, HBloc _Ender3Pro_pro; CasterSupportB_Ender5Plus) + old waffle plate from the user. Cura headers are wrong (0 m, 6666 s), so filament is summed from the E moves; checked against Cura's VBloc header (5.34 m) and Creality's caster file (7.48 m) | results/print_cost/make_table.py (uses gcode_filament.py) | 2026-10-20 | ready |
 
 ## References
 
@@ -87,3 +87,4 @@ Every search or data lookup that fed a design decision, with what it found.
 | S16 | 2026-10-14 | grabcad.com/library/nylon-caster-wheel-1 (built-in browser; plain fetch got 403) | Caster sizes | Fixing plate 38 x 32, holes Ø4 on 30 x 23, overall height 34, wheel Ø25.5; files need a login | Both caster supports |
 | S17 | 2026-10-14 | CAD/3mf/from_professional/Bracket.3mf | Vertex heights of the three parts | Flange 4 mm thick (12 mm only at the tab socket); flange X 33..90, Y 47.45..101.06 | Support plate thickness (flange_t) |
 | S18 | 2026-10-14 | Waffle plate (copied into "Caster Mount") | Holes near the rear centre line; underside solid fraction | Plate turned 90 deg as on the real robot; Ø4.5 holes at (±27, -71) and (±7, -34) used; underside flat with holes; 77 % of the support top on solid plate, bracket flange area 38 % | Fixing screw positions, contact check |
+| S19 | 2026-10-20 | Latest G-code files in CAD/out (motor brackets taken from origin/main a36c08b) + user | Filament length, print time, cost | 5 G-code parts 107.2 g at 1.27 g/cm3 (assumed typical PETG density), 5 h 08 (Cura TIME_ELAPSED); old waffle plate ~200 g, 1 d 21 h (user, no G-code). Total 307 g, 1229-1290 DA at 4000 DA/kg + 0-5 % waste (user) | Print cost table (T5) |
