@@ -144,26 +144,52 @@ struct __attribute__((packed)) SpeedPacket {
 
 uint8_t broadcastMac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
+// Speed is measured from the time between pulses, not from pulses per 100 ms:
+// with 16 slots a 100 ms window holds only 2-5 pulses, so +-1 pulse made the reading jump by 128 mm/s.
+const uint32_t ENCODER_STOP_US = 300000;  // no pulse for 300 ms = wheel stopped
+const float SPEED_SMOOTHING = 0.4;        // 0..1, higher = faster but noisier
+
 portMUX_TYPE encoderMux = portMUX_INITIALIZER_UNLOCKED;
-volatile uint32_t leftPulses = 0, rightPulses = 0;
+volatile uint32_t leftPulses = 0, rightPulses = 0;        // pulses in the current window
+volatile uint32_t leftPeriodSum = 0, rightPeriodSum = 0;  // sum of pulse-to-pulse times in the window (us)
 volatile uint32_t leftLastUs = 0, rightLastUs = 0;
+float leftMmFilt = 0, rightMmFilt = 0;
 
 void IRAM_ATTR onLeftPulse() {
     uint32_t now = micros();
-    if (now - leftLastUs < ENCODER_DEBOUNCE_US) return;
+    uint32_t period = now - leftLastUs;
+    if (period < ENCODER_DEBOUNCE_US) return;
     leftLastUs = now;
     portENTER_CRITICAL_ISR(&encoderMux);
-    leftPulses++;
+    if (period < ENCODER_STOP_US) {  // skip the first pulse after a stop
+        leftPulses++;
+        leftPeriodSum += period;
+    }
     portEXIT_CRITICAL_ISR(&encoderMux);
 }
 
 void IRAM_ATTR onRightPulse() {
     uint32_t now = micros();
-    if (now - rightLastUs < ENCODER_DEBOUNCE_US) return;
+    uint32_t period = now - rightLastUs;
+    if (period < ENCODER_DEBOUNCE_US) return;
     rightLastUs = now;
     portENTER_CRITICAL_ISR(&encoderMux);
-    rightPulses++;
+    if (period < ENCODER_STOP_US) {
+        rightPulses++;
+        rightPeriodSum += period;
+    }
     portEXIT_CRITICAL_ISR(&encoderMux);
+}
+
+// mm/s from the average pulse period in this window. With no pulse in the window, the time since
+// the last pulse gives an upper bound, so the reading falls smoothly to 0 instead of jumping.
+float wheelSpeed(uint32_t pulses, uint32_t periodSum, uint32_t lastUs, float prev) {
+    uint32_t since = micros() - lastUs;
+    float mm;
+    if (pulses > 0) mm = pulses * MM_PER_PULSE * 1e6 / periodSum;
+    else if (since >= ENCODER_STOP_US) mm = 0;
+    else mm = min(prev, MM_PER_PULSE * 1e6f / since);
+    return prev + SPEED_SMOOTHING * (mm - prev);
 }
 
 void initEncoders() {
@@ -183,13 +209,18 @@ void sendSpeed() {
 
     portENTER_CRITICAL(&encoderMux);
     uint32_t l = leftPulses, r = rightPulses;
-    leftPulses = 0;
-    rightPulses = 0;
+    uint32_t lSum = leftPeriodSum, rSum = rightPeriodSum;
+    uint32_t lLast = leftLastUs, rLast = rightLastUs;
+    leftPulses = rightPulses = 0;
+    leftPeriodSum = rightPeriodSum = 0;
     portEXIT_CRITICAL(&encoderMux);
 
+    leftMmFilt = wheelSpeed(l, lSum, lLast, leftMmFilt);
+    rightMmFilt = wheelSpeed(r, rSum, rLast, rightMmFilt);
+
     // A single-channel sensor can't tell direction, so take it from the motor command
-    int leftMm = l * MM_PER_PULSE * 1000 / dt;
-    int rightMm = r * MM_PER_PULSE * 1000 / dt;
+    int leftMm = (int)leftMmFilt;
+    int rightMm = (int)rightMmFilt;
     if (getLeftSpeed() < 0) leftMm = -leftMm;
     if (getRightSpeed() < 0) rightMm = -rightMm;
 

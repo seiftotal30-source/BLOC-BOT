@@ -1,6 +1,13 @@
 #include "motor.h"
 #include "pins.h"
 
+// Arduino-ESP32 3.x replaced ledcSetup/ledcAttachPin and writes by pin; keep the channel-based calls
+#if ESP_ARDUINO_VERSION_MAJOR >= 3
+static void ledcSetup(uint8_t, uint32_t, uint8_t) {}
+static void ledcAttachPin(uint8_t pin, uint8_t ch) { ledcAttachChannel(pin, PWM_FREQ, PWM_RESOLUTION, ch); }
+#define ledcWrite(ch, duty) ledcWriteChannel(ch, duty)
+#endif
+
 // =====================================================
 // MOTOR CONTROL VARIABLES
 // =====================================================
