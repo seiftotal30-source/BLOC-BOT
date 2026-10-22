@@ -327,6 +327,64 @@ void updateImu() {}
 void sendImu() {}
 #endif
 
+// =====================================================
+// ULTRASONIC (HC-SR04 -> controller)
+// =====================================================
+
+#ifdef ULTRASONIC_TRIG_PIN
+const unsigned long ULTRASONIC_PERIOD_MS = 100;  // one ping every 100 ms, sent to the controller
+const uint32_t ECHO_MAX_US = 25000;              // about 4.3 m; longer = no object
+
+// Must match DistancePacket in Bloc-Con/src/main.cpp
+struct __attribute__((packed)) DistancePacket {
+    uint8_t magic;  // 0xB5
+    int16_t mm;     // distance in mm, -1 = no object in range
+};
+
+// The echo pulse is timed by an interrupt, so the loop (and the motor ramp) never waits for it
+volatile uint32_t echoStartUs = 0;
+volatile uint32_t echoWidthUs = 0;
+volatile bool echoDone = false;
+
+void IRAM_ATTR onEcho() {
+    uint32_t now = micros();
+    if (digitalRead(ULTRASONIC_ECHO_PIN)) {
+        echoStartUs = now;
+    } else if (echoStartUs != 0) {
+        echoWidthUs = now - echoStartUs;
+        echoDone = true;
+    }
+}
+
+void initUltrasonic() {
+    pinMode(ULTRASONIC_TRIG_PIN, OUTPUT);
+    digitalWrite(ULTRASONIC_TRIG_PIN, LOW);
+    pinMode(ULTRASONIC_ECHO_PIN, INPUT);
+    attachInterrupt(digitalPinToInterrupt(ULTRASONIC_ECHO_PIN), onEcho, CHANGE);
+}
+
+// Each period: send the result of the last ping, then fire the next one
+void updateUltrasonic() {
+    static unsigned long lastPing = 0;
+    if (millis() - lastPing < ULTRASONIC_PERIOD_MS) return;
+    lastPing = millis();
+
+    int16_t mm = -1;
+    if (echoDone && echoWidthUs < ECHO_MAX_US) mm = echoWidthUs * 0.343 / 2;
+    DistancePacket p = {0xB5, mm};
+    esp_now_send(broadcastMac, (uint8_t*)&p, sizeof(p));
+
+    echoDone = false;
+    echoStartUs = 0;
+    digitalWrite(ULTRASONIC_TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(ULTRASONIC_TRIG_PIN, LOW);
+}
+#else
+void initUltrasonic() {}
+void updateUltrasonic() {}
+#endif
+
 void initRadio() {
     WiFi.mode(WIFI_STA);
     if (esp_now_init() != ESP_OK) {
@@ -480,6 +538,7 @@ void setup() {
     initLinkLed();
     initEncoders();
     initImu();
+    initUltrasonic();
 
     // Show help
     printHelp();
@@ -497,6 +556,7 @@ void loop() {
     sendSpeed();
     updateImu();
     sendImu();
+    updateUltrasonic();
 
     // Update motor ramping and failsafe
     updateMotors();

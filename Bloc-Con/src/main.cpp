@@ -149,6 +149,16 @@ volatile float remoteRoll = 0, remotePitch = 0, remoteGx = 0, remoteGy = 0, remo
 volatile unsigned long lastImuTime = 0;
 const unsigned long imuTimeout = 500;  // ms without a packet = Bloc not sending
 
+// robot -> controller: HC-SR04 on Bloc
+struct __attribute__((packed)) DistancePacket {
+  uint8_t magic;  // 0xB5
+  int16_t mm;     // -1 = no object in range
+};
+
+volatile int16_t remoteDistMm = -1;
+volatile unsigned long lastDistTime = 0;
+const unsigned long distTimeout = 500;
+
 uint8_t broadcastMac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 unsigned long lastSendTime = 0;
 bool wasDriving = false;
@@ -169,6 +179,11 @@ void onReceive(const uint8_t* mac, const uint8_t* data, int len) {
     speedLeft = p.left;
     speedRight = p.right;
     lastSpeedTime = millis();
+  } else if (len == sizeof(DistancePacket) && data[0] == 0xB5) {
+    DistancePacket p;
+    memcpy(&p, data, sizeof(p));
+    remoteDistMm = p.mm;
+    lastDistTime = millis();
   } else if (len == sizeof(ImuPacket) && data[0] == 0xB4) {
     ImuPacket p;
     memcpy(&p, data, sizeof(p));
@@ -629,12 +644,24 @@ void drawMpu() {
 
 void drawUltrasonic() {
 
-  float distance = getDistance();
+  // Bloc's sensor when its packets arrive, otherwise the HC-SR04 wired to Con
+  float distance;
+  const char* source;
+  if (lastDistTime != 0 && millis() - lastDistTime < distTimeout) {
+    distance = remoteDistMm < 0 ? -1 : remoteDistMm / 10.0;
+    source = "Bloc";
+  } else {
+    distance = getDistance();
+    source = "Con";
+  }
 
   int cx = 64;
   int cy = 63;
 
   u8g2.clearBuffer();
+
+  u8g2.setFont(u8g2_font_4x6_tr);
+  u8g2.drawStr(128 - u8g2.getStrWidth(source), 6, source);  // where the distance comes from
 
   u8g2.setFont(u8g2_font_5x8_tr);
 
