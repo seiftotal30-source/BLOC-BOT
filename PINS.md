@@ -34,8 +34,7 @@ reads only work on ADC1: 32–39.
 | 13 / 16 | DRV8833 AIN1 / AIN2, left motor | in code | 13 replaced 15, which kept failing on forward |
 | 18 / 17 | DRV8833 BIN1 / BIN2, right motor | in code | swapped so the right motor turns the right way |
 | 40 / 41 | LM393 encoders left / right | in code | sensors on 3.3 V, D0 to the pin, A0 unused |
-| 4 | red link LED | in code | **conflict** with the planned line sensor on 4, see below |
-| 48 | onboard RGB LED | in code | `RGB_BUILTIN` in the Arduino core (some DevKitC v1.1 boards wire it to 38) |
+| 48 | onboard RGB LED: green while Con is connected | in code | `RGB_BUILTIN` in the Arduino core (some DevKitC v1.1 boards wire it to 38) |
 | 8 / 9 | I2C SDA / SCL | planned | MPU6050 (tested 2026-10-21, address 0x68), OLED face, TCS34725 |
 | 1 | battery sense | planned | ADC1, through the 100k / 33k divider |
 | 2, 4, 5, 6, 7 | line sensors ×5 (TCRT5000) | planned | ADC1; 3 skipped (strapping) |
@@ -54,7 +53,8 @@ N16R8), 26–32 (flash). With ESP-NOW on, analog reads only work on ADC1: GPIO 1
 
 ## Open conflicts
 
-1. **GPIO 4**: the link LED (in code) and the 5th line sensor (planned). Line sensors are
-   analog and must stay on GPIO 1–10, so move the LED, e.g. to GPIO 10 or 42.
-2. **GPIO 13**: AIN1 in code; `electronics/README.md` still lists nFAULT there. Drop nFAULT
+1. **GPIO 13**: AIN1 in code; `electronics/README.md` still lists nFAULT there. Drop nFAULT
    or move it to a free pin.
+
+(The external test LED on GPIO 4, used only to check the ESP-NOW link, was removed from the code
+on 2026-10-22, so GPIO 4 is free for the line sensor.)

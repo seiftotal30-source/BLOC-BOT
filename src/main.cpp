@@ -82,16 +82,12 @@ void onReceive(const uint8_t*, const uint8_t* data, int len) {
 // LINK LED (on while the controller is connected)
 // =====================================================
 
-// Plain red LED: long leg -> GPIO 4, short leg -> GND.
-// No resistor, so the pin is set to its weakest drive strength to limit current.
-const int LINK_LED_PIN = 4;
+// Onboard RGB LED only (green = connected). The external test LED on GPIO 4 was removed;
+// GPIO 4 is kept for a line sensor (see PINS.md).
 const unsigned long LINK_TIMEOUT = 500;  // ms without a packet = disconnected (heartbeat every 100 ms)
 bool linkLedOn = false;
 
 void initLinkLed() {
-    pinMode(LINK_LED_PIN, OUTPUT);
-    gpio_set_drive_capability((gpio_num_t)LINK_LED_PIN, GPIO_DRIVE_CAP_0);
-    digitalWrite(LINK_LED_PIN, LOW);
 #ifdef RGB_BUILTIN
     neopixelWrite(RGB_BUILTIN, 0, 0, 0);
 #endif
@@ -101,7 +97,6 @@ void updateLinkLed() {
     bool connected = lastPacketTime != 0 && millis() - lastPacketTime < LINK_TIMEOUT;
     if (connected == linkLedOn) return;
     linkLedOn = connected;
-    digitalWrite(LINK_LED_PIN, connected ? HIGH : LOW);
 #ifdef RGB_BUILTIN
     neopixelWrite(RGB_BUILTIN, 0, connected ? 40 : 0, 0);  // onboard RGB: green
 #endif
