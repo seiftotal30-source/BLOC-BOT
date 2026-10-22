@@ -135,6 +135,20 @@ struct __attribute__((packed)) SpeedPacket {
   int16_t right;  // mm/s (negative = reverse)
 };
 
+// robot -> controller: MPU6050 on Bloc, angles and rates x10
+struct __attribute__((packed)) ImuPacket {
+  uint8_t magic;  // 0xB4
+  int16_t roll;   // deg x10
+  int16_t pitch;  // deg x10
+  int16_t gx;     // deg/s x10
+  int16_t gy;
+  int16_t gz;
+};
+
+volatile float remoteRoll = 0, remotePitch = 0, remoteGx = 0, remoteGy = 0, remoteGz = 0;
+volatile unsigned long lastImuTime = 0;
+const unsigned long imuTimeout = 500;  // ms without a packet = Bloc not sending
+
 uint8_t broadcastMac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 unsigned long lastSendTime = 0;
 bool wasDriving = false;
@@ -149,13 +163,22 @@ void onReceive(const esp_now_recv_info_t* info, const uint8_t* data, int len) {
 #else
 void onReceive(const uint8_t* mac, const uint8_t* data, int len) {
 #endif
-  if (len != sizeof(SpeedPacket)) return;
-  SpeedPacket p;
-  memcpy(&p, data, sizeof(p));
-  if (p.magic != 0xB2) return;
-  speedLeft = p.left;
-  speedRight = p.right;
-  lastSpeedTime = millis();
+  if (len == sizeof(SpeedPacket) && data[0] == 0xB2) {
+    SpeedPacket p;
+    memcpy(&p, data, sizeof(p));
+    speedLeft = p.left;
+    speedRight = p.right;
+    lastSpeedTime = millis();
+  } else if (len == sizeof(ImuPacket) && data[0] == 0xB4) {
+    ImuPacket p;
+    memcpy(&p, data, sizeof(p));
+    remoteRoll = p.roll / 10.0;
+    remotePitch = p.pitch / 10.0;
+    remoteGx = p.gx / 10.0;
+    remoteGy = p.gy / 10.0;
+    remoteGz = p.gz / 10.0;
+    lastImuTime = millis();
+  }
 }
 
 void initRadio() {
@@ -528,35 +551,48 @@ void drawMpu() {
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_6x10_tr);
 
+  float gx, gy, gz;
+  const char* source;
   uint8_t b[14];
-  if (!mpuOk || !mpuRead(0x3B, b, 14)) {
-    u8g2.drawStr(0, 12, "MPU6050 not found");
-    u8g2.drawStr(0, 30, "SDA -> D21");
-    u8g2.drawStr(0, 42, "SCL -> D22");
-    u8g2.drawStr(0, 54, "VCC 3V3, then reset");
+
+  if (lastImuTime != 0 && millis() - lastImuTime < imuTimeout) {
+    // Data from the MPU6050 on Bloc, over ESP-NOW
+    roll = remoteRoll;
+    pitch = remotePitch;
+    gx = remoteGx;
+    gy = remoteGy;
+    gz = remoteGz;
+    source = "Bloc";
+  } else if (mpuOk && mpuRead(0x3B, b, 14)) {
+    // MPU6050 wired straight to Con (bench test)
+    auto w = [&](int i) { return (int16_t)((b[i] << 8) | b[i + 1]); };
+    float ax = w(0) / 16384.0, ay = w(2) / 16384.0, az = w(4) / 16384.0;
+    gx = (w(8) - gyroOff[0]) / 131.0;
+    gy = (w(10) - gyroOff[1]) / 131.0;
+    gz = (w(12) - gyroOff[2]) / 131.0;
+
+    // Tilt from gravity (steady but noisy), blended with the gyro (smooth but drifts)
+    float accRoll = atan2(ay, az) * 180.0 / PI;
+    float accPitch = atan2(-ax, sqrt(ay * ay + az * az)) * 180.0 / PI;
+    unsigned long nowUs = micros();
+    float dt = (nowUs - mpuLastUs) / 1e6;
+    if (mpuLastUs == 0 || dt > 0.2) {
+      roll = accRoll;
+      pitch = accPitch;
+    } else {
+      roll = 0.96 * (roll + gx * dt) + 0.04 * accRoll;
+      pitch = 0.96 * (pitch + gy * dt) + 0.04 * accPitch;
+    }
+    mpuLastUs = nowUs;
+    source = "Con";
+  } else {
+    u8g2.drawStr(0, 12, "No MPU data");
+    u8g2.drawStr(0, 30, "Waiting for Bloc...");
+    u8g2.drawStr(0, 46, "Is Bloc on, with the");
+    u8g2.drawStr(0, 58, "MPU on GPIO 8 / 9?");
     u8g2.sendBuffer();
     return;
   }
-
-  auto w = [&](int i) { return (int16_t)((b[i] << 8) | b[i + 1]); };
-  float ax = w(0) / 16384.0, ay = w(2) / 16384.0, az = w(4) / 16384.0;
-  float gx = (w(8) - gyroOff[0]) / 131.0;
-  float gy = (w(10) - gyroOff[1]) / 131.0;
-  float gz = (w(12) - gyroOff[2]) / 131.0;
-
-  // Tilt from gravity (steady but noisy), blended with the gyro (smooth but drifts)
-  float accRoll = atan2(ay, az) * 180.0 / PI;
-  float accPitch = atan2(-ax, sqrt(ay * ay + az * az)) * 180.0 / PI;
-  unsigned long nowUs = micros();
-  float dt = (nowUs - mpuLastUs) / 1e6;
-  if (mpuLastUs == 0 || dt > 0.2) {
-    roll = accRoll;
-    pitch = accPitch;
-  } else {
-    roll = 0.96 * (roll + gx * dt) + 0.04 * accRoll;
-    pitch = 0.96 * (pitch + gy * dt) + 0.04 * accPitch;
-  }
-  mpuLastUs = nowUs;
 
   char line[24];
   snprintf(line, sizeof(line), "Roll  %6.1f", roll);
@@ -564,6 +600,9 @@ void drawMpu() {
   snprintf(line, sizeof(line), "Pitch %6.1f", pitch);
   u8g2.drawStr(0, 20, line);
   u8g2.drawStr(0, 33, "Gyro deg/s");
+  u8g2.setFont(u8g2_font_4x6_tr);
+  u8g2.drawStr(128 - u8g2.getStrWidth(source), 6, source);  // where the data comes from
+  u8g2.setFont(u8g2_font_6x10_tr);
   snprintf(line, sizeof(line), "X %6.1f", gx);
   u8g2.drawStr(0, 43, line);
   snprintf(line, sizeof(line), "Y %6.1f", gy);

@@ -3,6 +3,7 @@
 #include "motor.h"
 #include <WiFi.h>
 #include <esp_now.h>
+#include <Wire.h>
 
 // =====================================================
 // BLOC-BOT MOTOR TEST FIRMWARE
@@ -223,6 +224,109 @@ void sendSpeed() {
     esp_now_send(broadcastMac, (uint8_t*)&p, sizeof(p));
 }
 
+// =====================================================
+// IMU (MPU6050 on I2C -> controller)
+// =====================================================
+
+#ifdef I2C_SDA_PIN
+const uint8_t MPU_ADDR = 0x68;
+const unsigned long IMU_SEND_MS = 50;  // 20 Hz to the controller
+
+// Must match ImuPacket in Bloc-Con/src/main.cpp. Angles and rates are x10 (0.1 deg resolution).
+struct __attribute__((packed)) ImuPacket {
+    uint8_t magic;  // 0xB4
+    int16_t roll;   // deg x10
+    int16_t pitch;  // deg x10
+    int16_t gx;     // deg/s x10
+    int16_t gy;
+    int16_t gz;
+};
+
+bool mpuOk = false;
+float gyroOff[3] = {0, 0, 0};
+float roll = 0, pitch = 0, gyroX = 0, gyroY = 0, gyroZ = 0;
+unsigned long mpuLastUs = 0;
+
+bool mpuRead(uint8_t reg, uint8_t* buf, uint8_t n) {
+    Wire.beginTransmission(MPU_ADDR);
+    Wire.write(reg);
+    if (Wire.endTransmission(false) != 0) return false;
+    if (Wire.requestFrom(MPU_ADDR, n) != n) return false;
+    for (uint8_t i = 0; i < n; i++) buf[i] = Wire.read();
+    return true;
+}
+
+void mpuWrite(uint8_t reg, uint8_t val) {
+    Wire.beginTransmission(MPU_ADDR);
+    Wire.write(reg);
+    Wire.write(val);
+    Wire.endTransmission();
+}
+
+// Keep the robot still for about a second after power-on: the gyro is zeroed here
+void initImu() {
+    Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN, 400000);
+    Wire.beginTransmission(MPU_ADDR);
+    if (Wire.endTransmission() != 0) {
+        Serial.println("MPU6050 not found (SDA 8, SCL 9)");
+        return;
+    }
+    mpuWrite(0x6B, 0x00);  // wake up
+    mpuWrite(0x1C, 0x00);  // accel +-2 g
+    mpuWrite(0x1B, 0x00);  // gyro +-250 deg/s
+    delay(100);
+
+    long sum[3] = {0, 0, 0};
+    uint8_t b[6];
+    for (int i = 0; i < 200; i++) {
+        if (mpuRead(0x43, b, 6))
+            for (int k = 0; k < 3; k++) sum[k] += (int16_t)((b[2 * k] << 8) | b[2 * k + 1]);
+        delay(3);
+    }
+    for (int k = 0; k < 3; k++) gyroOff[k] = sum[k] / 200.0;
+    mpuOk = true;
+    Serial.println("MPU6050 ready");
+}
+
+// Runs every loop: tilt from gravity blended with the gyro (complementary filter)
+void updateImu() {
+    if (!mpuOk) return;
+    uint8_t b[14];
+    if (!mpuRead(0x3B, b, 14)) return;
+    auto w = [&](int i) { return (int16_t)((b[i] << 8) | b[i + 1]); };
+    float ax = w(0) / 16384.0, ay = w(2) / 16384.0, az = w(4) / 16384.0;
+    gyroX = (w(8) - gyroOff[0]) / 131.0;
+    gyroY = (w(10) - gyroOff[1]) / 131.0;
+    gyroZ = (w(12) - gyroOff[2]) / 131.0;
+
+    float accRoll = atan2(ay, az) * 180.0 / PI;
+    float accPitch = atan2(-ax, sqrt(ay * ay + az * az)) * 180.0 / PI;
+    unsigned long nowUs = micros();
+    float dt = (nowUs - mpuLastUs) / 1e6;
+    if (mpuLastUs == 0 || dt > 0.2) {
+        roll = accRoll;
+        pitch = accPitch;
+    } else {
+        roll = 0.96 * (roll + gyroX * dt) + 0.04 * accRoll;
+        pitch = 0.96 * (pitch + gyroY * dt) + 0.04 * accPitch;
+    }
+    mpuLastUs = nowUs;
+}
+
+void sendImu() {
+    static unsigned long lastSend = 0;
+    if (!mpuOk || millis() - lastSend < IMU_SEND_MS) return;
+    lastSend = millis();
+    ImuPacket p = {0xB4, (int16_t)(roll * 10), (int16_t)(pitch * 10),
+                   (int16_t)(gyroX * 10), (int16_t)(gyroY * 10), (int16_t)(gyroZ * 10)};
+    esp_now_send(broadcastMac, (uint8_t*)&p, sizeof(p));
+}
+#else
+void initImu() {}
+void updateImu() {}
+void sendImu() {}
+#endif
+
 void initRadio() {
     WiFi.mode(WIFI_STA);
     if (esp_now_init() != ESP_OK) {
@@ -375,6 +479,7 @@ void setup() {
     initRadio();
     initLinkLed();
     initEncoders();
+    initImu();
 
     // Show help
     printHelp();
@@ -390,6 +495,8 @@ void loop() {
     applyPacket();
     updateLinkLed();
     sendSpeed();
+    updateImu();
+    sendImu();
 
     // Update motor ramping and failsafe
     updateMotors();
