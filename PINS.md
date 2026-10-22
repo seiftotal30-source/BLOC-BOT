@@ -20,6 +20,7 @@ Board labels: D21 = GPIO 21, VP = GPIO 36, VN = GPIO 39.
 | 13 | button DOWN | in code | to GND, `INPUT_PULLUP` |
 | 14 | button FORWARD | in code | to GND, `INPUT_PULLUP` |
 | 27 | button BACK | in code | to GND, `INPUT_PULLUP` |
+| 21 / 22 | MPU6050 (temporary bench test) | in code | shares the OLED's I2C bus, address 0x68; moves to Bloc GPIO 8 / 9 later |
 
 Free: 4, 16, 17, 19, 23, 25, 26, 32, 33, 36 (VP), 39 (VN). Suggested: 36 for battery sense
 (input-only ADC1), 32 for the joystick button.
