@@ -20,7 +20,7 @@ Board labels: D21 = GPIO 21, VP = GPIO 36, VN = GPIO 39.
 | 13 | button DOWN | in code | to GND, `INPUT_PULLUP` |
 | 14 | button FORWARD | in code | to GND, `INPUT_PULLUP` |
 | 27 | button BACK | in code | to GND, `INPUT_PULLUP` |
-| 21 / 22 | MPU6050 (temporary bench test) | in code | shares the OLED's I2C bus, address 0x68; moves to Bloc GPIO 8 / 9 later |
+| 21 / 22 | MPU6050 fallback (bench test) | in code | only used when no data comes from Bloc; the MPU now lives on Bloc GPIO 8 / 9 |
 
 Free: 4, 16, 17, 19, 23, 25, 26, 32, 33, 36 (VP), 39 (VN). Suggested: 36 for battery sense
 (input-only ADC1), 32 for the joystick button.
@@ -36,7 +36,7 @@ reads only work on ADC1: 32–39.
 | 18 / 17 | DRV8833 BIN1 / BIN2, right motor | in code | swapped so the right motor turns the right way |
 | 40 / 41 | LM393 encoders left / right | in code | sensors on 3.3 V, D0 to the pin, A0 unused |
 | 48 | onboard RGB LED: green while Con is connected | in code | `RGB_BUILTIN` in the Arduino core (some DevKitC v1.1 boards wire it to 38) |
-| 8 / 9 | I2C SDA / SCL | planned | MPU6050 (tested 2026-10-21, address 0x68), OLED face, TCS34725 |
+| 8 / 9 | I2C SDA / SCL: MPU6050 (0x68) | in code | data sent to Con at 20 Hz; later also the OLED face and TCS34725 |
 | 1 | battery sense | planned | ADC1, through the 100k / 33k divider |
 | 2, 4, 5, 6, 7 | line sensors ×5 (TCRT5000) | planned | ADC1; 3 skipped (strapping) |
 | 11 / 12 | HC-SR04 TRIG / ECHO | planned | ECHO through a 1k / 2k divider |
