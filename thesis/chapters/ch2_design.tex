@@ -628,7 +628,8 @@ measures acceleration including gravity, in one chip \cite{mpu6000_ps}. It runs 
 2.375 to 3.46~V and is read over I\textsuperscript{2}C at up to 400~kHz, at the address
 0x68 when its AD0 pin is low \cite{mpu6000_ps}. On the robot it shares an
 I\textsuperscript{2}C bus, on GPIO~8 (SDA) and GPIO~9 (SCL), that is reserved for later
-I\textsuperscript{2}C sensors as well \todo{module type (GY-521?) and which supply pin it is on}.
+I\textsuperscript{2}C sensors as well, and the module is powered from the board's 3.3~V,
+inside the chip's supply range.
 
 \paragraph{Configuration.} At start-up the firmware wakes the chip by clearing the
 \texttt{SLEEP} bit of its power-management register, and selects the most sensitive

@@ -41,7 +41,7 @@ to ground.
   \caption{Schematic of the robot, drawn in KiCad. Modules are drawn as boxes with their
            header pins; pins carrying the same net name are connected. Only the
            ESP32-S3 pins in use are shown. Not shown: the main switch, a BMS and a fuse,
-           which are not fitted yet. \todo{MPU6050 supply pin to confirm (drawn on 3V3)}}
+           which are not fitted yet.}
   \label{fig:sch-robot}
 \end{sidewaysfigure}
 
@@ -67,8 +67,12 @@ declares and builds and uploads the firmware. Each board has its own project: th
 at the root of the repository, the controller's in \texttt{Bloc-Con}. The controller
 also uses the U8g2 graphics library to drive its display. All the source code is kept in
 a single Git repository, whose history is also the record of what was changed and when.
-\todo{versions: Arduino-ESP32 core, PlatformIO platform; was the controller ever run in
-the Wokwi simulator (a Wokwi configuration exists in Bloc-Con)?}
+The firmware is built with PlatformIO Core 6.1.19, its Espressif~32 platform 7.1.2
+and version 2.0.17 of the Arduino core for ESP32. The controller's firmware was also run in
+Wokwi, an online simulator for microcontroller boards, before it was loaded on the real
+board. The simulated circuit, kept in the project as \texttt{diagram.json}, contains an
+ESP32 board, an SSD1306 display, an analogue joystick, the four push buttons and an
+HC-SR04, so the menus and screens could be tried without the hardware.
 
 The code of each board is split into one file per function, listed in
 Table~\ref{tab:modules}, so that each part can be read, tested and changed on its own.
@@ -309,31 +313,109 @@ using.
 
 \section{Problems met and solutions}
 \label{sec:problems}
-\plan{Problem \(\to\) cause \(\to\) fix, one paragraph each, from the git history and the
-team's account: (1) DRV8871 motors never turned \(\to\) likely UVLO on 2S
-(Section~\ref{sec:drv8833}) \(\to\) one DRV8833; (2) left motor would not run forward on
-GPIO~15 \(\to\) a faulty jumper wire, found later \(\to\) AIN1 moved to GPIO~13;
-(3) right motor turned backwards \(\to\) wiring \(\to\) the two pins swapped in firmware
-instead of rewiring; (4) speed reading jumped by about 100~mm/s \(\to\) too few pulses per
-100~ms window \(\to\) period timing and filtering (Section~\ref{sec:encoders});
-(4b) speeds 25~\% too high \(\to\) firmware assumed 16 slots, the discs have 20 \(\to\)
-slots counted, constant corrected; (5) controller
-uploads stalled \(\to\) the board's CP2102 at high baud rates \(\to\) upload speed lowered
-to 115\,200 baud (\texttt{platformio.ini}); (6) old waffle plate: 45~h print, 200~g \(\to\)
-first print, no experience \(\to\) lighter redesign (Section~\ref{sec:platform}).
-\todo{confirm each story with the team; anything else that broke?}}
+Several things did not work the first time. They are listed here in the order we met
+them, each with its symptom, its cause as far as we could establish it, and the fix. Most
+of them are small, but together they shaped the final design, and several left a trace in
+the firmware or the wiring described earlier.
+
+\paragraph{The motors did not turn with the DRV8871.} The robot was first wired with two
+DRV8871 drivers, and the motors never turned. We did not measure the battery voltage at
+the time, but the driver's datasheet gives a likely cause: it needs at least 6.5~V and
+locks out when its supply falls to about 6.1 to 6.4~V, very close to what a 2S pack gives
+under load (Section~\ref{sec:drv8833}). We replaced both with a single DRV8833, which
+works from 2.7~V, and the motors ran at once.
+
+\paragraph{The left motor would not run forward.} With its \texttt{AIN1} input on
+GPIO~15, the left motor would not run forward. We first suspected the pin and
+moved the signal to GPIO~13, after which the motor worked; we later found that the real
+cause was a faulty jumper wire. The signal stayed on GPIO~13. The lesson was to check the
+wiring before suspecting the microcontroller.
+
+\paragraph{The right motor turned the wrong way.} For the same forward command, the right
+wheel turned backward. Instead of rewiring the motor, we swapped the two pin numbers of
+the right motor in the firmware, so that both wheels turn forward together
+(Section~\ref{sec:wiring}).
+
+\paragraph{The 5~V echo of the ultrasonic sensor.} The HC-SR04 was at first connected
+straight to the board, so its 5~V \texttt{ECHO} pulse reached a 3.3~V input whose limit
+is the supply voltage plus 0.3~V \cite{esp32s3_datasheet}, which is outside the chip's
+ratings. A 1~k\(\Omega\)/2~k\(\Omega\) divider now brings the pulse to 3.33~V
+(Section~\ref{sec:hcsr04}).
+
+\paragraph{The speed reading jumped.} The first speed measurement counted the pulses
+received in each 100~ms window. With only a few pulses per window, one pulse more or less
+made the displayed speed jump between distant values. Timing the interval between pulses,
+then smoothing the result, removed the steps (Section~\ref{sec:encoders}).
+
+\paragraph{The speed was too high.} The firmware assumed encoder discs with 16 slots.
+Counting them on the robot gave 20, so every distance and speed was overestimated by
+\(20/16 = 1.25\). The constant was corrected. This explains part of the speeds of up to
+about 10~km/h seen on the controller during early tests, which were far above what the
+motors can reach (Section~2.4.3); the rest is examined in test T1
+(Section~\ref{sec:tests}).
+
+\paragraph{Full speed too early on the joystick.} The controller first reached the full
+drive command with the stick at about a third of its travel, so small movements of the
+thumb gave large changes of speed. The scale was widened so that full speed is reached near
+the end of the travel (Section~\ref{sec:con-fw}).
+
+\paragraph{A slow and heavy first plate.} The first waffle plate, printed before we had any
+experience with 3D printing, took about 45~hours and weighs about 200~g. It still carries
+the robot today, but it led to the redesign described in Section~\ref{sec:platform}.
 
 \section{Tests and results}
 \label{sec:tests}
-\plan{From \texttt{tracking/test\_plan.md}. Each test: what was measured, how, the raw data
-in \texttt{results/<test>/}, a table or plot, and what it does and does not show.
-T1 real speed: 10 hand turns of a wheel must give 200 pulses (checks the 20 slots), then
-2~m timed three times, measured vs displayed (explains or not the \(\sim\)10~km/h reading;
-expected order of magnitude about 3~km/h, Section 2.4.3). T2 runtime on a full charge.
-T3 ultrasonic: 10, 20, 50, 100~cm vs displayed. T4 print fits (screw hole 6.2 \(\to\) 6.0,
-glue joint 0.14 \(\to\) 0.20~mm per side). T5 print time, filament and robot mass.
-Demos D1 driving, D2 safety stop, D3 moving a bloc, D4 line following when it works.
-\todo{measurements}}
+The tests below were chosen to give a number that can be checked, or something that
+can be shown at the defence. For each one, the raw data is kept in the folder
+\texttt{thesis/results/} of the repository.
+
+\subsection{T1: real speed against displayed speed}
+\paragraph{Purpose.} To check that the speed shown on the controller is the real speed of
+the robot, and to explain the high readings of the early tests.
+\paragraph{Procedure.} A 2~m straight course is marked on the floor with tape. The robot
+starts about 1~m before the first mark, so that it has reached a steady speed, and is
+driven straight at full command. The time between the two marks is taken from a phone
+video, three runs in a row, and the speed displayed on the controller is noted during
+each run. The measured speed is \(v = 2~\text{m} / t\).
+\paragraph{Expected.} A speed below about 3~km/h, the no-load figure of the motors
+(Section~2.4.3), and a displayed speed that agrees with it within the resolution of the
+encoders.
+\paragraph{Results.} \todo{three times, the three displayed speeds, table and comment}
+
+\subsection{T2: running time on one charge}
+\paragraph{Purpose.} To measure how long the robot runs on its 2S pack.
+\paragraph{Procedure.} The cells are fully charged in the charger. The robot is placed with
+its wheels off the ground and driven at a constant command. Because the pack has no
+battery management system (Section~\ref{sec:robot-power}), the test must not run until the
+robot stops by itself: the pack voltage is measured with a multimeter every 10~minutes,
+and the test ends when it reaches 6.0~V, that is 3.0~V per cell. The running time is
+noted.
+\paragraph{Results.} \todo{running time, voltage readings}
+
+\subsection{T3: ultrasonic distance}
+\paragraph{Purpose.} To check the distances measured by the HC-SR04 and sent to the
+controller.
+\paragraph{Procedure.} A flat box is placed in front of the robot at 10, 20, 50 and 100~cm,
+measured with a tape from the front of the sensor, and the distance shown on the
+controller is noted for each.
+\paragraph{Results.} \todo{table: real distance, displayed distance, difference}
+
+\subsection{T4 and T5: printed parts and mass}
+\paragraph{Fits.} Two dimensions were corrected after the first prints: the hole for the
+jaw screw of the blocs, reduced from 6.2 to 6.0~mm in diameter, and the clearance of the
+glued joints, increased from 0.14 to 0.20~mm per side. \todo{photos of the parts}
+\paragraph{Print time and mass.} The print time and mass of each part are given in
+Table~\ref{tab:print-cost}. The robot described here is still a prototype: it runs on the
+first waffle plate, and the redesigned plate and pillars are not printed yet. Its total
+mass has not been weighed; we estimate it at 0.8 to 1~kg. \todo{weigh the final robot on
+a kitchen scale}
+
+\subsection{Demonstrations}
+Four behaviours are shown live rather than measured: driving the robot from the controller
+with its speed on the screen (D1); switching the controller off while the robot moves, after
+which the robot stops by itself within 300~ms (D2); moving a bloc to another position on the
+plate in a few seconds (D3); and, once it works, following a line of tape (D4).
+\todo{record a short video of each as a back-up for the defence}
 
 \section{Cost}
 \label{sec:cost}
@@ -367,11 +449,53 @@ is available. The cost is the mass of PETG at 4000~DA per kilogram, with and wit
   \end{tabularx}
 \end{table}
 
-\paragraph{Electronics.}\mbox{}\par
-\plan{Bill of materials with the prices actually paid
-(\texttt{results/bom\_cost/paid\_prices.csv}), marked paid vs shop listing, and the total
-cost of one robot and one controller. \todo{missing prices: MPU6050, TP4056 module,
-MT3608, OLED, cells for the controller, Mini360 and others bought by the team}}
+\paragraph{Electronics.} Table~\ref{tab:bom} lists the electronic parts with the prices we
+paid in Algerian shops (\texttt{results/bom\_cost/paid\_prices.csv}). Tools, such as the
+two-slot charger (3000~DA), and parts bought for features not built yet, the five-channel
+line sensor (800~DA) and the Flying Fish infrared sensor (500~DA), are not counted.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Electronic parts and the prices paid (DA). \todo{MT3608 price}}
+  \label{tab:bom}
+  \begin{tabularx}{\textwidth}{@{}X r r r@{}}
+    \toprule
+    Part & Unit price & Qty & Total \\
+    \midrule
+    \multicolumn{4}{@{}l}{\textit{Robot}} \\
+    ESP32-S3 board (N16R8) & 2000 & 1 & 2000 \\
+    TT gearmotor & 550 & 2 & 1100 \\
+    Wheel & 250 & 2 & 500 \\
+    DRV8833 module & 500 & 1 & 500 \\
+    Mini360 buck converter & 400 & 1 & 400 \\
+    LM393 slotted speed sensor & 500 & 2 & 1000 \\
+    HC-SR04 & 600 & 1 & 600 \\
+    MPU6050 module & 600 & 1 & 600 \\
+    Two-cell 18650 holder & 400 & 1 & 400 \\
+    18650 cell, 2500~mAh & 1000 & 2 & 2000 \\
+    Caster wheel & 300 & 1 & 300 \\
+    \textbf{Robot total} & & & \textbf{9400} \\
+    \midrule
+    \multicolumn{4}{@{}l}{\textit{Controller}} \\
+    ESP32 DevKit & 1600 & 1 & 1600 \\
+    KY-023 joystick & 500 & 1 & 500 \\
+    Push button & 50 & 4 & 200 \\
+    TP4056 module & 200 & 1 & 200 \\
+    Single 18650 holder & 200 & 1 & 200 \\
+    OLED 0.96'' & 800 & 1 & 800 \\
+    MT3608 boost converter & \todo{?} & 1 & \todo{?} \\
+    18650 cell, 2000~mAh & 250 & 1 & 250 \\
+    Power switch\textsuperscript{a} & 50--200 & 1 & 50--200 \\
+    \textbf{Controller total}\textsuperscript{b} & & & \textbf{3800--3950} \\
+    \bottomrule
+    \multicolumn{4}{@{}l}{\footnotesize \textsuperscript{a} Exact price not remembered.
+      \textsuperscript{b} Without the MT3608.}
+  \end{tabularx}
+\end{table}
+
+The electronics of one robot cost 9400~DA, and those of the controller about 3800 to
+3950~DA, to which the printed parts of Table~\ref{tab:print-cost} add about 1230 to 1290~DA
+of PETG.
 
 \section{Conclusion}
 \plan{What works against the requirements of Table~\ref{tab:requirements}, what the tests

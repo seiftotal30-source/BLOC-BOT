@@ -10,10 +10,15 @@ KY-023 joystick,controller,500,1,paid (Wassim 2026-10-21),
 Push button,controller,50,4,paid (Wassim 2026-10-21),qty 4 from the wiring diagram
 Flying Fish IR sensor,planned self-parking,500,1,paid (Wassim 2026-10-21),bought; feature not built
 TCRT5000 5-channel line sensor,line following (in progress),800,1,paid (Wassim 2026-10-21),
-18650 cell,batteries,1000,TBD,paid (Wassim 2026-10-21),which cells and how many: TBD
+18650 cell (METAMA 2500 mAh),robot power,1000,2,paid (Wassim 2026-10-25),
+18650 cell (QHTC 2000 mAh),controller power,250,1,paid (Wassim 2026-10-25),
 18650 holder 2x,robot power,400,1,paid (Wassim 2026-10-21),
 18650 holder 1x,controller power,200,1,paid (Wassim 2026-10-21),
 Li-ion charger (2 slots),charging the robot cells,3000,1,paid (Wassim 2026-10-21),
 LM393 slotted speed sensor,robot wheel speed (2 fitted),500,4,paid (Seif 2026-10-24),4 bought
-MPU6050 module,robot IMU,TBD,1,TBD,price not given yet
-TP4056 USB-C module with protection,controller charging,TBD,1,TBD,not bought from Esp32Lab; looks identical to their listing
+MPU6050 module,robot IMU,600,1,paid (Seif 2026-10-25),
+TP4056 USB-C module with protection,controller charging,200,1,paid (Wassim 2026-10-25),not bought from Esp32Lab; looks identical to their listing
+Caster wheel,robot,300,1,paid (Wassim 2026-10-25),
+OLED 0.96in SSD1306,controller display,800,1,paid (Wassim 2026-10-25),found too small; a larger one may replace it
+Power switch,controller,50-200,1,paid (Wassim 2026-10-25),exact price not remembered
+MT3608 boost converter,controller 5 V,TBD,1,TBD,price not given yet

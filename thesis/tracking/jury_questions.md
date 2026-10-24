@@ -53,3 +53,6 @@ the thesis text and its source.
 | Q46 | 3.3.4 | Your radar screen sweeps: does the sensor rotate? | No. The sweep is an animation; the sensor is fixed, the angle means nothing. A servo-mounted HC-SR04 is future work. | Bloc-Con main.cpp |
 | Q47 | 3.3.4 | How do you debounce buttons? | 180 ms lockout after each accepted press. | Bloc-Con main.cpp |
 | Q48 | 2.4.4 | Your first speeds were 25 % too high. Why? | The firmware assumed 16 slots; the real discs have 20. Δs is π·D/N, so 16 instead of 20 overestimates every distance and speed by 20/16 = 1.25. Fixed after counting. | encoders.cpp |
+| Q49 | 3.4 | What problems did you meet and how did you solve them? | Pick 3: DRV8871 never turned the motors (UVLO 6.5 V on 2S) → DRV8833; bad jumper on GPIO 15 → moved to 13, check wiring first; speeds 25 % too high (16 vs 20 slots) and jumping → counted slots, timed pulse periods. | ch3 §3.4 |
+| Q50 | 3.5 | How did you measure the battery life without a BMS? | Wheels lifted, constant command, multimeter every 10 min, stopped at 6.0 V (3.0 V per cell) so the cells are not over-discharged. | test_plan T2 |
+| Q51 | 3.6 | How much does it cost? | Robot 9400 DA, controller about 3800–3950 DA (MT3608 price missing), plus about 1230–1290 DA of PETG. Prices paid in Algerian shops; tools and unbuilt-feature sensors not counted. | paid_prices.csv; print_cost.csv |
