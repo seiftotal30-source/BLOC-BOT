@@ -20,6 +20,14 @@
 #define ENCODER_LEFT_PIN   40
 #define ENCODER_RIGHT_PIN  41
 
+// I2C bus: MPU6050 (0x68), later the OLED face and TCS34725
+#define I2C_SDA_PIN  8
+#define I2C_SCL_PIN  9
+
+// HC-SR04 (VCC on 5V). ECHO is 5 V: ECHO -> 1k -> GPIO 12, GPIO 12 -> 2k -> GND
+#define ULTRASONIC_TRIG_PIN  11
+#define ULTRASONIC_ECHO_PIN  12
+
 // PWM Configuration
 #define PWM_FREQ         20000  // 20 kHz for motor drivers
 #define PWM_RESOLUTION   8      // 8-bit (0-255)

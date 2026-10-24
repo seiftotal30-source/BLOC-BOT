@@ -3,6 +3,7 @@
 #include "motor.h"
 #include <WiFi.h>
 #include <esp_now.h>
+#include <Wire.h>
 
 // =====================================================
 // BLOC-BOT MOTOR TEST FIRMWARE
@@ -78,16 +79,12 @@ void onReceive(const uint8_t*, const uint8_t* data, int len) {
 // LINK LED (on while the controller is connected)
 // =====================================================
 
-// Plain red LED: long leg -> GPIO 4, short leg -> GND.
-// No resistor, so the pin is set to its weakest drive strength to limit current.
-const int LINK_LED_PIN = 4;
+// Onboard RGB LED only (green = connected). The external test LED on GPIO 4 was removed;
+// GPIO 4 is kept for a line sensor (see PINS.md).
 const unsigned long LINK_TIMEOUT = 500;  // ms without a drive packet = disconnected (controller sends every 50 ms)
 bool linkLedOn = false;
 
 void initLinkLed() {
-    pinMode(LINK_LED_PIN, OUTPUT);
-    gpio_set_drive_capability((gpio_num_t)LINK_LED_PIN, GPIO_DRIVE_CAP_0);
-    digitalWrite(LINK_LED_PIN, LOW);
 #ifdef RGB_BUILTIN
     neopixelWrite(RGB_BUILTIN, 0, 0, 0);
 #endif
@@ -97,7 +94,6 @@ void updateLinkLed() {
     bool connected = lastPacketTime != 0 && millis() - lastPacketTime < LINK_TIMEOUT;
     if (connected == linkLedOn) return;
     linkLedOn = connected;
-    digitalWrite(LINK_LED_PIN, connected ? HIGH : LOW);
 #ifdef RGB_BUILTIN
     neopixelWrite(RGB_BUILTIN, 0, connected ? 40 : 0, 0);  // onboard RGB: green
 #endif
@@ -140,26 +136,52 @@ struct __attribute__((packed)) SpeedPacket {
 
 uint8_t broadcastMac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
+// Speed is measured from the time between pulses, not from pulses per 100 ms:
+// with 16 slots a 100 ms window holds only 2-5 pulses, so +-1 pulse made the reading jump by 128 mm/s.
+const uint32_t ENCODER_STOP_US = 300000;  // no pulse for 300 ms = wheel stopped
+const float SPEED_SMOOTHING = 0.4;        // 0..1, higher = faster but noisier
+
 portMUX_TYPE encoderMux = portMUX_INITIALIZER_UNLOCKED;
-volatile uint32_t leftPulses = 0, rightPulses = 0;
+volatile uint32_t leftPulses = 0, rightPulses = 0;        // pulses in the current window
+volatile uint32_t leftPeriodSum = 0, rightPeriodSum = 0;  // sum of pulse-to-pulse times in the window (us)
 volatile uint32_t leftLastUs = 0, rightLastUs = 0;
+float leftMmFilt = 0, rightMmFilt = 0;
 
 void IRAM_ATTR onLeftPulse() {
     uint32_t now = micros();
-    if (now - leftLastUs < ENCODER_DEBOUNCE_US) return;
+    uint32_t period = now - leftLastUs;
+    if (period < ENCODER_DEBOUNCE_US) return;
     leftLastUs = now;
     portENTER_CRITICAL_ISR(&encoderMux);
-    leftPulses++;
+    if (period < ENCODER_STOP_US) {  // skip the first pulse after a stop
+        leftPulses++;
+        leftPeriodSum += period;
+    }
     portEXIT_CRITICAL_ISR(&encoderMux);
 }
 
 void IRAM_ATTR onRightPulse() {
     uint32_t now = micros();
-    if (now - rightLastUs < ENCODER_DEBOUNCE_US) return;
+    uint32_t period = now - rightLastUs;
+    if (period < ENCODER_DEBOUNCE_US) return;
     rightLastUs = now;
     portENTER_CRITICAL_ISR(&encoderMux);
-    rightPulses++;
+    if (period < ENCODER_STOP_US) {
+        rightPulses++;
+        rightPeriodSum += period;
+    }
     portEXIT_CRITICAL_ISR(&encoderMux);
+}
+
+// mm/s from the average pulse period in this window. With no pulse in the window, the time since
+// the last pulse gives an upper bound, so the reading falls smoothly to 0 instead of jumping.
+float wheelSpeed(uint32_t pulses, uint32_t periodSum, uint32_t lastUs, float prev) {
+    uint32_t since = micros() - lastUs;
+    float mm;
+    if (pulses > 0) mm = pulses * MM_PER_PULSE * 1e6 / periodSum;
+    else if (since >= ENCODER_STOP_US) mm = 0;
+    else mm = min(prev, MM_PER_PULSE * 1e6f / since);
+    return prev + SPEED_SMOOTHING * (mm - prev);
 }
 
 void initEncoders() {
@@ -179,19 +201,185 @@ void sendSpeed() {
 
     portENTER_CRITICAL(&encoderMux);
     uint32_t l = leftPulses, r = rightPulses;
-    leftPulses = 0;
-    rightPulses = 0;
+    uint32_t lSum = leftPeriodSum, rSum = rightPeriodSum;
+    uint32_t lLast = leftLastUs, rLast = rightLastUs;
+    leftPulses = rightPulses = 0;
+    leftPeriodSum = rightPeriodSum = 0;
     portEXIT_CRITICAL(&encoderMux);
 
+    leftMmFilt = wheelSpeed(l, lSum, lLast, leftMmFilt);
+    rightMmFilt = wheelSpeed(r, rSum, rLast, rightMmFilt);
+
     // A single-channel sensor can't tell direction, so take it from the motor command
-    int leftMm = l * MM_PER_PULSE * 1000 / dt;
-    int rightMm = r * MM_PER_PULSE * 1000 / dt;
+    int leftMm = (int)leftMmFilt;
+    int rightMm = (int)rightMmFilt;
     if (getLeftSpeed() < 0) leftMm = -leftMm;
     if (getRightSpeed() < 0) rightMm = -rightMm;
 
     SpeedPacket p = {0xB2, (int16_t)leftMm, (int16_t)rightMm};
     esp_now_send(broadcastMac, (uint8_t*)&p, sizeof(p));
 }
+
+// =====================================================
+// IMU (MPU6050 on I2C -> controller)
+// =====================================================
+
+#ifdef I2C_SDA_PIN
+const uint8_t MPU_ADDR = 0x68;
+const unsigned long IMU_SEND_MS = 50;  // 20 Hz to the controller
+
+// Must match ImuPacket in Bloc-Con/src/main.cpp. Angles and rates are x10 (0.1 deg resolution).
+struct __attribute__((packed)) ImuPacket {
+    uint8_t magic;  // 0xB4
+    int16_t roll;   // deg x10
+    int16_t pitch;  // deg x10
+    int16_t gx;     // deg/s x10
+    int16_t gy;
+    int16_t gz;
+};
+
+bool mpuOk = false;
+float gyroOff[3] = {0, 0, 0};
+float roll = 0, pitch = 0, gyroX = 0, gyroY = 0, gyroZ = 0;
+unsigned long mpuLastUs = 0;
+
+bool mpuRead(uint8_t reg, uint8_t* buf, uint8_t n) {
+    Wire.beginTransmission(MPU_ADDR);
+    Wire.write(reg);
+    if (Wire.endTransmission(false) != 0) return false;
+    if (Wire.requestFrom(MPU_ADDR, n) != n) return false;
+    for (uint8_t i = 0; i < n; i++) buf[i] = Wire.read();
+    return true;
+}
+
+void mpuWrite(uint8_t reg, uint8_t val) {
+    Wire.beginTransmission(MPU_ADDR);
+    Wire.write(reg);
+    Wire.write(val);
+    Wire.endTransmission();
+}
+
+// Keep the robot still for about a second after power-on: the gyro is zeroed here
+void initImu() {
+    Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN, 400000);
+    Wire.beginTransmission(MPU_ADDR);
+    if (Wire.endTransmission() != 0) {
+        Serial.println("MPU6050 not found (SDA 8, SCL 9)");
+        return;
+    }
+    mpuWrite(0x6B, 0x00);  // wake up
+    mpuWrite(0x1C, 0x00);  // accel +-2 g
+    mpuWrite(0x1B, 0x00);  // gyro +-250 deg/s
+    delay(100);
+
+    long sum[3] = {0, 0, 0};
+    uint8_t b[6];
+    for (int i = 0; i < 200; i++) {
+        if (mpuRead(0x43, b, 6))
+            for (int k = 0; k < 3; k++) sum[k] += (int16_t)((b[2 * k] << 8) | b[2 * k + 1]);
+        delay(3);
+    }
+    for (int k = 0; k < 3; k++) gyroOff[k] = sum[k] / 200.0;
+    mpuOk = true;
+    Serial.println("MPU6050 ready");
+}
+
+// Runs every loop: tilt from gravity blended with the gyro (complementary filter)
+void updateImu() {
+    if (!mpuOk) return;
+    uint8_t b[14];
+    if (!mpuRead(0x3B, b, 14)) return;
+    auto w = [&](int i) { return (int16_t)((b[i] << 8) | b[i + 1]); };
+    float ax = w(0) / 16384.0, ay = w(2) / 16384.0, az = w(4) / 16384.0;
+    gyroX = (w(8) - gyroOff[0]) / 131.0;
+    gyroY = (w(10) - gyroOff[1]) / 131.0;
+    gyroZ = (w(12) - gyroOff[2]) / 131.0;
+
+    float accRoll = atan2(ay, az) * 180.0 / PI;
+    float accPitch = atan2(-ax, sqrt(ay * ay + az * az)) * 180.0 / PI;
+    unsigned long nowUs = micros();
+    float dt = (nowUs - mpuLastUs) / 1e6;
+    if (mpuLastUs == 0 || dt > 0.2) {
+        roll = accRoll;
+        pitch = accPitch;
+    } else {
+        roll = 0.96 * (roll + gyroX * dt) + 0.04 * accRoll;
+        pitch = 0.96 * (pitch + gyroY * dt) + 0.04 * accPitch;
+    }
+    mpuLastUs = nowUs;
+}
+
+void sendImu() {
+    static unsigned long lastSend = 0;
+    if (!mpuOk || millis() - lastSend < IMU_SEND_MS) return;
+    lastSend = millis();
+    ImuPacket p = {0xB4, (int16_t)(roll * 10), (int16_t)(pitch * 10),
+                   (int16_t)(gyroX * 10), (int16_t)(gyroY * 10), (int16_t)(gyroZ * 10)};
+    esp_now_send(broadcastMac, (uint8_t*)&p, sizeof(p));
+}
+#else
+void initImu() {}
+void updateImu() {}
+void sendImu() {}
+#endif
+
+// =====================================================
+// ULTRASONIC (HC-SR04 -> controller)
+// =====================================================
+
+#ifdef ULTRASONIC_TRIG_PIN
+const unsigned long ULTRASONIC_PERIOD_MS = 100;  // one ping every 100 ms, sent to the controller
+const uint32_t ECHO_MAX_US = 25000;              // about 4.3 m; longer = no object
+
+// Must match DistancePacket in Bloc-Con/src/main.cpp
+struct __attribute__((packed)) DistancePacket {
+    uint8_t magic;  // 0xB5
+    int16_t mm;     // distance in mm, -1 = no object in range
+};
+
+// The echo pulse is timed by an interrupt, so the loop (and the motor ramp) never waits for it
+volatile uint32_t echoStartUs = 0;
+volatile uint32_t echoWidthUs = 0;
+volatile bool echoDone = false;
+
+void IRAM_ATTR onEcho() {
+    uint32_t now = micros();
+    if (digitalRead(ULTRASONIC_ECHO_PIN)) {
+        echoStartUs = now;
+    } else if (echoStartUs != 0) {
+        echoWidthUs = now - echoStartUs;
+        echoDone = true;
+    }
+}
+
+void initUltrasonic() {
+    pinMode(ULTRASONIC_TRIG_PIN, OUTPUT);
+    digitalWrite(ULTRASONIC_TRIG_PIN, LOW);
+    pinMode(ULTRASONIC_ECHO_PIN, INPUT);
+    attachInterrupt(digitalPinToInterrupt(ULTRASONIC_ECHO_PIN), onEcho, CHANGE);
+}
+
+// Each period: send the result of the last ping, then fire the next one
+void updateUltrasonic() {
+    static unsigned long lastPing = 0;
+    if (millis() - lastPing < ULTRASONIC_PERIOD_MS) return;
+    lastPing = millis();
+
+    int16_t mm = -1;
+    if (echoDone && echoWidthUs < ECHO_MAX_US) mm = echoWidthUs * 0.343 / 2;
+    DistancePacket p = {0xB5, mm};
+    esp_now_send(broadcastMac, (uint8_t*)&p, sizeof(p));
+
+    echoDone = false;
+    echoStartUs = 0;
+    digitalWrite(ULTRASONIC_TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(ULTRASONIC_TRIG_PIN, LOW);
+}
+#else
+void initUltrasonic() {}
+void updateUltrasonic() {}
+#endif
 
 void initRadio() {
     WiFi.mode(WIFI_STA);
@@ -345,6 +533,8 @@ void setup() {
     initRadio();
     initLinkLed();
     initEncoders();
+    initImu();
+    initUltrasonic();
 
     // Show help
     printHelp();
@@ -360,6 +550,9 @@ void loop() {
     applyPacket();
     updateLinkLed();
     sendSpeed();
+    updateImu();
+    sendImu();
+    updateUltrasonic();
 
     // Update motor ramping and failsafe
     updateMotors();
