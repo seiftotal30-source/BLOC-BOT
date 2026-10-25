@@ -1,0 +1,55 @@
+# Likely jury questions (collected while writing)
+
+Practise these once the thesis is written (soutenance-defense skill). Each answer must match
+the thesis text and its source.
+
+| # | Section | Likely question | Short answer to rehearse | Source |
+|---|---|---|---|---|
+| Q1 | 2.4.3 | Your motor table: did you measure these values? | No. Our motors carry no marking and the Algerian shops publish no specs, so we used Adafruit's published bench figures for the same 1:48 TT motor. They describe the motor type, not our units. | adafruit_tt_motor |
+| Q2 | 2.4.3 | The motors are rated 3–6 V, your pack is 7.4–8.4 V. Aren't you over-volting them? | The firmware caps PWM at 80 % (204/255): about 6.2 V average on a 7.7 V pack. With a full pack it reaches about 6.7 V, slightly above rating; we know it and state it as a limit. | src/main.cpp MAX_DRIVE_SPEED |
+| Q3 | 2.4.2 | Why did you abandon the DRV8871? | The motors never turned with it. Its datasheet needs at least 6.5 V and locks out at 6.1–6.4 V; our 2S pack is 7.4 V nominal and sags under load, so it likely sat at the lockout. We didn't measure the voltage then, so we say "likely". The DRV8833 works from 2.7 V. | drv8871_datasheet |
+| Q4 | 2.4.2 | What current can your driver give? | 1.5 A per bridge for the HTSSOP version, 0.5 A for the plain TSSOP. Our chip's marking is unreadable, so we design to the safe 0.5 A. TT motors run at about 0.16 A. | drv8833_datasheet |
+| Q5 | 2.4.2 | What happens if both inputs of one bridge are high? | Brake: both outputs low, motor terminals shorted. Shoot-through (both switches of one leg on) is prevented inside the chip. | drv8833_datasheet Table 1 |
+| Q6 | 2.4.2 | Why 20 kHz PWM? | Set in the firmware; a common choice at the upper edge of hearing, so the motors don't whine. | pins_esp32s3.h |
+| Q7 | 2.4.1 | Why an ESP32-S3 on the robot and a plain ESP32 on the controller? | The robot needs pins for more sensors and blocs; the controller only reads a joystick and buttons and drives a screen, so the ESP32 we had was enough. A cheaper ESP32-C3 is a perspective. | user; esp32s3_datasheet |
+| Q8 | 2.4.1 | Can you use any GPIO? | No: 35–37 go to the octal PSRAM, 0/3/45/46 are strapping pins, 19/20 USB, 43/44 UART0, and analog sensors must be on ADC1 because ADC2 doesn't work with Wi-Fi. | esp32s3_datasheet |
+| Q9 | 2.4.5 | The HC-SR04 is a 5 V sensor. Is the ESP32 5 V tolerant? | No, inputs are limited to VDD + 0.3 V (about 3.6 V). A 1k/2k divider brings ECHO to 3.33 V. | esp32s3_datasheet |
+| Q10 | 2.4 / power | Where is the battery protection? | There is no BMS or fuse yet; it's a known limitation, and a main switch is planned. | user |
+| Q11 | 2.4.3 / Ch. 3 | Your screen showed ~10 km/h but the motors can't exceed ~3 km/h. Explain. | (Answer after test T1: slot count, encoder chatter or wheel diameter.) | T1 |
+| Q12 | 2.5.1 | GPIO 12 on the controller is a strapping pin. Is your button safe there? | Yes: its default at reset is pull-down, and the button only pulls low; the internal pull-up is enabled by the firmware after boot. Never add an external pull-up there. | esp32_datasheet |
+| Q13 | 2.4.4 | How does your encoder work? Why can't it tell direction? | IR LED and phototransistor across a slotted disc; the LM393 squares the signal, one pulse per slot. One channel only, so no direction; the firmware takes the sign from the motor command. A quadrature encoder (two channels, 90° apart) would give direction. | lm393_datasheet; main.cpp |
+| Q14 | 2.4.4 | What is the resolution of your speed measurement? | 10.2 mm per pulse (π·65/20); in a 100 ms window one pulse = 102 mm/s ≈ 0.37 km/h (why the method changed). Now timed to the µs. | main.cpp |
+| Q15 | 2.4.4 | Why the 1 ms debounce? | Slot edges can chatter and give extra pulses. At 250 rpm a 20-slot disc gives a pulse every 12 ms, so 1 ms never hides a real one. | main.cpp; adafruit_tt_motor |
+| Q16 | 2.4.4 | LM393 output: why the pull-up? | It's open-collector: it can only pull low, the pull-up sets the high level (3.3 V here, since the sensor is powered from 3.3 V). | lm393_datasheet |
+| Q17 | 2.4.5 | Show the ultrasonic formula. Why divide by 2? What is the speed of sound and what changes it? | d = v·t/2: the echo time is a round trip. v ≈ 340 m/s (datasheet); it depends on air temperature. | hcsr04_datasheet |
+| Q18 | 2.4.5 | How did you protect the ESP32 from the 5 V echo? Compute it. | Divider R1 series, R2 to GND: V = 5 × R2/(R1+R2) = 3.33 V with 1k/2k; S3 max input VDD+0.3 ≈ 3.6 V, high threshold 0.75·VDD ≈ 2.5 V. | esp32s3_datasheet |
+| Q19 | 2.4.5 | Why wait 60 ms between measurements? | Datasheet advice: a late echo from the previous burst could be taken for the new one. 4 m round trip ≈ 24 ms. | hcsr04_datasheet |
+| Q20 | 2.4.6 | Why a buck converter and not a linear regulator (7805/LDO)? | A linear regulator burns the difference (8.4 → 5 V) as heat; a buck switches and filters, so it wastes far less. Mini360: 4.75–23 V in, 1.8 A cont.; the S3 peaks at ~340 mA. | mini360_c101; esp32s3_datasheet |
+| Q21 | 2.4.6 | What is your current consumption / battery life? | S3 up to ~340 mA (TX); motors ~0.16 A each running, up to 1.5 A at stall. Battery life is measured in test T2, not estimated. | esp32s3_datasheet; adafruit_tt_motor; T2 |
+| Q22 | 2.4.6 | No BMS, no fuse: is that safe? | No, and we say so. The user must not run the pack flat and charges cells in the dedicated charger; a 2S BMS, fuse and switch are the first future-work items. | user |
+| Q23 | 2.4.6 | Why 2S? Why not 3S? | 2S (6.4–8.4 V) fits the DRV8833's 2.7–10.8 V; 3S (up to 12.6 V) would exceed it, and it is enough for TT motors with the 80 % PWM cap. | drv8833_datasheet |
+| Q24 | 2.4.4 | Why did you change the speed measurement? | Counting pulses per 100 ms gave only a few pulses, so ±1 pulse = ±102 mm/s jumps. Timing the pulse periods (µs timer) removes the steps; a first-order filter (α = 0.4) smooths the rest. | main.cpp, commit 26a230b |
+| Q25 | 2.4.4 | What is the slowest speed you can measure? | No pulse for 300 ms = stopped, so about 10.2 mm / 0.3 s ≈ 34 mm/s. | main.cpp |
+| Q26 | 2.4.6 | What is a complementary filter? Why 0.96 / 0.04? | Gyro integration is good short-term but drifts; accel tilt is drift-free but noisy under motion. Blend: 96 % gyro-propagated angle + 4 % accel angle each loop. The weights set the time constant; chosen in the firmware, not tuned by a test. | main.cpp |
+| Q27 | 2.4.6 | Why can't you get yaw from the MPU6050? | Gravity gives no heading reference; yaw from the gyro alone drifts. Needs a magnetometer. | mpu6000_ps |
+| Q28 | 2.4.6 | Why must the robot stay still at power-on? | The firmware averages 200 gyro samples as the zero offset; moving it would bias the gyro. | main.cpp |
+| Q29 | 2.4.5 | Why time the echo with an interrupt instead of pulseIn? | pulseIn blocks up to ~25 ms; the motor ramp and failsafe run every 10 ms. The interrupt keeps the loop free. | main.cpp |
+| Q30 | 2.5.2 | Why is the joystick on GPIO 34/35 and powered at 3.3 V? | 34/35 are ADC1, and ADC2 is shared with the Wi-Fi driver; 3.3 V keeps the wiper below what the ESP32 input accepts. | espidf_adc; esp32_datasheet |
+| Q31 | 2.5.2 | How accurate is the ESP32 ADC? | 12-bit (0–4095) but INL up to 12 LSB, DNL 7 LSB; datasheet advises averaging, the firmware averages 8 samples. | esp32_datasheet |
+| Q32 | 2.5.2 | No pull-up resistors on the buttons? | Internal pull-ups (INPUT_PULLUP): released = high, pressed = low. | main.cpp |
+| Q33 | 2.5.2 | I2C address of the OLED? Frame buffer size? | 0x3C (SA0 low); 128×64/8 = 1024 bytes. | ssd1306_datasheet |
+| Q34 | 2.5.3 | How does the TP4056 charge? | CC then CV at 4.2 V (±1.5 %), up to 1 A set by R_PROG, trickle below 2.9 V. Switch after the charger so it charges when off. | tp4056_datasheet |
+| Q35 | 2.5.3 | How does the MT3608 set 5 V? Why set it before connecting? | V_OUT = 0.6 (1 + R1/R2) with a trimmer; it can output up to 28 V, so set to 5 V with a multimeter first. | mt3608_datasheet |
+| Q36 | 2.6 | What is ESP-NOW? Connected or connectionless? | Espressif's connectionless protocol on the Wi-Fi radio: frames to a MAC or broadcast address, no access point, no connection set-up; ≤250 B payload (v1.0), ≤20 peers. | espnow_idf |
+| Q37 | 2.6 | Why not Bluetooth or Wi-Fi? | Wi-Fi needs an AP and association plus IP; the S3 has only BLE (no Classic), and BLE needs a central/peripheral connection and GATT services. ESP-NOW works as soon as the radio starts, same code on both boards; our biggest packet is 11 B. Also: it was suggested to us and fits an all-ESP32 system. | esp32_datasheet; esp32s3_datasheet; espnow_idf |
+| Q38 | 2.6 | What happens if a packet is lost? | Nothing serious: commands repeat every 50 ms; the robot stops after 300 ms without one (~6 lost in a row). ESP-NOW's "success" is MAC-level only, the app has no guarantee. | espnow_idf; motor.cpp |
+| Q39 | 2.6 | Is the link secure? Two robots in the same room? | No: broadcast can't be encrypted and any device sending the right identifier would be obeyed; two BLOC-BOTs would interfere. Fix: pair by MAC + ESP-NOW encryption (future work). | espnow_idf |
+| Q40 | 2.6 | What is the range? | Not measured; we don't state a number. | — |
+| Q41 | 3.3.3 | Explain your differential-drive mixing. | L = clamp(f+t)·204/100, R = clamp(f−t)·204/100. Straight: both equal; full turn with f = 0: opposite wheels, spin on the spot. | main.cpp applyPacket |
+| Q42 | 3.3.3 | What happens if the controller is switched off while driving? | No command for 300 ms → both motors stopped at once (no ramp), coast. Tolerates 5 lost packets, acts on the 6th. Demo D2. | motor.cpp |
+| Q43 | 3.3.3 | How do you avoid blocking calls? Update rate? | 10 ms loop; encoders, echo and radio handled in interrupts/callbacks; nothing in the loop waits for a sensor. | main.cpp |
+| Q44 | 3.3.2 | Show your packet format. How does the receiver tell packets apart? | 4 packets 0xB1/B2/B4/B5, 3–11 bytes; accepted only if the first byte and the length both match. | main.cpp both boards |
+| Q45 | 3.3.4 | How is the joystick processed? | 50-sample centre at boot; 8-sample average; ÷20; dead zone ±4 (80 counts); ×100/90, clipped → full speed near the end of the travel (~102). Was /30 (full speed at 1/3 of the travel), widened for finer low-speed control. | Bloc-Con main.cpp |
+| Q46 | 3.3.4 | Your radar screen sweeps: does the sensor rotate? | No. The sweep is an animation; the sensor is fixed, the angle means nothing. A servo-mounted HC-SR04 is future work. | Bloc-Con main.cpp |
+| Q47 | 3.3.4 | How do you debounce buttons? | 180 ms lockout after each accepted press. | Bloc-Con main.cpp |
+| Q48 | 2.4.4 | Your first speeds were 25 % too high. Why? | The firmware assumed 16 slots; the real discs have 20. Δs is π·D/N, so 16 instead of 20 overestimates every distance and speed by 20/16 = 1.25. Fixed after counting. | encoders.cpp |

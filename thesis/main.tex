@@ -1,37 +1,66 @@
-% BLOC-BOT thesis -- main file. Compile with: latexmk -pdf main.tex (uses biber).
+% BLOC-BOT thesis -- main file. Build: latexmk -pdf -interaction=nonstopmode main.tex (biber).
+% Each chapter lives in chapters/. Front matter (cover, abstracts) comes later.
 \documentclass[12pt,a4paper]{report}
 
+\usepackage[a4paper,margin=2.5cm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern} % vector fonts; without it T1 falls back to blurry bitmap fonts
+\usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{booktabs}
-\usepackage{amsmath}
-\usepackage[hidelinks]{hyperref}
+\usepackage{tabularx}    % any table with a text column: use an X column so it wraps
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{pdfpages}    % separately built cover / Arabic abstract
+\usepackage{rotating}    % sidewaysfigure, for the schematics
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, calc, fit, backgrounds}
+\usepackage[european]{circuitikz} % circuit symbols (H-bridge figure)
+\setlength{\emergencystretch}{3em}
+
 \usepackage[style=ieee,backend=biber]{biblatex}
 \addbibresource{references.bib}
+\usepackage[hidelinks]{hyperref}
+
+% Running header: current chapter at the top of every body page.
+\usepackage{fancyhdr}
+\setlength{\headheight}{15pt}
+\fancyhf{}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\chaptermark}[1]{\markboth{\chaptername~\thechapter.\ #1}{}}
+
+% Drafting marks. \plan: what a section will contain (blue box). \todo: a fact still
+% missing (red). Both must be gone before submission: grep for them.
+\newcommand{\plan}[1]{\par\noindent\colorbox{blue!8}{\parbox{\dimexpr\linewidth-2\fboxsep}{%
+  \small\textcolor{blue!60!black}{\textbf{Plan:} #1}}}\par\medskip}
+\newcommand{\todo}[1]{\textcolor{red!75!black}{\textbf{[TODO: #1]}}}
 
 % Figures are read straight from the CAD output folder, so re-rendered images are
 % picked up automatically.
 \graphicspath{{../CAD/out/}}
 
 \title{BLOC-BOT}
-\author{TODO: author}
+\author{Wassim Chetioui \and Seif Ali Charad}
 \date{\today}
 
 \begin{document}
 \maketitle
 \tableofcontents
 
-\chapter{Motor bracket design}
-% Placeholder chapter: shows how to use the figure library and the bibliography.
-The motor and sensor dimensions are taken from the reference models
-\cite{ttmotor_model,lm393_sensor_model}, and the bracket was modelled in
-Autodesk Fusion \cite{fusion360}. Figure~\ref{fig:sensor-side} shows the encoder
-disc in the sensor fork.
+\pagenumbering{arabic}
+\pagestyle{fancy}
 
-\input{figures}
+\setcounter{chapter}{1} % temporary: numbers Study and design as Ch. 2 until Ch. 1 exists
+\include{chapters/ch2_design}
+\include{chapters/ch3_realisation}
+
+% Figure library (F01...): not placed yet; figures move into the chapters as they are used.
+% \input{figures}
 
 \printbibliography
 \end{document}

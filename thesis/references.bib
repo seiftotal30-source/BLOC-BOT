@@ -114,12 +114,209 @@
   author       = {{Texas Instruments}},
   title        = {{DRV8833 Dual H-Bridge Motor Driver}},
   number       = {SLVSAR1E},
-  note         = {Datasheet, revised July 2015. Source of the motor supply range
+  note         = {Datasheet, revised July 2015},
+  annotation   = {Copy in references/datasheets/. Source of the motor supply range
                   (2.7--10.8~V), current per bridge (1.5~A RMS), overcurrent and
                   undervoltage limits, logic levels and the control tables},
   year         = {2015},
   url          = {https://www.ti.com/lit/gpn/DRV8833},
   urldate      = {2026-10-10}
+}
+
+@manual{drv8871_datasheet,
+  author       = {{Texas Instruments}},
+  title        = {{DRV8871 3.6-A Brushed DC Motor Driver With Internal Current Sense}},
+  number       = {SLVSCY9B},
+  note         = {Datasheet, revised July 2016},
+  annotation   = {Copy in references/datasheets/. Source of the 6.5--45~V VM range and the
+                  undervoltage lockout (falling 6.1~V typ / 6.4~V max, rising 6.3 / 6.5~V)},
+  year         = {2016},
+  url          = {https://www.ti.com/lit/ds/symlink/drv8871.pdf},
+  urldate      = {2026-10-21}
+}
+
+@manual{tp4056_datasheet,
+  author       = {{NanJing Top Power ASIC Corp.}},
+  title        = {{TP4056 1A Standalone Linear Li-ion Battery Charger with Thermal Regulation in
+                   SOP-8}},
+  note         = {Datasheet, hosted by SparkFun Electronics},
+  annotation   = {Copy in references/datasheets/. Constant-current/constant-voltage linear charger,
+                  4.2 V preset (1.5 percent), up to 1000 mA set by R_PROG (I_BAT = 1200 x V_PROG / R_PROG
+                  at V_PROG = 1 V), 2.9 V trickle threshold, input up to 8 V. No revision or date},
+  url          = {https://dlnmh9ip6v2uc.cloudfront.net/datasheets/Prototyping/TP4056.pdf},
+  urldate      = {2026-10-24}
+}
+
+@manual{mt3608_datasheet,
+  author       = {{Aerosemi Technology}},
+  title        = {{MT3608 High Efficiency 1.2MHz 2A Step Up Converter}},
+  note         = {Datasheet, hosted by Olimex},
+  annotation   = {Copy in references/datasheets/. 2--24 V in, up to 28 V out, 1.2 MHz, 4 A switch
+                  limit, V_FB = 0.6 V, V_OUT = 0.6 x (1 + R1/R2), up to 97 percent, UVLO and thermal
+                  protection. No revision or date},
+  url          = {https://www.olimex.com/Products/Breadboarding/BB-PWR-3608/resources/MT3608.pdf},
+  urldate      = {2026-10-24}
+}
+
+@manual{ssd1306_datasheet,
+  author       = {{Solomon Systech}},
+  title        = {{SSD1306 128 x 64 Dot Matrix OLED/PLED Segment/Common Driver with Controller}},
+  edition      = {Rev 1.1},
+  date         = {2008-04},
+  annotation   = {Copy in references/datasheets/ (Adafruit-hosted). 128 x 64, I2C slave address
+                  0111100 / 0111101 selected by SA0 (0x3C / 0x3D), logic VDD 1.65--3.3 V},
+  url          = {https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf},
+  urldate      = {2026-10-24}
+}
+
+@online{esp32lab_tp4056,
+  author       = {{Esp32Lab}},
+  title        = {{Chargeur LiPo USB-C TP4056}},
+  note         = {Product page (Algerian shop), in French},
+  annotation   = {Module bought for the controller (user, 2026-10-24). Listing: input 4.5--5.5 V,
+                  max charge current 1000 mA, full charge 4.2 V +-1 percent, USB-C, red/green LEDs,
+                  over-discharge protection 2.5 V, overcurrent protection 3 A, B+/B- battery and
+                  OUT+/OUT- load terminals. Price 100 DA},
+  url          = {https://esp32lab.com/boutique/chargeur-lipo-usb-c-tp4056/},
+  urldate      = {2026-10-24}
+}
+
+@online{espnow_idf,
+  author       = {{Espressif Systems}},
+  title        = {{ESP-NOW -- ESP32}},
+  note         = {ESP-IDF Programming Guide v6.1},
+  annotation   = {Quotes used: "a kind of connectionless Wi-Fi communication protocol that is defined
+                  by Espressif"; v1.0 payload 250 bytes (v2.0: 1470); max 20 paired peers, <= 17
+                  encrypted (default 7); broadcast FF:FF:FF:FF:FF:FF must be added as a peer;
+                  multicast frames cannot be encrypted; send callback success = received at MAC
+                  layer, application reception not guaranteed; CCMP encryption with PMK/LMK},
+  url          = {https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html},
+  urldate      = {2026-10-25}
+}
+
+@online{espidf_adc,
+  author       = {{Espressif Systems}},
+  title        = {{Analog to Digital Converter (ADC) Oneshot Mode Driver -- ESP32}},
+  note         = {ESP-IDF Programming Guide v6.1},
+  annotation   = {Quote used: "ADC2 is also used by Wi-Fi."},
+  url          = {https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/adc/adc_oneshot.html},
+  urldate      = {2026-10-24}
+}
+
+@manual{mpu6000_ps,
+  author       = {{InvenSense Inc.}},
+  title        = {{MPU-6000 and MPU-6050 Product Specification}},
+  number       = {PS-MPU-6000A-00},
+  edition      = {Revision 3.1},
+  date         = {2011-10-24},
+  annotation   = {Copy in references/datasheets/ (SparkFun-hosted). 3-axis gyro + 3-axis accel,
+                  VDD 2.375--3.46 V, I2C 400 kHz, address 1101000 (0x68) with AD0 = 0,
+                  gyro +-250 deg/s = 131 LSB/(deg/s), accel +-2 g = 16384 LSB/g},
+  url          = {https://cdn.sparkfun.com/datasheets/Components/General%20IC/PS-MPU-6000A.pdf},
+  urldate      = {2026-10-24}
+}
+
+@manual{mpu6000_rm,
+  author       = {{InvenSense Inc.}},
+  title        = {{MPU-6000 and MPU-6050 Register Map and Descriptions}},
+  number       = {RM-MPU-6000A-00},
+  edition      = {Revision 4.0},
+  date         = {2012-03-09},
+  annotation   = {Copy in references/datasheets/. Registers used by the firmware: 0x1B GYRO_CONFIG,
+                  0x1C ACCEL_CONFIG, 0x3B ACCEL_XOUT_H (accel, temp, gyro burst), 0x43 GYRO_XOUT_H,
+                  0x6B PWR_MGMT_1 (SLEEP bit)},
+  url          = {https://cdn.sparkfun.com/datasheets/Sensors/Accelerometers/RM-MPU-6000A.pdf},
+  urldate      = {2026-10-24}
+}
+
+@online{mini360_c101,
+  author       = {{Components101}},
+  title        = {{Mini360 DC-DC Buck Converter Module Pinout, Datasheet, Features, Specs and
+                   Applications}},
+  date         = {2022-09-15},
+  annotation   = {Module-level figures: MP2307DN controller, 4.75--23 V in, 1--17 V out set by a
+                  trimmer, 1.8 A continuous, 3 A surge, 340 kHz, up to 95 percent at 5 V in / 3.3 V
+                  out / 200 mA. The MPS MP2307 datasheet itself could not be downloaded from here},
+  url          = {https://components101.com/modules/mini360-dc-dc-buck-converter-module},
+  urldate      = {2026-10-24}
+}
+
+@manual{hcsr04_datasheet,
+  author       = {{ElecFreaks}},
+  title        = {{Ultrasonic Ranging Module HC-SR04}},
+  note         = {Datasheet, hosted by SparkFun Electronics},
+  annotation   = {Copy in references/datasheets/hcsr04_elecfreaks.pdf. 5 V, 15 mA, 40 kHz burst
+                  of 8 cycles, 2 cm--4 m, 15 deg, 10 us trigger, distance = t x 340 m/s / 2
+                  (us/58 = cm), measurement cycle > 60 ms. Vendor document, no revision or date},
+  url          = {https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf},
+  urldate      = {2026-10-24}
+}
+
+@manual{lm393_datasheet,
+  author       = {{Texas Instruments}},
+  title        = {{LM393B, LM2903B, LM193, LM293, LM393 and LM2903 Dual Comparators}},
+  number       = {SLCS005AH},
+  note         = {Datasheet, revised April 2025},
+  annotation   = {Copy in references/datasheets/. Two independent comparators, open-collector
+                  (open-drain NPN) output needing a pull-up, supply 2--30 V (non-V devices)},
+  year         = {2025},
+  url          = {https://www.ti.com/lit/ds/symlink/lm393.pdf},
+  urldate      = {2026-10-24}
+}
+
+@online{adafruit_tt_motor,
+  author       = {{Adafruit Industries}},
+  title        = {{DC Gearbox Motor -- ``TT Motor'' -- 200RPM -- 3 to 6VDC}},
+  note         = {Product 3777, technical details},
+  annotation   = {Reference listing for the common yellow 1:48 TT motor (ours carry no marking,
+                  Algerian shop pages list no specs). 1:48, 3--6 V; 3 V: 150 mA, 120 rpm no-load,
+                  1.1 A stall, 0.4 kg.cm; 6 V: 160 mA, 250 rpm no-load, 1.5 A stall, 0.8 kg.cm},
+  url          = {https://www.adafruit.com/product/3777},
+  urldate      = {2026-10-21}
+}
+
+@manual{esp32_datasheet,
+  author       = {{Espressif Systems}},
+  title        = {{ESP32 Series Datasheet}},
+  edition      = {Version 5.3},
+  annotation   = {Copy in references/datasheets/. Controller MCU: LX6 240 MHz, 520 KB SRAM,
+                  Wi-Fi b/g/n, BT 4.2, 34 GPIOs (6 input-only), GPIO34/35 = ADC1_CH6/CH7
+                  input-only, strapping pins and MTDI (GPIO12) flash-voltage selection},
+  url          = {https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf},
+  urldate      = {2026-10-21}
+}
+
+@manual{esp32s3_datasheet,
+  author       = {{Espressif Systems}},
+  title        = {{ESP32-S3 Series Datasheet}},
+  edition      = {Version 2.2},
+  date         = {2026-03-05},
+  annotation   = {Copy in references/datasheets/. Source of the CPU, memory, radio,
+                  ADC, LED PWM, strapping-pin and input-level figures},
+  url          = {https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf},
+  urldate      = {2026-10-21}
+}
+
+@manual{esp32s3_wroom1_datasheet,
+  author       = {{Espressif Systems}},
+  title        = {{ESP32-S3-WROOM-1 / WROOM-1U Datasheet}},
+  edition      = {Version 1.8},
+  date         = {2026-03-02},
+  annotation   = {Copy in references/datasheets/. Source of the N16R8 memory
+                  (16~MB Quad SPI flash, 8~MB Octal SPI PSRAM), 36 GPIOs, 3.0--3.6~V
+                  supply, IO35--37 taken by the PSRAM},
+  url          = {https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf},
+  urldate      = {2026-10-21}
+}
+
+@manual{esp32s3_devkitc1_guide,
+  author       = {{Espressif Systems}},
+  title        = {{ESP32-S3-DevKitC-1 v1.1 User Guide}},
+  note         = {Online documentation},
+  annotation   = {ESP-IDF dev-kits documentation, source commit 4ffc5bd. Source of the
+                  5~V pin, the 5~V to 3.3~V LDO and the GPIO35--37 note},
+  url          = {https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html},
+  urldate      = {2026-10-21}
 }
 
 @misc{caster_wheel_model,

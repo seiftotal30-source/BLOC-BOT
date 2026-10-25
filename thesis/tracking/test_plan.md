@@ -8,7 +8,7 @@ chapter, or something to show live at the defense. Save photos and numbers in
 
 | # | Test | How | Goes in the thesis as |
 |---|---|---|---|
-| T1 | **Real speed** | Time the robot over 2 m at full speed, 3 runs. Before that, turn a wheel 10 turns by hand and check the encoder count is 160 (16 slots), so the speed on the controller is right. | Speed in km/h, measured vs displayed |
+| T1 | **Real speed** | Time the robot over 2 m at full speed, 3 runs. Before that, turn a wheel 10 turns by hand and check the encoder count is 200 (20 slots), so the speed on the controller is right. | Speed in km/h, measured vs displayed |
 | T2 | **Battery life** | Full charge, drive around (or wheels lifted) until it stops, note the time. | Runtime in minutes |
 | T3 | **Ultrasonic accuracy** | Box at 10, 20, 50, 100 cm (tape measure), read the controller. | Small table: real vs measured distance |
 | T4 | **Print fits** | Already done: screw hole Ø6.2 → 6.0, glue joint 0.14 → 0.20 mm/side. Photograph the parts. | Table + photos |
