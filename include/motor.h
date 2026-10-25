@@ -3,46 +3,21 @@
 
 #include <Arduino.h>
 
-// =====================================================
-// MOTOR CONTROL FOR THE DRV8833 DRIVER
-// =====================================================
-// DRV8833 is a dual H-bridge driver (one bridge per motor, same IN1/IN2 logic)
-// Control modes:
-// IN1=HIGH, IN2=LOW  -> Forward
-// IN1=LOW,  IN2=HIGH -> Reverse
-// IN1=LOW,  IN2=LOW  -> Coast (motor freewheels)
-// IN1=HIGH, IN2=HIGH -> Brake (slow decay)
-//
-// For PWM speed control, we use:
-// Forward: IN1=PWM, IN2=LOW
-// Reverse: IN1=LOW, IN2=PWM
-// =====================================================
+// two tt motors on one drv8833, one h-bridge each
+//   in1 = 1, in2 = 0  forward
+//   in1 = 0, in2 = 1  reverse
+//   in1 = 0, in2 = 0  coast
+//   in1 = 1, in2 = 1  brake
+// speed control: pwm on in1 (forward) or in2 (reverse), the other pin low
 
-// Initialize motor driver PWM channels
 void initMotors();
-
-// Set motor speed (-255 to +255)
-// Negative = reverse, Positive = forward, 0 = stop
-// Uses soft-start ramping to avoid current spikes
-void setMotorSpeed(char motor, int speed);
-
-// Set both motors (for arcade drive mixing)
-void setMotors(int leftSpeed, int rightSpeed);
-
-// Emergency stop (immediate)
-void stopMotors();
-
-// Update motor ramping (call this in main loop)
-void updateMotors();
-
-// Reset failsafe timer (call when receiving commands)
-void resetFailsafe();
-
-// Check if motors are stopped due to failsafe
+void setMotorSpeed(char motor, int speed);      // 'L' or 'R', -255..255
+void setMotors(int leftSpeed, int rightSpeed);  // targets, reached through the ramp
+void stopMotors();                              // immediate, no ramp
+void updateMotors();                            // call every loop: failsafe + ramp
+void resetFailsafe();                           // call on every command
 bool isFailsafeActive();
-
-// Current (ramped) motor speeds, -255..+255
-int getLeftSpeed();
+int getLeftSpeed();  // duty applied now, -255..255
 int getRightSpeed();
 
-#endif // MOTOR_H
+#endif

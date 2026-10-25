@@ -1,41 +1,36 @@
 #ifndef PINS_ESP32S3_H
 #define PINS_ESP32S3_H
 
-// =====================================================
-// ESP32-S3 PIN DEFINITIONS (Future hardware)
-// =====================================================
-// ESP32-S3 has many more available GPIOs compared to ESP32-CAM
-// =====================================================
+// robot pins, esp32-s3 n16r8 (see PINS.md)
+// do not use 35-37 (octal psram), 0/3/45/46 (strapping), 19/20 (usb), 43/44 (uart0)
 
-// DRV8833 dual motor driver (replaced 2x DRV8871)
-// Left motor (AIN1/AIN2)
-#define MOTOR_LEFT_IN1   13  // moved off GPIO 15, which kept failing on forward
+// drv8833, left motor on bridge a
+#define MOTOR_LEFT_IN1   13  // was 15, that was a bad jumper wire
 #define MOTOR_LEFT_IN2   16
 
-// Right motor (BIN1/BIN2)
-#define MOTOR_RIGHT_IN1  18  // 17/18 swapped so the right motor turns the right way
+// drv8833, right motor on bridge b
+#define MOTOR_RIGHT_IN1  18  // 17/18 swapped so both wheels go forward together
 #define MOTOR_RIGHT_IN2  17
 
-// LM393 slot sensors (wheel speed), powered from 3.3V
+// lm393 slot sensors, powered from 3.3 V
 #define ENCODER_LEFT_PIN   40
 #define ENCODER_RIGHT_PIN  41
 
-// I2C bus: MPU6050 (0x68), later the OLED face and TCS34725
+// i2c: mpu6050 (0x68), later more sensors
 #define I2C_SDA_PIN  8
 #define I2C_SCL_PIN  9
 
-// HC-SR04 (VCC on 5V). ECHO is 5 V: ECHO -> 1k -> GPIO 12, GPIO 12 -> 2k -> GND
+// hc-sr04 on 5 V. echo -> 1k -> gpio 12, gpio 12 -> 2k -> gnd (5 V to 3.3 V)
 #define ULTRASONIC_TRIG_PIN  11
 #define ULTRASONIC_ECHO_PIN  12
 
-// PWM Configuration
-#define PWM_FREQ         20000  // 20 kHz for motor drivers
-#define PWM_RESOLUTION   8      // 8-bit (0-255)
+// motor pwm
+#define PWM_FREQ         20000  // 20 kHz
+#define PWM_RESOLUTION   8      // 0-255
 
-// PWM Channels
 #define PWM_CHANNEL_LEFT_IN1   0
 #define PWM_CHANNEL_LEFT_IN2   1
 #define PWM_CHANNEL_RIGHT_IN1  2
 #define PWM_CHANNEL_RIGHT_IN2  3
 
-#endif // PINS_ESP32S3_H
+#endif
