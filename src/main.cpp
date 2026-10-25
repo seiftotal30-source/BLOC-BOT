@@ -124,10 +124,10 @@ void applyPacket() {
 // WHEEL SPEED (LM393 slot sensors -> controller)
 // =====================================================
 
-// Encoder disc (roue_codeuse_16): 16 slots on the TT output shaft = 16 pulses per wheel turn
+// Encoder disc: 20 slots on the TT output shaft = 20 pulses per wheel turn
 const float WHEEL_DIAMETER_MM = 65.0;  // standard TT wheel, change if yours differs
-const int ENCODER_SLOTS = 16;
-const float MM_PER_PULSE = PI * WHEEL_DIAMETER_MM / ENCODER_SLOTS;  // ~12.8 mm
+const int ENCODER_SLOTS = 20;
+const float MM_PER_PULSE = PI * WHEEL_DIAMETER_MM / ENCODER_SLOTS;  // ~10.2 mm
 const unsigned long SPEED_SEND_MS = 100;
 const uint32_t ENCODER_DEBOUNCE_US = 1000;  // LM393 boards can chatter on a slot edge
 
@@ -141,7 +141,7 @@ struct __attribute__((packed)) SpeedPacket {
 uint8_t broadcastMac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 // Speed is measured from the time between pulses, not from pulses per 100 ms:
-// with 16 slots a 100 ms window holds only 2-5 pulses, so +-1 pulse made the reading jump by 128 mm/s.
+// with 20 slots a 100 ms window holds only 3-6 pulses, so +-1 pulse made the reading jump by about 100 mm/s.
 const uint32_t ENCODER_STOP_US = 300000;  // no pulse for 300 ms = wheel stopped
 const float SPEED_SMOOTHING = 0.4;        // 0..1, higher = faster but noisier
 
