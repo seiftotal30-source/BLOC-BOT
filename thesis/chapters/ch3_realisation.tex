@@ -398,11 +398,12 @@ controller.
 \paragraph{Procedure.} A flat box is placed in front of the robot at 10, 20, 50 and 100~cm,
 measured with a tape from the front of the sensor, and the distance shown on the
 controller is noted for each.
-\paragraph{Results.} In use, the sensor on the robot gives readings only up to about
-60~cm; beyond that the controller shows ``No Object''. This is far below the 4~m given in
-the datasheet \cite{hcsr04_datasheet}, which assumes a target of at least 0.5~m\(^2\);
-the distances therefore have to be checked within this range.
-\todo{how the 60~cm was observed; table at 10, 20 and 50~cm: real, displayed, difference}
+\paragraph{Results.} In use, the distance shown on the controller follows the obstacle
+up to 59.9~cm, then stays at 59.9~cm whatever the real distance. This is far below the
+4~m given in the datasheet \cite{hcsr04_datasheet}. \todo{cause: a floor echo is the
+likely one (sensor about 10--11~cm above the floor, beam of about 15\textdegree); check by
+lifting or tilting the sensor towards a wall at 1~m, then write the result; table at 10,
+20 and 50~cm: real, displayed, difference}
 
 \subsection{T4 and T5: printed parts and mass}
 \paragraph{Fits.} Two dimensions were corrected after the first prints: the hole for the
@@ -410,7 +411,9 @@ jaw screw of the blocs, reduced from 6.2 to 6.0~mm in diameter, and the clearanc
 glued joints, increased from 0.14 to 0.20~mm per side. \todo{photos of the parts}
 \paragraph{Print time and mass.} The print time and mass of each part are given in
 Table~\ref{tab:print-cost}. The robot described here is still a prototype: it runs on the
-first waffle plate, and the redesigned plate and pillars are not printed yet. Its total
+first waffle plate, while the two plates of the new design (lower and upper), the pillars
+and a new set of blocs are being printed. \todo{print time and filament of the final parts
+from the slicer, once printed} Its total
 mass has not been weighed; we estimate it at 0.8 to 1~kg. \todo{weigh the final robot on
 a kitchen scale}
 
