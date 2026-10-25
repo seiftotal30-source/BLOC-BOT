@@ -30,3 +30,9 @@ old designs/
 
 # Third-party installer (324 MB, exceeds GitHub 100 MB limit)
 CAD/out/CrealityPrint_*.exe
+
+# Downloaded third-party datasheets (links are in thesis/references.bib)
+thesis/references/datasheets/
+
+# KiCad per-user settings
+*.kicad_prl

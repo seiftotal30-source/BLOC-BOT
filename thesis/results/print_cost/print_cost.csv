@@ -1,0 +1,8 @@
+part,mass_g,print_time,cost_DA_no_waste,cost_DA_5pct_waste,source
+Motor brackets (left + right),29.5,1 h 18,118,124,G-code: CAD/out/motor_bracket/MotorBracket_Ender3Pro_pro.gcode
+HBloc_L (line sensor),28.0,1 h 15,112,117,G-code: CAD/out/hbloc/HBlocL_Ender3Pro_pro.gcode
+VBloc,16.4,1 h 15,66,69,G-code: CAD/out/vbloc/VBloc_Ender3Pro_pro.gcode
+HBloc,13.9,0 h 39,56,59,G-code: CAD/out/hbloc/HBloc_Ender3Pro_pro.gcode
+Caster support B,19.4,0 h 41,78,82,G-code: CAD/out/CasterSupportB_Ender5Plus.gcode
+"Waffle plate (old version, in use)",200.0,45 h 00,800,840,"user: ~200 g, 1 d 21 h, early print before the team had experience"
+TOTAL,307.2,50 h 08,1229,1290,

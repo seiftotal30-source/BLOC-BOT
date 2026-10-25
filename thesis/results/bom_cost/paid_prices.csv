@@ -1,0 +1,19 @@
+component,used_in,unit_price_da,qty,source,note
+ESP32-S3 DevKitC-1 N16R8,robot MCU,2000,1,paid (Wassim 2026-10-21),
+ESP32 DevKit,controller MCU,1600,1,paid (Wassim 2026-10-21),
+TT gearmotor,robot drive,550,2,paid (Wassim 2026-10-21),
+Wheel,robot drive,250,2,paid (Wassim 2026-10-21),diameter to measure (65 mm assumed in code)
+DRV8833 module,robot motor driver,500,1,paid (Wassim 2026-10-21),
+Mini360 buck converter,robot 5 V,400,1,paid (Wassim 2026-10-21),
+HC-SR04,robot distance (front),600,1,paid (Wassim 2026-10-21),
+KY-023 joystick,controller,500,1,paid (Wassim 2026-10-21),
+Push button,controller,50,4,paid (Wassim 2026-10-21),qty 4 from the wiring diagram
+Flying Fish IR sensor,planned self-parking,500,1,paid (Wassim 2026-10-21),bought; feature not built
+TCRT5000 5-channel line sensor,line following (in progress),800,1,paid (Wassim 2026-10-21),
+18650 cell,batteries,1000,TBD,paid (Wassim 2026-10-21),which cells and how many: TBD
+18650 holder 2x,robot power,400,1,paid (Wassim 2026-10-21),
+18650 holder 1x,controller power,200,1,paid (Wassim 2026-10-21),
+Li-ion charger (2 slots),charging the robot cells,3000,1,paid (Wassim 2026-10-21),
+LM393 slotted speed sensor,robot wheel speed (2 fitted),500,4,paid (Seif 2026-10-24),4 bought
+MPU6050 module,robot IMU,TBD,1,TBD,price not given yet
+TP4056 USB-C module with protection,controller charging,TBD,1,TBD,not bought from Esp32Lab; looks identical to their listing
