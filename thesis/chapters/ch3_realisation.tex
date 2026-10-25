@@ -398,7 +398,11 @@ controller.
 \paragraph{Procedure.} A flat box is placed in front of the robot at 10, 20, 50 and 100~cm,
 measured with a tape from the front of the sensor, and the distance shown on the
 controller is noted for each.
-\paragraph{Results.} \todo{table: real distance, displayed distance, difference}
+\paragraph{Results.} In use, the sensor on the robot gives readings only up to about
+60~cm; beyond that the controller shows ``No Object''. This is far below the 4~m given in
+the datasheet \cite{hcsr04_datasheet}, which assumes a target of at least 0.5~m\(^2\);
+the distances therefore have to be checked within this range.
+\todo{how the 60~cm was observed; table at 10, 20 and 50~cm: real, displayed, difference}
 
 \subsection{T4 and T5: printed parts and mass}
 \paragraph{Fits.} Two dimensions were corrected after the first prints: the hole for the
@@ -414,8 +418,10 @@ a kitchen scale}
 Four behaviours are shown live rather than measured: driving the robot from the controller
 with its speed on the screen (D1); switching the controller off while the robot moves, after
 which the robot stops by itself within 300~ms (D2); moving a bloc to another position on the
-plate in a few seconds (D3); and, once it works, following a line of tape (D4).
-\todo{record a short video of each as a back-up for the defence}
+plate in a few seconds (D3); and, once it works, following a line of tape (D4). The
+safety stop has been checked on the robot: when the controller is switched off while the
+robot moves, the robot stops at once. Videos of the robot in use have been recorded as a
+back-up in case a demonstration fails on the day. \todo{which demos the 2--3 videos show}
 
 \section{Cost}
 \label{sec:cost}

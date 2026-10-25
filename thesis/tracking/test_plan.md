@@ -10,7 +10,7 @@ chapter, or something to show live at the defense. Save photos and numbers in
 |---|---|---|---|
 | T1 | **Real speed** | Time the robot over 2 m at full speed, 3 runs. Before that, turn a wheel 10 turns by hand and check the encoder count is 200 (20 slots), so the speed on the controller is right. | Speed in km/h, measured vs displayed |
 | T2 | **Battery life** | Full charge, wheels lifted, constant command. NO BMS: do not run until it stops. Measure the pack with a multimeter every 10 min and stop at 6.0 V (3.0 V per cell); note the time. | Runtime in minutes |
-| T3 | **Ultrasonic accuracy** | Box at 10, 20, 50, 100 cm (tape measure), read the controller. | Small table: real vs measured distance |
+| T3 | **Ultrasonic accuracy** | Box at 10, 20, 50 cm (tape measure; observed max range ~60 cm), read the controller. | Small table: real vs measured distance |
 | T4 | **Print fits** | Already done: screw hole Ø6.2 → 6.0, glue joint 0.14 → 0.20 mm/side. Photograph the parts. | Table + photos |
 | T5 | **Print time, filament, weight** | From the slicer (time, grams) and a kitchen scale (full robot). | Parts table and total mass |
 
