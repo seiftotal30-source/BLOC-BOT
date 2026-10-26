@@ -313,27 +313,27 @@ using.
 
 \section{Problems met and solutions}
 \label{sec:problems}
-Several things did not work the first time. They are listed here in the order we met
-them, each with its symptom, its cause as far as we could establish it, and the fix. Most
+Several things did not work the first time. They are listed here in the order they
+appeared, each with its symptom, its cause as far as it could be established, and the fix. Most
 of them are small, but together they shaped the final design, and several left a trace in
 the firmware or the wiring described earlier.
 
 \paragraph{The motors did not turn with the DRV8871.} The robot was first wired with two
-DRV8871 drivers, and the motors never turned. We did not measure the battery voltage at
+DRV8871 drivers, and the motors never turned. The battery voltage was not measured at
 the time, but the driver's datasheet gives a likely cause: it needs at least 6.5~V and
 locks out when its supply falls to about 6.1 to 6.4~V, very close to what a 2S pack gives
-under load (Section~\ref{sec:drv8833}). We replaced both with a single DRV8833, which
+under load (Section~\ref{sec:drv8833}). Both were replaced with a single DRV8833, which
 works from 2.7~V, and the motors ran at once.
 
 \paragraph{The left motor would not run forward.} With its \texttt{AIN1} input on
-GPIO~15, the left motor would not run forward. We first suspected the pin and
-moved the signal to GPIO~13, after which the motor worked; we later found that the real
-cause was a faulty jumper wire. The signal stayed on GPIO~13. The lesson was to check the
+GPIO~15, the left motor would not run forward. The pin was suspected first and the
+signal was moved to GPIO~13, after which the motor worked; the real cause later turned
+out to be a faulty jumper wire. The signal stayed on GPIO~13. The lesson was to check the
 wiring before suspecting the microcontroller.
 
 \paragraph{The right motor turned the wrong way.} For the same forward command, the right
-wheel turned backward. Instead of rewiring the motor, we swapped the two pin numbers of
-the right motor in the firmware, so that both wheels turn forward together
+wheel turned backward. Instead of rewiring the motor, the two pin numbers of the right
+motor were swapped in the firmware, so that both wheels turn forward together
 (Section~\ref{sec:wiring}).
 
 \paragraph{The 5~V echo of the ultrasonic sensor.} The HC-SR04 was at first connected
@@ -359,7 +359,7 @@ drive command with the stick at about a third of its travel, so small movements 
 thumb gave large changes of speed. The scale was widened so that full speed is reached near
 the end of the travel (Section~\ref{sec:con-fw}).
 
-\paragraph{A slow and heavy first plate.} The first waffle plate, printed before we had any
+\paragraph{A slow and heavy first plate.} The first waffle plate, printed before the team had any
 experience with 3D printing, took about 45~hours and weighs about 200~g. It still carries
 the robot today, but it led to the redesign described in Section~\ref{sec:platform}.
 
@@ -418,7 +418,7 @@ Table~\ref{tab:print-cost}. The robot described here is still a prototype: it ru
 first waffle plate, while the two plates of the new design (lower and upper), the pillars
 and a new set of blocs are being printed. \todo{print time and filament of the final parts
 from the slicer, once printed} Its total
-mass has not been weighed; we estimate it at 0.8 to 1~kg. \todo{weigh the final robot on
+mass has not been weighed; it is estimated at 0.8 to 1~kg. \todo{weigh the final robot on
 a kitchen scale}
 
 \subsection{Demonstrations}
@@ -435,7 +435,7 @@ back-up in case a demonstration fails on the day. \todo{which demos the 2--3 vid
 
 \paragraph{Printed parts.} Table~\ref{tab:print-cost} gives the mass, print time and
 material cost of the printed parts. Masses and times are read from the slicer's G-code for
-each part, except the waffle plate in use, an early print for which only our own estimate
+each part, except the waffle plate in use, an early print for which only the authors' estimate
 is available. The cost is the mass of PETG at 4000~DA per kilogram, with and without a
 5~\% allowance for waste.
 
@@ -462,7 +462,7 @@ is available. The cost is the mass of PETG at 4000~DA per kilogram, with and wit
   \end{tabularx}
 \end{table}
 
-\paragraph{Electronics.} Table~\ref{tab:bom} lists the electronic parts with the prices we
+\paragraph{Electronics.} Table~\ref{tab:bom} lists the electronic parts with the prices
 paid in Algerian shops (\texttt{results/bom\_cost/paid\_prices.csv}). Tools, such as the
 two-slot charger (3000~DA), and parts bought for features not built yet, the five-channel
 line sensor (800~DA) and the Flying Fish infrared sensor (500~DA), are not counted.

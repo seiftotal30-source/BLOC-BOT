@@ -13,31 +13,31 @@ with its working principle and the reason it was chosen. The modular platform co
 \label{sec:spec}
 
 \subsection{Origin of the need}
-BLOC-BOT grew out of our own experience of student robotics competitions. Our team took
-part in two consecutive editions of the Algerian Robot Cup (ARC~3 and ARC~4), and in
+BLOC-BOT grew out of the authors' own experience of student robotics competitions. Their
+team took part in two consecutive editions of the Algerian Robot Cup (ARC~3 and ARC~4), and in
 several other competitions, without success. Each ARC edition has two stages. To
 qualify, a team's robot must follow a line through a maze, and the fastest robots go
 through. The main event then calls for a second robot, built for a task that changes
-from one year to the next. Looking back, we traced most of our difficulties to two
+from one year to the next. In hindsight, most of the team's difficulties came from two
 causes.
 
-The first was time. For every competition we built the robot's modules from scratch:
+The first was time. For every competition, the robot's modules were built from scratch:
 a new chassis, new sensor mounts, new wiring, and in the case of ARC, two robots instead
-of one. Each took long enough that we reached the competition underprepared, with too
-little time left for testing and tuning.
+of one. Each took long enough that the team reached the competition underprepared, with
+too little time left for testing and tuning.
 
 The second was the specification itself. Organisers often announce the rules late or in
-vague terms. Unsure of what would be asked, we tended to over-prepare and build a robot
-more complicated than the task required. A more complicated robot has more ways to fail,
-and some of ours failed during the competition itself.
+vague terms. Unsure of what would be asked, the team tended to over-prepare and build a
+robot more complicated than the task required. A more complicated robot has more ways to
+fail, and some of the team's robots failed during the competition itself.
 
 Both problems point to the same answer: a single robot that is ready in advance and can
 be reconfigured quickly for each competition, rather than a new robot every time. Most
 competitions in this category rely on a small, recurring set of sensors (line sensors,
 distance sensors, wheel encoders). If each of these has a standard way of being mounted
 and wired, adapting the robot becomes a matter of choosing modules instead of designing
-them. This is the idea behind BLOC-BOT and its interchangeable mechanical holders, which
-we call \emph{blocs}.
+them. This is the idea behind BLOC-BOT and its interchangeable mechanical holders, called
+\emph{blocs} in this work.
 
 \subsection{Target users}
 The platform is aimed first at students and teams preparing for robotics competitions,
@@ -79,8 +79,8 @@ Besides what the system does, four conditions shaped how it was built.
 
 \begin{itemize}
   \item \textbf{Local availability of components.} Most of the components were chosen
-        because they could be bought in Algeria or were already in our hands, not after a
-        comparison of every alternative on the market. We state this plainly here, and
+        because they could be bought in Algeria or were already at hand, not after a
+        comparison of every alternative on the market. This is stated plainly here, and
         each component section in this chapter says when availability was the deciding
         reason.
   \item \textbf{Low cost.} The platform is meant for students, so it is built from common
@@ -256,7 +256,7 @@ changing the microcontroller. Its PSRAM is not used by the current firmware.
 \paragraph{Pins that cannot be used freely.} Not all 36 GPIOs are available. With an
 octal PSRAM, GPIO35, GPIO36 and GPIO37 carry the memory's data lines and cannot be used
 for anything else \cite{esp32s3_datasheet,esp32s3_wroom1_datasheet,esp32s3_devkitc1_guide},
-even though our board still brings them out to its header.
+even though the board used here still brings them out to its header.
 GPIO0, GPIO3, GPIO45 and GPIO46 are strapping pins, read by the chip at reset to choose
 its boot mode, so nothing connected to them should pull them high or low at power-up.
 GPIO19 and GPIO20 carry the USB interface and GPIO43 and GPIO44 the serial port used for
@@ -384,22 +384,22 @@ the waffle plate. Its supply range, 2.7 to 10.8~V, covers the whole range of a 2
 lithium-ion pack, and its logic inputs accept the 3.3~V signals of the ESP32-S3
 directly. It was also available locally at low cost.
 
-The module we use is a small red breakout board that carries the chip and a 10~\textmu F
+The module used is a small red breakout board that carries the chip and a 10~\textmu F
 capacitor on the motor supply, and follows the pin layout of the common TB6612FNG
 boards, with the three pins the DRV8833 does not need marked NC. The chip's marking is
-not readable on our module, so we cannot tell from it whether it is the HTSSOP version,
+not readable on this module, so it cannot be told from it whether it is the HTSSOP version,
 whose exposed pad allows 1.5~A per bridge, or the plain TSSOP one, limited to 0.5~A
-\cite{drv8833_datasheet}. We therefore take the lower figure, 0.5~A continuous per motor,
-as the safe limit.
+\cite{drv8833_datasheet}. The lower figure, 0.5~A continuous per motor, is therefore
+taken as the safe limit.
 
-\paragraph{The driver we started with.} The robot was first wired with two DRV8871
+\paragraph{The first driver.} The robot was first wired with two DRV8871
 modules, one per motor. With them, the motors never turned at all, while the same motors
-ran with the DRV8833. We did not
-measure the battery voltage at the time, so we cannot state the cause with certainty.
+ran with the DRV8833. The battery voltage was not measured at the time, so the cause
+cannot be stated with certainty.
 The DRV8871 datasheet points to a likely one: the chip is rated for a motor supply of
 6.5 to 45~V, and its undervoltage lockout switches the bridge off when the supply falls
 to 6.1~V typically (6.4~V at most), only restarting once it rises back to about
-6.3--6.5~V \cite{drv8871_datasheet}. Our 2S pack is 7.4~V nominal
+6.3--6.5~V \cite{drv8871_datasheet}. The robot's 2S pack is 7.4~V nominal
 (2~\(\times\)~3.7~V, from the cell labels), only about 1~V above that threshold, and its
 voltage falls as it discharges and drops further for a moment each time a motor starts
 and draws a surge of current. A partly discharged pack could therefore keep the DRV8871
@@ -413,15 +413,15 @@ reduces the speed and multiplies the torque, and has an output shaft on both sid
 the gearbox. One side carries the wheel; the other is free, which is where the encoder
 disc of Section~\ref{sec:encoders} is fitted.
 
-Our motors carry no marking, and the shops we bought them from publish no
-specifications. We therefore use the figures published by Adafruit for the same common
-1:48 TT motor as a reference, given in Table~\ref{tab:ttmotor}; they describe the type
-of motor, not measurements of our own units.
+The motors used carry no marking, and the shops that sold them publish no
+specifications. The figures published by Adafruit for the same common 1:48 TT motor
+are therefore used as a reference, given in Table~\ref{tab:ttmotor}; they describe the
+type of motor, not measurements of the units fitted to BLOC-BOT.
 
 \begin{table}[htbp]
   \centering
   \caption{Reference figures for the 1:48 TT gearmotor (vendor bench measurements
-           \cite{adafruit_tt_motor}, not measured on our motors).}
+           \cite{adafruit_tt_motor}, not measured on the robot's motors).}
   \label{tab:ttmotor}
   \begin{tabular}{@{}lcc@{}}
     \toprule
@@ -446,7 +446,7 @@ firmware comment, this gives about \(0.8 \times 7.7 \approx 6.2\)~V on average. 
 pack is fully charged the average rises to about 6.7~V, slightly above the rating; this
 is a known limit of the current setting.
 
-\paragraph{Current.} While running, a TT motor draws well under 0.5~A, the safe limit we
+\paragraph{Current.} While running, a TT motor draws well under 0.5~A, the safe limit
 set for the driver in Section~\ref{sec:drv8833}, but at stall, or for an instant when it starts, it
 can draw up to about 1.5~A at 6~V (Table~\ref{tab:ttmotor}). This is still below the
 2~A peak the DRV8833 accepts and below its overcurrent trip point
@@ -463,7 +463,7 @@ of the robot the real speed is lower, so the robot should not go much faster tha
 
 \paragraph{Why TT motors.} They are geared, so they turn slowly enough to drive a wheel
 directly, cheap, easy to mount, and the dual shaft leaves room for an encoder. Above
-all they were the motors available to us.
+all they were the motors available.
 
 \subsection{Wheel speed sensors: LM393 slotted encoders}
 \label{sec:encoders}
@@ -478,8 +478,8 @@ phototransistor's current rises and falls with it. This signal is slow and noisy
 edges, so the board feeds it to an LM393 comparator, which compares it with a fixed
 reference and gives a clean two-level output: one pulse per slot. The LM393's output
 stage is an open-collector transistor that can only pull the line low, so the board
-carries a pull-up resistor that defines the high level \cite{lm393_datasheet}. We power
-the sensors from the ESP32-S3's 3.3~V supply, so that this high level is 3.3~V and the
+carries a pull-up resistor that defines the high level \cite{lm393_datasheet}. The
+sensors are powered from the ESP32-S3's 3.3~V supply, so that this high level is 3.3~V and the
 output can go straight to a GPIO.
 
 \paragraph{From pulses to speed.} With \(N\) slots on the disc and a wheel of diameter
@@ -488,7 +488,7 @@ output can go straight to a GPIO.
   \Delta s = \frac{\pi D}{N}.
   \label{eq:mm-per-pulse}
 \end{equation}
-Our discs have \(N = 20\) slots, counted on the real parts, and the wheels are 65~mm in
+The discs have \(N = 20\) slots, counted on the real parts, and the wheels are 65~mm in
 diameter, which gives \(\Delta s = \pi \times 65 / 20 \approx 10.2\)~mm per pulse
 (\texttt{encoders.cpp}). The firmware first assumed 16 slots; this made every reported speed
 25~\% too high (20/16) until the
@@ -538,7 +538,7 @@ previous one on the same wheel. At the TT motor's no-load speed of 250~rpm
 12~ms, so this 1~ms window cannot hide a real pulse.
 
 \paragraph{Why these sensors.} The board's fork fits around the rim of a disc on the TT
-motor's second shaft, the sensors cost little, and they were what we had. They give
+motor's second shaft, the sensors cost little, and they were already at hand. They give
 speed, not position or direction; a quadrature encoder would give both, at a higher cost.
 
 \subsection{Ultrasonic sensor: HC-SR04}
@@ -603,7 +603,7 @@ between \texttt{ECHO} and GPIO~12, and \(R_2\) from GPIO~12 to ground. The pin t
 \begin{equation}
   V_{\text{GPIO}} = V_{\text{ECHO}} \, \frac{R_2}{R_1 + R_2}.
 \end{equation}
-We use \(R_1 = 1\)~k\(\Omega\) and \(R_2 = 2\)~k\(\Omega\), so a 5~V echo gives 3.33~V,
+With \(R_1 = 1\)~k\(\Omega\) and \(R_2 = 2\)~k\(\Omega\), a 5~V echo gives 3.33~V,
 within the input limit and well above the \(0.75 \times V_{DD}\), about 2.5~V, that the
 ESP32-S3 needs to read a high level \cite{esp32s3_datasheet}. The \texttt{TRIG} input is
 left without conversion. The datasheet only asks for a ``TTL pulse''
@@ -660,16 +660,16 @@ cancels the drift. Every 50~ms (20~Hz) the robot sends the roll, the pitch and t
 angular rates to the controller, which shows them on its MPU6050 screen.
 
 \paragraph{Why the MPU6050.} It is a common and cheap module that gives six axes over two
-wires, and it was available to us. The yaw angle, the heading, cannot be corrected the
+wires, and it was available. The yaw angle, the heading, cannot be corrected the
 same way, because gravity gives no reference for it; it would need a magnetometer, and
 the firmware does not compute it.
 
 \subsection{Power supply}
 \label{sec:robot-power}
 \paragraph{The battery.} The robot runs from two 18650 lithium-ion cells, the
-cylindrical 18~mm by 65~mm format used in laptop packs and power banks. Ours are METAMA
-cells labelled 3.7~V and 2500~mAh; we found no datasheet for them, so the label values
-are all we use. The two cells sit in a two-slot holder and are connected in series, the
+cylindrical 18~mm by 65~mm format used in laptop packs and power banks. The cells used
+are METAMA cells labelled 3.7~V and 2500~mAh; no datasheet could be found for them, so
+only the label values are used. The two cells sit in a two-slot holder and are connected in series, the
 positive terminal of one to the negative terminal of the other, which makes a 2S pack:
 \begin{itemize}
   \item nominal voltage \(2 \times 3.7 = 7.4\)~V, rising to about 8.4~V when fully
@@ -692,10 +692,10 @@ is from the converter's output (\texttt{pins\_esp32s3.h}).
 \paragraph{The step-down converter.} A pack that reaches 8.4~V cannot be connected to the
 board's 5~V pin directly. A linear regulator would turn the difference into heat; a
 switching \emph{buck} converter instead switches the input on and off at high frequency
-and smooths the result with an inductor and a capacitor, so it wastes far less. We use a
-Mini360 module, a very small buck board built around the MP2307 controller, whose output
-voltage is set with an on-board trimmer. Before the ESP32-S3 was connected, we fed
-the module 7.4~V from a bench power supply and turned the trimmer until a multimeter
+and smooths the result with an inductor and a capacitor, so it wastes far less. The
+converter is a Mini360 module, a very small buck board built around the MP2307 controller, whose output
+voltage is set with an on-board trimmer. Before the ESP32-S3 was connected, the module
+was fed 7.4~V from a bench power supply and the trimmer was turned until a multimeter
 read 5~V at its output. Its main figures, from a module description \cite{mini360_c101}, are an input
 of 4.75 to 23~V, an output of 1 to 17~V, and 1.8~A continuous (3~A peak). The ESP32-S3
 draws at most about 340~mA, while transmitting over Wi-Fi \cite{esp32s3_datasheet}, so
@@ -705,8 +705,8 @@ the converter works far below its limit.
 fuse, and the main switch is planned but not fitted yet. A BMS would cut the load when a
 cell is over-discharged and stop overcharging, and a fuse would protect the wiring from
 a short circuit; without them, these protections rely on the user, who must not run the
-pack flat and must charge the cells in the dedicated charger. One of our cells failed
-during development and was replaced; we did not identify the cause. Adding a 2S BMS, a
+pack flat and must charge the cells in the dedicated charger. One of the cells failed
+during development and was replaced; the cause was not identified. Adding a 2S BMS, a
 fuse and the switch is the first item of future work on the hardware.
 
 Decoupling is also minimal. TI asks for at least 10~\textmu F close to the DRV8833's
@@ -731,13 +731,13 @@ figures are a dual-core Xtensa LX6 processor at up to 240~MHz, 520~KB of SRAM, 2
 Wi-Fi (IEEE 802.11b/g/n), Bluetooth~4.2, two 12-bit analog-to-digital converters and 34
 GPIOs, six of which are inputs only \cite{esp32_datasheet}. The board is a generic
 30-pin development board of the ``ESP32 DevKit V1'' type, with a USB-C connector and a
-CP2102 USB-to-serial converter for programming. Its module carries no marking, so we
-cannot name it exactly; like the robot's board, it takes 5~V on its \texttt{VIN} pin and
+CP2102 USB-to-serial converter for programming. Its module carries no marking, so it
+cannot be named exactly; like the robot's board, it takes 5~V on its \texttt{VIN} pin and
 regulates it to 3.3~V.
 
 \paragraph{Why an ESP32.} The controller's job is light: read a few inputs, draw a
 128 \(\times\) 64 screen and exchange small packets with the robot. A classic ESP32 does
-this easily and it is the board we already had. Since it uses the same radio and the same
+this easily and it was the board already at hand. Since it uses the same radio and the same
 ESP-NOW protocol as the ESP32-S3, the two ends speak to each other without any extra
 hardware. A smaller and cheaper chip, such as the single-core ESP32-C3, would probably
 be enough and is left as a possible improvement.
@@ -772,7 +772,7 @@ stop the board from starting.
 wiper of a potentiometer connected between the supply and ground, so the wiper voltage
 varies with the position of the stick and rests near mid-supply when the stick is
 released. The module also has a push switch, which the controller does not use. Although
-its supply pin is labelled +5~V, we power it from 3.3~V so that its outputs never exceed
+its supply pin is labelled +5~V, it is powered from 3.3~V so that its outputs never exceed
 what the ESP32's inputs accept. The two wipers go to GPIO~34 and~35, which belong to ADC1.
 This matters because the radio is on all the time and ADC2 is shared with the Wi-Fi
 driver \cite{espidf_adc}, while ADC1 is not. The ADC converts each voltage into a 12-bit
@@ -792,7 +792,7 @@ SSD1306 answers to when its address-select pin is low \cite{ssd1306_datasheet}, 
 powered from 3.3~V, within the controller's 1.65 to 3.3~V logic supply range
 \cite{ssd1306_datasheet}. The firmware draws each screen in a frame buffer in the ESP32's
 memory, \(128 \times 64 / 8 = 1024\) bytes, and sends it to the display in one transfer.
-OLED pixels emit their own light, so the screen needs no backlight. During development we found the small 0.96-inch screens hard to read at arm's
+OLED pixels emit their own light, so the screen needs no backlight. During development the small 0.96-inch screens proved hard to read at arm's
 length, so a larger 2.42-inch display of the same resolution, driven by the closely
 related SSD1309, is planned. The firmware already supports it through a single
 compile-time switch (\texttt{USE\_SSD1309}), and the wiring is the same.
@@ -808,9 +808,9 @@ Figure~\ref{fig:architecture}.
 is charged through a TP4056 module with a USB-C input. The TP4056 is a linear charger for
 single lithium-ion cells. It charges at constant current, set by a programming resistor,
 then at constant voltage once the cell reaches 4.2~V (within 1.5~\%), and charges a deeply
-discharged cell gently until it rises above 2.9~V \cite{tp4056_datasheet}. Our module
-carries no reference; it is identical in layout to a USB-C TP4056 module sold locally,
-whose listing we use for its figures \cite{esp32lab_tp4056}: a maximum charge current of
+discharged cell gently until it rises above 2.9~V \cite{tp4056_datasheet}. The module
+used carries no reference; it is identical in layout to a USB-C TP4056 module sold
+locally, whose listing gives its figures \cite{esp32lab_tp4056}: a maximum charge current of
 1000~mA.
 
 Unlike the robot's pack, the controller's cell is protected. The module has separate
@@ -871,7 +871,7 @@ second, between two boards that are both Espressif chips.
         chips. The 250-byte limit is far above what BLOC-BOT needs, since its largest
         packet is 11~bytes.
 \end{itemize}
-The choice was also practical: the protocol was suggested to us during development, and
+The choice was also practical: the protocol was suggested during development, and
 it suits a system in which every board is an ESP32.
 
 \paragraph{How BLOC-BOT uses it.} Both boards send to the broadcast address, without
@@ -896,8 +896,8 @@ first is handled by the design; the other two remain open.
         therefore interfere. Pairing each controller with its robot by MAC address, and
         enabling ESP-NOW's encryption, which is available for paired devices
         \cite{espnow_idf}, would remove this limit and is left as future work.
-  \item \textbf{Range.} We have not measured the range of the link, and the documentation
-        we used gives no figure for it, so the thesis states none.
+  \item \textbf{Range.} The range of the link has not been measured, and the
+        documentation consulted gives no figure for it, so the thesis states none.
 \end{itemize}
 
 \section{The modular platform}
