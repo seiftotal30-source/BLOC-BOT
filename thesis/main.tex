@@ -49,7 +49,9 @@
 \date{\today}
 
 \begin{document}
-\input{chapters/cover}
+% Title page from the faculty's 2026 template, built separately with LuaLaTeX because
+% its header carries Arabic:  cd titlepage && lualatex titlepage.tex
+\includepdf[pages=1]{titlepage/titlepage.pdf}
 
 \pagenumbering{roman}
 \tableofcontents
