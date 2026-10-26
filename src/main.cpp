@@ -37,7 +37,7 @@ void loop() {
     updateImu();
     sendImu();            // every 50 ms
     updateUltrasonic();   // every 100 ms
-    updateLine();         // every 50 ms
+    updateLine();         // every loop: line follower, state to con every 50 ms
     updateMotors();       // failsafe + ramp
     delay(10);
 }

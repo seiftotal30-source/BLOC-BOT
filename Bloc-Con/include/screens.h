@@ -8,6 +8,7 @@ enum Screen {
   ULTRASONIC_SCREEN,
   MPU_SCREEN,
   LINE_SCREEN,
+  FOLLOW_SCREEN,
   DRIVE_SCREEN,
   ABOUT_SCREEN,
   SETTINGS_SCREEN
@@ -38,5 +39,11 @@ void drawMpu();
 
 // screen_line.cpp
 void drawLine();
+
+// screen_follow.cpp (menu: Start)
+void openFollow();     // starts in calibration
+void followForward();  // FORWARD: calibration -> following
+void stopFollow();     // BACK: line follower off
+void drawFollow();
 
 #endif

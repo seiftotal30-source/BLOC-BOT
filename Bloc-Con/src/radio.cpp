@@ -32,6 +32,9 @@ static void onReceive(const uint8_t*, const uint8_t* data, int len) {
     LinePacket p;
     memcpy(&p, data, sizeof(p));
     for (int i = 0; i < 5; i++) robot.line[i] = p.raw[i];
+    robot.linePos = p.position;
+    robot.lineFlags = p.flags;
+    robot.lineUsable = p.usable;
     robot.lineTime = millis();
   } else if (len == sizeof(ImuPacket) && data[0] == ID_IMU) {
     ImuPacket p;
@@ -65,5 +68,12 @@ void sendDrive(int fwd, int turn) {
   p.id = ID_DRIVE;
   p.fwd = constrain(fwd, -100, 100);
   p.turn = constrain(turn, -100, 100);
+  esp_now_send(broadcastMac, (uint8_t*)&p, sizeof(p));
+}
+
+void sendLineCmd(uint8_t mode) {
+  LineCmdPacket p;
+  p.id = ID_LINE_CMD;
+  p.mode = mode;
   esp_now_send(broadcastMac, (uint8_t*)&p, sizeof(p));
 }
