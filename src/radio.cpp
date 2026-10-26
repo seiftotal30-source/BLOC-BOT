@@ -2,6 +2,7 @@
 #include <esp_now.h>
 #include "radio.h"
 #include "drive.h"
+#include "line.h"
 
 static uint8_t broadcastMac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
@@ -12,6 +13,7 @@ static void onReceive(const esp_now_recv_info_t*, const uint8_t* data, int len) 
 static void onReceive(const uint8_t*, const uint8_t* data, int len) {
 #endif
     handleDrivePacket(data, len);
+    handleLineCmdPacket(data, len);
 }
 
 void initRadio() {

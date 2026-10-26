@@ -27,7 +27,9 @@ void initButtons() {
 
 static void openSelected() {
   switch (selected) {
-    case 0:  // start: nothing yet
+    case 0:  // start: line follower
+      currentScreen = FOLLOW_SCREEN;
+      openFollow();
       break;
     case 1:
       currentScreen = SETTINGS_SCREEN;
@@ -69,12 +71,22 @@ void handleButtons() {
     if (pressed(BTN_FORWARD)) {
       openSelected();
       lastButtonTime = millis();
+      return;  // the same press must not also act on the screen it just opened
     }
+  }
+
+  if (currentScreen == FOLLOW_SCREEN && pressed(BTN_FORWARD)) {
+    followForward();
+    lastButtonTime = millis();
   }
 
   // back always returns to the menu
   if (pressed(BTN_BACK)) {
     if (currentScreen == DRIVE_SCREEN) stopRobot();
+    if (currentScreen == FOLLOW_SCREEN) {
+      stopFollow();
+      stopRobot();
+    }
     currentScreen = MENU_SCREEN;
     lastButtonTime = millis();
   }

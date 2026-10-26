@@ -11,6 +11,7 @@ const uint8_t ID_SPEED = 0xB2;     // bloc -> con
 const uint8_t ID_IMU = 0xB4;       // bloc -> con
 const uint8_t ID_DISTANCE = 0xB5;  // bloc -> con
 const uint8_t ID_LINE = 0xB6;      // bloc -> con
+const uint8_t ID_LINE_CMD = 0xB7;  // con -> bloc
 
 struct __attribute__((packed)) DrivePacket {
   uint8_t id;
@@ -38,9 +39,29 @@ struct __attribute__((packed)) DistancePacket {
   int16_t mm;  // -1 = nothing in range
 };
 
+// line sensor state flags (LinePacket.flags)
+const uint8_t LINE_SEEN = 0x01;        // the line is under at least one sensor
+const uint8_t LINE_CALIBRATED = 0x02;  // at least one sensor has a usable floor/line range
+const uint8_t LINE_FOLLOWING = 0x04;   // bloc is steering along the line
+const uint8_t LINE_LOST = 0x08;        // following, but the line was lost for too long: stopped
+
 struct __attribute__((packed)) LinePacket {
   uint8_t id;
   uint16_t raw[5];  // analog 0..4095, sensor 1 (left) .. 5 (right)
+  int8_t position;  // -100 (line far left) .. 100 (far right), valid with LINE_SEEN
+  uint8_t flags;    // LINE_*
+  uint8_t usable;   // bit i set = sensor i+1 changed enough during calibration
+};
+
+// line follower mode, sent by con every 50 ms while its Start screen is open.
+// bloc drops back to LINE_OFF if none arrives for 300 ms
+const uint8_t LINE_OFF = 0;
+const uint8_t LINE_CALIBRATE = 1;  // stand still, learn each sensor's floor and line values
+const uint8_t LINE_FOLLOW = 2;
+
+struct __attribute__((packed)) LineCmdPacket {
+  uint8_t id;
+  uint8_t mode;  // LINE_OFF, LINE_CALIBRATE, LINE_FOLLOW
 };
 
 #endif

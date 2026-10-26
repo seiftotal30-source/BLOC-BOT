@@ -30,6 +30,7 @@ void loop() {
     case ULTRASONIC_SCREEN: drawUltrasonic(); break;
     case MPU_SCREEN:        drawMpu(); break;
     case LINE_SCREEN:       drawLine(); break;
+    case FOLLOW_SCREEN:     drawFollow(); break;
     case DRIVE_SCREEN:      drawDriveScreen(); break;
     case ABOUT_SCREEN:      drawAbout(); break;
     case SETTINGS_SCREEN:   drawSettings(); break;
