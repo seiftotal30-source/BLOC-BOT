@@ -2,6 +2,7 @@
 % Each chapter lives in chapters/. Front matter (cover, abstracts) comes later.
 \documentclass[12pt,a4paper]{report}
 
+\usepackage{cmap}        % before fontenc: makes the PDF text searchable and copyable
 \usepackage[a4paper,margin=2.5cm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -11,7 +12,16 @@
 \usepackage{float}
 \usepackage{booktabs}
 \usepackage{tabularx}    % any table with a text column: use an X column so it wraps
+\usepackage{longtable}   % list of abbreviations
 \usepackage{multirow}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+% Table of contents shows "Chapter 1: Generalities".
+\usepackage[titles]{tocloft}
+\renewcommand{\cftchappresnum}{Chapter~}
+\renewcommand{\cftchapaftersnum}{:}
+\AtBeginDocument{\settowidth{\cftchapnumwidth}{\bfseries Chapter~0:\ }}
 \usepackage{caption}
 \usepackage{pdfpages}    % separately built cover / Arabic abstract
 \usepackage{rotating}    % sidewaysfigure, for the schematics
@@ -54,8 +64,16 @@
 \includepdf[pages=1]{titlepage/titlepage.pdf}
 
 \pagenumbering{roman}
-\tableofcontents
+\include{chapters/front_dedication}
+\include{chapters/front_acknowledgements}
 
+\tableofcontents
+\listoffigures
+\listoftables
+
+\include{chapters/front_abbreviations}
+
+\cleardoublepage
 \pagenumbering{arabic}
 \pagestyle{fancy}
 
@@ -66,5 +84,5 @@
 % Figure library (F01...): not placed yet; figures move into the chapters as they are used.
 % \input{figures}
 
-\printbibliography
+\printbibliography[heading=bibintoc,title={References}]
 \end{document}

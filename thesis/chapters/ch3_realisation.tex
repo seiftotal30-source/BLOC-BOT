@@ -38,7 +38,7 @@ to ground.
 \begin{sidewaysfigure}
   \centering
   \includegraphics[width=\textheight]{../circuits/kicad/robot/robot.pdf}
-  \caption{Schematic of the robot, drawn in KiCad. Modules are drawn as boxes with their
+  \caption[Schematic of the robot]{Schematic of the robot, drawn in KiCad. Modules are drawn as boxes with their
            header pins; pins carrying the same net name are connected. Only the
            ESP32-S3 pins in use are shown. Not shown: the main switch, a BMS and a fuse,
            which are not fitted yet.}
@@ -48,7 +48,7 @@ to ground.
 \begin{sidewaysfigure}
   \centering
   \includegraphics[width=\textheight]{../circuits/kicad/controller/controller.pdf}
-  \caption{Schematic of the controller, drawn in KiCad, with the same conventions as
+  \caption[Schematic of the controller]{Schematic of the controller, drawn in KiCad, with the same conventions as
            Figure~\ref{fig:sch-robot}. The joystick is powered from 3.3~V although its
            pin is labelled +5V. The HC-SR04 wired to the controller during bench tests is
            not shown, since the sensor now sits on the robot.}
@@ -81,7 +81,7 @@ both projects so that the two ends always agree on them.
 
 \begin{table}[htbp]
   \centering
-  \caption{Organisation of the firmware (\texttt{.cpp} file and its \texttt{.h} header).}
+  \caption[Organisation of the firmware]{Organisation of the firmware (\texttt{.cpp} file and its \texttt{.h} header).}
   \label{tab:modules}
   \begin{tabularx}{\textwidth}{@{}l X@{}}
     \toprule
@@ -123,7 +123,7 @@ millimetres and angles in tenths of a degree.
 
 \begin{table}[htbp]
   \centering
-  \caption{ESP-NOW packets exchanged between the controller (Con) and the robot (Bloc).
+  \caption[ESP-NOW packets]{ESP-NOW packets exchanged between the controller (Con) and the robot (Bloc).
            All multi-byte fields are signed 16-bit integers.}
   \label{tab:packets}
   \begin{tabularx}{\textwidth}{@{}c l X c c@{}}
@@ -198,7 +198,7 @@ loop waits for a sensor, so the motor ramp and the failsafe always run on time.
       encoders: time each wheel pulse\\
       echo: time the ultrasonic pulse};
   \end{tikzpicture}
-  \caption{Main loop of the robot firmware. Dashed: work done in interrupt routines,
+  \caption[Main loop of the robot firmware]{Main loop of the robot firmware. Dashed: work done in interrupt routines,
            outside the loop.}
   \label{fig:robot-loop}
 \end{figure}
@@ -277,7 +277,7 @@ from scrolling too fast.
     \node[font=\scriptsize, align=left, right=3mm of mpu] {roll, pitch, rates,\\ spirit
       level};
   \end{tikzpicture}
-  \caption{Screens of the controller. FORWARD opens the selected screen from the menu,
+  \caption[Screens of the controller]{Screens of the controller. FORWARD opens the selected screen from the menu,
            and BACK returns to the menu from every screen.}
   \label{fig:screens}
 \end{figure}
@@ -441,7 +441,7 @@ is available. The cost is the mass of PETG at 4000~DA per kilogram, with and wit
 
 \begin{table}[htbp]
   \centering
-  \caption{Printed parts: mass, print time and PETG cost at 4000~DA/kg
+  \caption[Printed parts: mass, print time and cost]{Printed parts: mass, print time and PETG cost at 4000~DA/kg
            (\texttt{results/print\_cost/print\_cost.csv}).}
   \label{tab:print-cost}
   \begin{tabularx}{\textwidth}{@{}X r r r r@{}}
@@ -469,7 +469,7 @@ line sensor (800~DA) and the Flying Fish infrared sensor (500~DA), are not count
 
 \begin{table}[htbp]
   \centering
-  \caption{Electronic parts and the prices paid (DA). \todo{MT3608 price}}
+  \caption[Electronic parts and their prices]{Electronic parts and the prices paid (DA). \todo{MT3608 price}}
   \label{tab:bom}
   \begin{tabularx}{\textwidth}{@{}X r r r@{}}
     \toprule

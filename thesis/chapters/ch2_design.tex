@@ -197,7 +197,7 @@ and~\ref{sec:controller}.
     \node[font=\small\bfseries, blue!60!black, align=center]
       at ($(mcuC.south)!0.5!(mcuR.north) + (-4.4,0)$) {ESP-NOW\\wireless link};
   \end{tikzpicture}
-  \caption{System architecture. The controller (top) and the robot (bottom) share no
+  \caption[System architecture]{System architecture. The controller (top) and the robot (bottom) share no
            wire; over ESP-NOW the controller sends drive commands and the robot sends back
            its wheel speeds, the measured distance and its tilt. Red arrows
            are power, black arrows are signals, and the dashed block is in progress.}
@@ -228,7 +228,7 @@ step-down converter described in Section~\ref{sec:robot-power}.
 
 \begin{table}[htbp]
   \centering
-  \caption{Main features of the ESP32-S3 and of the N16R8 module used on the robot,
+  \caption[Main features of the ESP32-S3 N16R8 module]{Main features of the ESP32-S3 and of the N16R8 module used on the robot,
            whose figures follow Espressif's WROOM-1 N16R8
            \cite{esp32s3_datasheet,esp32s3_wroom1_datasheet}.}
   \label{tab:esp32s3}
@@ -270,7 +270,7 @@ DRV8833's sleep input is tied to 3.3~V, so the driver is always enabled and need
 
 \begin{table}[htbp]
   \centering
-  \caption{GPIO assignment on the robot (firmware file \texttt{pins\_esp32s3.h}).}
+  \caption[GPIO assignment on the robot]{GPIO assignment on the robot (firmware file \texttt{pins\_esp32s3.h}).}
   \label{tab:robot-pins}
   \begin{tabularx}{\textwidth}{@{}l l X@{}}
     \toprule
@@ -319,7 +319,7 @@ since that would short the supply to ground; the driver chip prevents this inter
     \draw (0,2) node[circ] {} node[left=12pt] {OUT1} -- (mot.west);
     \draw (mot.east) -- (4,2) node[circ] {} node[right=12pt] {OUT2};
   \end{circuitikz}
-  \caption{Principle of an H-bridge. The DRV8833 contains two of these, built from
+  \caption[Principle of an H-bridge]{Principle of an H-bridge. The DRV8833 contains two of these, built from
            N-channel MOSFETs, one per motor \cite{drv8833_datasheet}.}
   \label{fig:hbridge}
 \end{figure}
@@ -332,7 +332,7 @@ Table~\ref{tab:drv8833}.
 
 \begin{table}[htbp]
   \centering
-  \caption{DRV8833 H-bridge logic, per bridge \cite{drv8833_datasheet}, and the
+  \caption[DRV8833 H-bridge logic]{DRV8833 H-bridge logic, per bridge \cite{drv8833_datasheet}, and the
            switches of Figure~\ref{fig:hbridge} that it closes.}
   \label{tab:drv8833-logic}
   \begin{tabular}{@{}cccccl@{}}
@@ -349,7 +349,7 @@ Table~\ref{tab:drv8833}.
 
 \begin{table}[htbp]
   \centering
-  \caption{Main ratings of the DRV8833 \cite{drv8833_datasheet}.}
+  \caption[Main ratings of the DRV8833]{Main ratings of the DRV8833 \cite{drv8833_datasheet}.}
   \label{tab:drv8833}
   \begin{tabularx}{\textwidth}{@{}l X@{}}
     \toprule
@@ -420,7 +420,7 @@ type of motor, not measurements of the units fitted to BLOC-BOT.
 
 \begin{table}[htbp]
   \centering
-  \caption{Reference figures for the 1:48 TT gearmotor (vendor bench measurements
+  \caption[Reference figures for the 1:48 TT gearmotor]{Reference figures for the 1:48 TT gearmotor (vendor bench measurements
            \cite{adafruit_tt_motor}, not measured on the robot's motors).}
   \label{tab:ttmotor}
   \begin{tabular}{@{}lcc@{}}
@@ -565,7 +565,7 @@ assumed. Table~\ref{tab:hcsr04} lists the module's main figures.
 
 \begin{table}[htbp]
   \centering
-  \caption{Main figures of the HC-SR04 module, from the manufacturer's datasheet
+  \caption[Main figures of the HC-SR04 module]{Main figures of the HC-SR04 module, from the manufacturer's datasheet
            \cite{hcsr04_datasheet}.}
   \label{tab:hcsr04}
   \begin{tabularx}{\textwidth}{@{}l X@{}}
@@ -744,7 +744,7 @@ be enough and is left as a possible improvement.
 
 \begin{table}[htbp]
   \centering
-  \caption{GPIO assignment on the controller (firmware file \texttt{Bloc-Con/include/config.h}).}
+  \caption[GPIO assignment on the controller]{GPIO assignment on the controller (firmware file \texttt{Bloc-Con/include/config.h}).}
   \label{tab:con-pins}
   \begin{tabularx}{\textwidth}{@{}l l X@{}}
     \toprule
