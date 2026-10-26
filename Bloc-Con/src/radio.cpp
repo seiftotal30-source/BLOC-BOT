@@ -28,6 +28,11 @@ static void onReceive(const uint8_t*, const uint8_t* data, int len) {
     memcpy(&p, data, sizeof(p));
     robot.distMm = p.mm;
     robot.distTime = millis();
+  } else if (len == sizeof(LinePacket) && data[0] == ID_LINE) {
+    LinePacket p;
+    memcpy(&p, data, sizeof(p));
+    for (int i = 0; i < 5; i++) robot.line[i] = p.raw[i];
+    robot.lineTime = millis();
   } else if (len == sizeof(ImuPacket) && data[0] == ID_IMU) {
     ImuPacket p;
     memcpy(&p, data, sizeof(p));

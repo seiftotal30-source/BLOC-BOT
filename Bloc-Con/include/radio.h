@@ -13,6 +13,8 @@ struct RobotData {
   volatile unsigned long distTime = 0;
   volatile float roll = 0, pitch = 0, gx = 0, gy = 0, gz = 0;  // deg, deg/s
   volatile unsigned long imuTime = 0;
+  volatile uint16_t line[5] = {0, 0, 0, 0, 0};  // line sensors, analog 0..4095, left to right
+  volatile unsigned long lineTime = 0;
 };
 
 extern RobotData robot;

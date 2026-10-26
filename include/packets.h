@@ -10,6 +10,7 @@ const uint8_t ID_DRIVE = 0xB1;     // con -> bloc
 const uint8_t ID_SPEED = 0xB2;     // bloc -> con
 const uint8_t ID_IMU = 0xB4;       // bloc -> con
 const uint8_t ID_DISTANCE = 0xB5;  // bloc -> con
+const uint8_t ID_LINE = 0xB6;      // bloc -> con
 
 struct __attribute__((packed)) DrivePacket {
     uint8_t id;
@@ -35,6 +36,11 @@ struct __attribute__((packed)) ImuPacket {
 struct __attribute__((packed)) DistancePacket {
     uint8_t id;
     int16_t mm;  // -1 = nothing in range
+};
+
+struct __attribute__((packed)) LinePacket {
+    uint8_t id;
+    uint16_t raw[5];  // analog 0..4095, sensor 1 (left) .. 5 (right)
 };
 
 #endif

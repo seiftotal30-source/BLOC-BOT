@@ -5,8 +5,8 @@
 
 Screen currentScreen = MENU_SCREEN;
 
-static const char* menu[] = {"Start", "Settings", "Ultrasonic", "MPU6050", "Drive", "About", "Reset"};
-static const int MENU_SIZE = 7;
+static const char* menu[] = {"Start", "Settings", "Ultrasonic", "MPU6050", "Line", "Drive", "About", "Reset"};
+static const int MENU_SIZE = 8;
 static const int MENU_ROWS = 6;  // rows that fit on 64 px, the list scrolls past this
 static int selected = 0;
 
@@ -40,12 +40,15 @@ static void openSelected() {
       resetMpuFilter();
       break;
     case 4:
-      currentScreen = DRIVE_SCREEN;
+      currentScreen = LINE_SCREEN;
       break;
     case 5:
-      currentScreen = ABOUT_SCREEN;
+      currentScreen = DRIVE_SCREEN;
       break;
     case 6:
+      currentScreen = ABOUT_SCREEN;
+      break;
+    case 7:
       ESP.restart();
       break;
   }

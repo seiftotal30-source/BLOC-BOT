@@ -38,7 +38,7 @@ reads only work on ADC1: 32–39.
 | 48 | onboard RGB LED: green while Con is connected | in code | `RGB_BUILTIN` in the Arduino core (some DevKitC v1.1 boards wire it to 38) |
 | 8 / 9 | I2C SDA / SCL: MPU6050 (0x68) | in code | data sent to Con at 20 Hz; later also the OLED face and TCS34725 |
 | 1 | battery sense | planned | ADC1, through the 100k / 33k divider |
-| 2, 4, 5, 6, 7 | line sensors ×5 (TCRT5000) | planned | ADC1; 3 skipped (strapping) |
+| 2, 4, 5, 6, 7 | 5-channel line sensor bar (analog) | in code | left to right; bar on 3V3 so the outputs stay 3.3 V; ADC1; raw values sent to Con at 20 Hz |
 | 11 / 12 | HC-SR04 TRIG / ECHO | in code | ECHO -> 1k -> 12, 12 -> 2k -> GND; VCC on 5V; distance sent to Con at 10 Hz |
 | 21 | WS2812 data | planned | |
 | 47 | passive buzzer | planned | |

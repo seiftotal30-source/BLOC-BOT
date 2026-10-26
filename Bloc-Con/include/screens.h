@@ -7,6 +7,7 @@ enum Screen {
   MENU_SCREEN,
   ULTRASONIC_SCREEN,
   MPU_SCREEN,
+  LINE_SCREEN,
   DRIVE_SCREEN,
   ABOUT_SCREEN,
   SETTINGS_SCREEN
@@ -34,5 +35,8 @@ void drawUltrasonic();
 void initLocalMpu();
 void resetMpuFilter();
 void drawMpu();
+
+// screen_line.cpp
+void drawLine();
 
 #endif

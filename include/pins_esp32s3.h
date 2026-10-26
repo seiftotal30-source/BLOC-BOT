@@ -24,6 +24,13 @@
 #define ULTRASONIC_TRIG_PIN  11
 #define ULTRASONIC_ECHO_PIN  12
 
+// 5-channel line sensor bar (analog outputs), powered from 3.3 V. adc1 only: wi-fi blocks adc2
+#define LINE_PIN_1  2  // far left
+#define LINE_PIN_2  4
+#define LINE_PIN_3  5  // centre
+#define LINE_PIN_4  6
+#define LINE_PIN_5  7  // far right
+
 // motor pwm
 #define PWM_FREQ         20000  // 20 kHz
 #define PWM_RESOLUTION   8      // 0-255
