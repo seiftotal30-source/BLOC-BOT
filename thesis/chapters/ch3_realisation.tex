@@ -382,15 +382,19 @@ each run. The measured speed is \(v = 2~\text{m} / t\).
 encoders.
 \paragraph{Results.} \todo{three times, the three displayed speeds, table and comment}
 
-\subsection{T2: running time on one charge}
-\paragraph{Purpose.} To measure how long the robot runs on its 2S pack.
-\paragraph{Procedure.} The cells are fully charged in the charger. The robot is placed with
-its wheels off the ground and driven at a constant command. Because the pack has no
-battery management system (Section~\ref{sec:robot-power}), the test must not run until the
-robot stops by itself: the pack voltage is measured with a multimeter every 10~minutes,
-and the test ends when it reaches 6.0~V, that is 3.0~V per cell. The running time is
-noted.
-\paragraph{Results.} \todo{running time, voltage readings}
+\subsection{Running time on one charge}
+The running time of the robot was deliberately not measured. Measuring it means running
+the pack down to empty, and since the pack has no battery management system
+(Section~\ref{sec:robot-power}), nothing would stop the cells from being over-discharged
+and damaged during the test; one cell had already failed during development.
+
+An order of magnitude is enough for the intended use. The pack holds 2500~mAh, or about
+18.5~Wh (Section~\ref{sec:robot-power}). Even if the robot drew an average of 1~A from it,
+an assumption well above the no-load current of the two motors (\(2 \times 0.16\)~A,
+Table~\ref{tab:ttmotor}) plus the electronics, the pack would last in the order of two
+hours. A demonstration or a competition run lasts a few minutes, so the running time is
+not a limitation in practice. Measuring it properly, with a BMS fitted to cut off the
+pack safely, is left for future work.
 
 \subsection{T3: ultrasonic distance}
 \paragraph{Purpose.} To check the distances measured by the HC-SR04 and sent to the

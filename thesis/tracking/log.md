@@ -111,3 +111,15 @@ Every search or data lookup that fed a design decision, with what it found.
 | S17 | 2026-10-14 | CAD/3mf/from_professional/Bracket.3mf | Vertex heights of the three parts | Flange 4 mm thick (12 mm only at the tab socket); flange X 33..90, Y 47.45..101.06 | Support plate thickness (flange_t) |
 | S18 | 2026-10-14 | Waffle plate (copied into "Caster Mount") | Holes near the rear centre line; underside solid fraction | Plate turned 90 deg as on the real robot; Ø4.5 holes at (±27, -71) and (±7, -34) used; underside flat with holes; 77 % of the support top on solid plate, bracket flange area 38 % | Fixing screw positions, contact check |
 | S19 | 2026-10-20 | Latest G-code files in CAD/out (motor brackets taken from origin/main a36c08b) + user | Filament length, print time, cost | 5 G-code parts 107.2 g at 1.27 g/cm3 (assumed typical PETG density), 5 h 08 (Cura TIME_ELAPSED); old waffle plate ~200 g, 1 d 21 h (user, no G-code). Total 307 g, 1229-1290 DA at 4000 DA/kg + 0-5 % waste (user) | Print cost table (T5) |
+
+### Chapter 1 sources (added 2026-10-26)
+
+| Key | What it is | Used for | Verified? |
+|---|---|---|---|
+| siegwart2004 | Siegwart & Nourbakhsh, Introduction to Autonomous Mobile Robots, MIT Press 2004 (PDF copy + extracted text in references/datasheets/) | Ch. 1.2: wheels most popular, legged vs wheeled, differential drive spins on the spot, equal velocity profiles needed to go straight | yes (quotes checked in the text) |
+| mondada2009epuck | e-puck paper (9th Conf. Autonomous Robot Systems and Competitions 2009) + EPFL DISAL page | Ch. 1.3: education robot, open hardware, extension turrets | page + abstract (full text not read) |
+| riedo2013thymio | Thymio II paper (IEEE ARSO 2013) + EPFL Thymio page | Ch. 1.3: open-source, all ages, two motors, programming levels | page + abstract (full text not read) |
+| yim2007modular | Yim et al., Modular self-reconfigurable robot systems, IEEE RAM 2007 | Ch. 1.4: definition of self-reconfigurable modular robots | abstract (full text not read) |
+| mhtronic_kit | MHTronic 2-wheel chassis kit page | Ch. 1.3: local kit contents and price (2950 DA) | yes (page) |
+| arduino_uno, atmega328p_datasheet | Arduino UNO R3 docs + Atmel ATmega328P datasheet 7810D | Ch. 1.5: 8-bit, 16 MHz, 32 KB flash, 2 KB SRAM, 10-bit ADC, no radio | yes |
+| nrf24l01p_datasheet | Nordic nRF24L01+ product spec rev 1.0 | Ch. 1.6: 2.4 GHz, 250 k / 1 M / 2 Mbps | yes |

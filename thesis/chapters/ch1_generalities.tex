@@ -1,0 +1,192 @@
+% Chapter 1: Generalities. Background needed to read Chapters 2 and 3, and the place of
+% BLOC-BOT among existing robots. Sources: references.bib (each claim cited).
+
+\chapter{Generalities}
+\label{ch:generalities}
+
+\section{Introduction}
+This chapter gives the background on which the rest of the thesis builds. It first
+describes mobile robots and the way they move, then looks at robots designed for teaching
+and at the idea of a modular robot, and places BLOC-BOT among them. The last two sections
+introduce the electronic building blocks of the project: microcontrollers, and the wireless
+links that let two of them communicate.
+
+\section{Mobile robots}
+\label{sec:mobile-robots}
+
+\subsection{Definition}
+A mobile robot is a machine that can move through its environment under its own control,
+as opposed to an industrial arm fixed to the floor of a factory. It carries its own
+actuators to move, sensors to perceive its surroundings and its own motion, a processing
+unit that decides what to do, and usually its own energy source. It may be controlled by a
+human, as BLOC-BOT is when it is driven from its controller, or it may act on its own from
+what its sensors tell it, as a line-following robot does.
+
+\subsection{Locomotion}
+A mobile robot can move on legs, on wheels, on tracks, or in more unusual ways. Legged
+locomotion copes well with soft and uneven ground but needs many degrees of freedom and is
+mechanically complex. Wheels, by contrast, are simple and very well suited to flat ground,
+where wheeled locomotion is one to two orders of magnitude more efficient than legged
+locomotion \cite{siegwart2004}. For these reasons, Siegwart and Nourbakhsh describe the
+wheel as ``by far the most popular locomotion mechanism in mobile robotics''
+\cite{siegwart2004}. The student competitions we took part in are run on flat indoor
+tracks, where wheels are the natural choice.
+
+\subsection{Differential drive}
+\label{sec:diff-drive}
+Among the many possible wheel arrangements \cite{siegwart2004}, the simplest steerable
+one is the \emph{differential drive}: two wheels on a common axis, each driven by its own
+motor, and one or two passive points of contact, such as a caster wheel, that keep the
+robot level. There is no steering mechanism. The robot goes straight when both wheels turn
+at the same speed, turns when one wheel turns faster than the other, and spins on the spot
+when the wheels turn at the same speed in opposite directions. This ability to turn
+without moving its centre makes it very manoeuvrable, and Siegwart and Nourbakhsh name the
+two-wheel differential drive the most popular of these highly manoeuvrable designs
+\cite{siegwart2004}.
+
+The same property has a cost. Since nothing mechanical keeps the robot on a straight line,
+both motors ``must be driven along exactly the same velocity profile'' for it to go
+straight, which is difficult because of the small differences between wheels and motors
+\cite{siegwart2004}. This is why a differential-drive robot
+benefits from measuring the speed of each wheel, as BLOC-BOT does with its encoders
+(Section~\ref{sec:encoders}). BLOC-BOT uses this configuration: two driven wheels and a
+caster at the front.
+
+\section{Educational and competition robots}
+\label{sec:edu-robots}
+Robots are widely used to teach electronics, programming and control, because they turn
+abstract notions into a machine whose behaviour can be seen. Several families of robots
+serve this purpose.
+
+\paragraph{Robots designed for teaching.} Some robots are designed from the start as
+teaching tools. The e-puck, developed at the EPFL in Switzerland, is a small
+differential-drive robot made for engineering education at university level, inexpensive
+enough to be used widely in class, released under an open-hardware licence, and extensible
+with additional boards stacked on top of it, for example for radio communication
+\cite{mondada2009epuck}. Thymio, also from the EPFL, targets a wider public, from primary
+school to university: it is open-source in both hardware and software, is driven by two
+independent motors, and can be used through pre-programmed behaviours, then graphical and
+text programming \cite{riedo2013thymio}. Both are complete, finished robots: they are
+excellent to learn with, but their mechanics are fixed, and adding a sensor that was not
+planned by their designers is not their purpose.
+
+\paragraph{Hobby kits.} At the other end are the robot-car kits sold in electronics shops.
+The most common one in Algerian shops, a two-wheel chassis kit, costs 2950~DA and contains
+a chassis, two 6~V gearmotors with a 1:48 reduction, two wheels, an omnidirectional caster,
+two encoder discs, a holder for four AA batteries and screws; the microcontroller, the
+motor driver and every sensor have to be bought separately \cite{mhtronic_kit}. Such kits
+are cheap and are the usual starting point for student teams, but they provide little more
+than a frame and motors. Every new sensor needs its own way of being fixed and wired, and
+the result is a different robot every time.
+
+\paragraph{Competition robots.} In our experience of competitions such as the Algerian
+Robot Cup (Section~\ref{sec:spec}), teams build their robots from such kits or from
+scratch, for one event and one task. As explained in Chapter~\ref{ch:design}, this is precisely the
+situation BLOC-BOT was created to improve.
+
+\section{Modular robots}
+\label{sec:modular}
+The word \emph{modular} is used in robotics with two rather different meanings, and it is
+worth separating them to place BLOC-BOT correctly.
+
+In research, \emph{modular self-reconfigurable robots} are machines made of many identical
+or similar modules that can rearrange how they are connected, and so change their own
+shape, to adapt to a new situation, perform a new task or recover from damage
+\cite{yim2007modular}. The robot changes its shape by itself. This is an active research field
+with its own open problems \cite{yim2007modular}.
+
+In a simpler sense, a robot is modular when it is built from parts that follow a common
+interface, so that they can be added, removed or exchanged by hand without redesigning the
+rest. The extension boards of the e-puck are an example of this on the electronic side
+\cite{mondada2009epuck}.
+
+BLOC-BOT belongs to this second kind. It does not reconfigure itself: its modularity is
+mechanical and manual. A plate with a fixed pattern of holes, the waffle plate, provides
+a common interface, and printed holders, the blocs, clamp a sensor or a module to it at
+any position of the pattern. Changing the robot for a new competition then means moving or
+adding blocs and their wiring, rather than designing and printing a new chassis. In this
+sense, BLOC-BOT sits between the hobby kit, which it resembles in cost and in parts, and the
+educational robot, from which it takes the idea of a documented, open platform that others
+can build on.
+
+\section{Embedded systems and microcontrollers}
+\label{sec:mcu}
+An embedded system is a computer built into a device to perform a specific function, often
+with tight limits on size, cost and power, and directly connected to the physical world
+through sensors and actuators. A robot's brain is usually such a system, built around a
+\emph{microcontroller}: a single chip that contains a processor, program and data memory,
+and the peripherals needed to talk to the outside world, such as general-purpose
+input/output (GPIO) pins, timers that generate PWM signals, analog-to-digital converters
+(ADCs) and serial interfaces.
+
+\paragraph{Arduino.} Much of student robotics starts with the Arduino UNO, a board built
+around the ATmega328P microcontroller \cite{arduino_uno}. Its 8-bit processor runs at
+16~MHz, with 32~KB of flash memory for the program, 2~KB of SRAM and a 10-bit ADC
+\cite{atmega328p_datasheet}. The board has no radio \cite{arduino_uno}: a wireless link
+needs an extra module.
+
+\paragraph{The ESP32 family.} The ESP32 chips from Espressif are microcontrollers with an
+integrated 2.4~GHz radio. The original ESP32 combines a dual-core 32-bit processor at up to
+240~MHz, 520~KB of SRAM, Wi-Fi and Bluetooth~4.2 \cite{esp32_datasheet}; the newer ESP32-S3
+offers a similar processor with 512~KB of SRAM, Wi-Fi and Bluetooth~5 Low Energy, and more
+GPIOs \cite{esp32s3_datasheet}. Table~\ref{tab:mcu-compare} compares them with the Arduino
+UNO's microcontroller. Their main interest for a robot is that the processor and the radio
+are on the same chip, so the robot and its controller can communicate without any added
+module, and that they are programmed with the same Arduino tools as an Arduino board.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Microcontrollers compared
+           \cite{atmega328p_datasheet,arduino_uno,esp32_datasheet,esp32s3_datasheet}.}
+  \label{tab:mcu-compare}
+  \begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    & ATmega328P (Arduino UNO) & ESP32 & ESP32-S3 \\
+    \midrule
+    Processor & 8-bit AVR, 16~MHz & dual-core 32-bit Xtensa LX6, up to 240~MHz
+              & dual-core 32-bit Xtensa LX7, up to 240~MHz \\
+    SRAM & 2~KB & 520~KB & 512~KB \\
+    Radio & none & Wi-Fi 802.11b/g/n, Bluetooth~4.2 (Classic and LE)
+          & Wi-Fi 802.11b/g/n, Bluetooth~5 (LE only) \\
+    ADC & 10-bit & two 12-bit & two 12-bit \\
+    Used in BLOC-BOT & no & controller & robot \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Wireless links for robots}
+\label{sec:wireless}
+A robot driven by hand needs a link between its controller and its own microcontroller.
+Most of the options available to a student project work in the 2.4~GHz band.
+
+\begin{itemize}
+  \item \textbf{Wi-Fi} (IEEE 802.11b/g/n) is built into ESP32 chips \cite{esp32_datasheet}.
+        It is designed to connect devices to a network: one device acts as an access
+        point and the others join it before exchanging data, usually over IP.
+  \item \textbf{Bluetooth} exists in two forms. Bluetooth Classic is available on the
+        original ESP32 only; Bluetooth Low Energy,
+        available on both chips \cite{esp32_datasheet,esp32s3_datasheet}, organises data as
+        services and characteristics exchanged over a connection between a central and a
+        peripheral device.
+  \item \textbf{Separate radio modules}, such as the nRF24L01+, are transceivers that a
+        microcontroller without a radio drives over SPI. The nRF24L01+ works in the 2.4~GHz
+        band at 250~kbit/s, 1 or 2~Mbit/s \cite{nrf24l01p_datasheet}; it is cheap and simple
+        but adds a module and its wiring at each end.
+  \item \textbf{ESP-NOW} is Espressif's connectionless protocol, which uses the Wi-Fi radio
+        of ESP32 chips to send short frames directly from one device to another, without an
+        access point or a connection set-up, with up to 250~bytes per frame
+        \cite{espnow_idf}.
+\end{itemize}
+
+The choice between them for BLOC-BOT is made in Section~\ref{sec:espnow}: since both ends
+are ESP32 chips, ESP-NOW gives a direct link with no extra hardware and no connection to
+establish.
+
+\section{Conclusion}
+A small differential-drive robot is one of the simplest and most widely used forms of
+wheeled mobile robot \cite{siegwart2004}; its weakness, keeping a straight line, is what wheel
+encoders help with. Between finished educational robots, whose mechanics are fixed, and
+hobby kits, which offer little beyond a frame and motors, there is room for a platform that
+is as cheap as a kit but provides a standard way of mounting and wiring modules. The ESP32
+family, with its integrated radio and ESP-NOW, provides the electronic base for such a
+platform. Chapter~\ref{ch:design} specifies and designs it.

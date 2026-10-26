@@ -123,6 +123,105 @@
   urldate      = {2026-10-10}
 }
 
+@book{siegwart2004,
+  author       = {Siegwart, Roland and Nourbakhsh, Illah R.},
+  title        = {Introduction to Autonomous Mobile Robots},
+  publisher    = {MIT Press},
+  address      = {Cambridge, MA},
+  year         = {2004},
+  annotation   = {Copy in references/datasheets/siegwart_mobile_robots.pdf (text extracted to
+                  siegwart.txt). Used: wheels "by far the most popular locomotion mechanism"
+                  (sec. 2.3); legged vs wheeled complexity and efficiency (sec. 2.1); two-wheel
+                  differential drive can spin on the spot, "the most popular such robot";
+                  straight-line driving needs both motors on exactly the same velocity profile
+                  (sec. 2.3.1); Table 2.1 wheel configurations}
+}
+
+@inproceedings{mondada2009epuck,
+  author       = {Mondada, Francesco and Bonani, Michael and others},
+  title        = {The e-puck, a Robot Designed for Education in Engineering},
+  booktitle    = {Proceedings of the 9th Conference on Autonomous Robot Systems and
+                  Competitions},
+  address      = {Castelo Branco, Portugal},
+  pages        = {59--65},
+  year         = {2009},
+  annotation   = {EPFL DISAL page: inexpensive enough for classroom use, open hardware licence,
+                  extension turrets (e.g. radio). Abstract: designed for university engineering
+                  education; 90 percent of a large student sample appreciated it},
+  url          = {https://www.epfl.ch/labs/disal/research/epuckwheeledrobot},
+  urldate      = {2026-10-26}
+}
+
+@inproceedings{riedo2013thymio,
+  author       = {Riedo, Fanny and Chevalier, Morgane and Magnenat, St\'{e}phane and
+                  Mondada, Francesco},
+  title        = {Thymio {II}, a Robot that Grows Wiser with Children},
+  booktitle    = {2013 IEEE Workshop on Advanced Robotics and its Social Impacts (ARSO)},
+  address      = {Tokyo, Japan},
+  pages        = {187--193},
+  year         = {2013},
+  doi          = {10.1109/ARSO.2013.6705527},
+  annotation   = {With the EPFL Thymio page: open-source hardware and software, learners of all
+                  ages, two independent motors, pre-programmed modes then visual, block and text
+                  programming}
+}
+
+@article{yim2007modular,
+  author       = {Yim, Mark and Shen, Wei-Min and Salemi, Behnam and Rus, Daniela and Moll, Mark
+                  and Lipson, Hod and Klavins, Eric and Chirikjian, Gregory S.},
+  title        = {Modular Self-Reconfigurable Robot Systems: Challenges and Opportunities for the
+                  Future},
+  journal      = {IEEE Robotics \& Automation Magazine},
+  date         = {2007-03},
+  pages        = {43--53},
+  annotation   = {Abstract (ISI bib): modular self-reconfigurable systems = autonomous kinematic
+                  machines with variable morphology that change their own shape by rearranging
+                  the connectivity of their parts}
+}
+
+@online{mhtronic_kit,
+  author       = {{MHTronic}},
+  title        = {Kits ch\^{a}ssis de voiture robotis\'{e}e intelligente 2 roues},
+  note         = {Product page (Algerian shop), in French},
+  annotation   = {2950 DA: chassis, 2 motors (6 V, 1:48), 2 tyres, 1 omni wheel, 2 speed encoders,
+                  4 x AA battery box, screws; no microcontroller, driver or sensors},
+  url          = {https://mhtronic.com/produit/kits-chassis-de-voiture-robotisee-intelligente-2-roues/},
+  urldate      = {2026-10-26}
+}
+
+@online{arduino_uno,
+  author       = {{Arduino}},
+  title        = {{UNO R3}},
+  note         = {Product documentation},
+  annotation   = {ATmega328P, 16 MHz, 14 digital I/O (6 PWM), 6 analog inputs, USB, no wireless},
+  url          = {https://docs.arduino.cc/hardware/uno-rev3/},
+  urldate      = {2026-10-26}
+}
+
+@manual{atmega328p_datasheet,
+  author       = {{Atmel}},
+  title        = {{ATmega328P} 8-bit {AVR} Microcontroller with 32K Bytes In-System Programmable
+                  Flash (Automotive)},
+  number       = {7810D-AVR-01/15},
+  note         = {Datasheet summary},
+  year         = {2015},
+  annotation   = {Copy in references/datasheets/. 8-bit AVR, 32 KB flash, 1 KB EEPROM, 2 KB SRAM,
+                  23 I/O lines, 10-bit ADC, 2.7-5.5 V, up to 16 MHz at 4.5-5.5 V},
+  url          = {https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-7810-Automotive-Microcontrollers-ATmega328P_Datasheet.pdf},
+  urldate      = {2026-10-26}
+}
+
+@manual{nrf24l01p_datasheet,
+  author       = {{Nordic Semiconductor}},
+  title        = {{nRF24L01+} Single Chip 2.4GHz Transceiver Product Specification},
+  edition      = {Revision 1.0},
+  year         = {2008},
+  annotation   = {SparkFun-hosted copy in references/datasheets/. 2.4 GHz ISM, 250 kbps / 1 Mbps /
+                  2 Mbps, 1.9-3.6 V, Enhanced ShockBurst},
+  url          = {https://cdn.sparkfun.com/assets/home_page_posts/2/6/7/3/nRF24L01P.pdf},
+  urldate      = {2026-10-26}
+}
+
 @manual{drv8871_datasheet,
   author       = {{Texas Instruments}},
   title        = {{DRV8871 3.6-A Brushed DC Motor Driver With Internal Current Sense}},
