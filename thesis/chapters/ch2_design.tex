@@ -902,9 +902,77 @@ first is handled by the design; the other two remain open.
 
 \section{The modular platform}
 \label{sec:platform}
-\plan{Written last, short. Waffle plate (210 x 210 x 10~mm PETG, hole pattern
-3.2/4.5/6.0~mm), blocs HBloc / VBloc / HBloc\_L, pillars. Old plate (printed) vs new plate
-(designed): print time and mass. One or two figures, the print cost table.}
+The mechanical side of BLOC-BOT is what makes it modular: a base plate drilled with many
+holes, called the \emph{waffle plate}, and a family of printed holders, the \emph{blocs},
+that clamp a sensor board and bolt onto the plate. All the printed parts are made of PETG
+on fused deposition modelling (FDM) printers.
+
+\paragraph{The waffle plate.} The plate is a square of 210 by 210~mm, 10~mm thick, sized
+to fill the 220~mm bed of the printers used. Figure~\ref{fig:waffle} shows its holes, as
+read from the print file: 108 holes of 3.2~mm diameter, 192 of 4.5~mm and 40 of 6.0~mm,
+eight rectangular openings, and 16 tabs along the edges, each with a 6.4~mm hole. The motor
+brackets are fixed with M3 screws and the blocs with M4 thumb screws, both through 4.5~mm
+holes. The holes do not follow a single regular grid: they are grouped around the places
+where parts are expected, and several pairs of holes repeat at the same spacing in
+different parts of the plate, so that a bloc can be moved from one place to another
+without any change to the bloc or to the plate.
+
+\begin{figure}[htbp]
+  \centering
+  \input{figures/waffle_plate_top.tex}
+  \caption[Top view of the waffle plate]{Top view of the waffle plate, drawn from its print
+           file (\texttt{CAD/3mf/Waffle\_plate.3mf}): holes of 3.2~mm (white), 4.5~mm
+           (blue) and 6.0~mm (orange), and the 6.4~mm holes of the 16 edge tabs (red). The
+           plate is mounted on the robot with the caster on the left side of this view.}
+  \label{fig:waffle}
+\end{figure}
+
+\paragraph{Two plates.} The robot uses two identical plates, one above the other. The lower
+plate carries the motors, through their brackets, and the caster; the upper plate carries
+the sensors that must see over the robot, such as the HC-SR04 at the front. The 16 edge
+tabs were designed to receive printed hexagonal pillars joining the two plates. On the
+robot as built, long M6 screws and nuts passed through the tab holes are used instead of
+the pillars. \todo{distance between the two plates on the robot as built}
+
+\paragraph{The blocs.} A bloc is a small vise. A sliding jaw, moved by an M6 lead screw
+turned with a knob, clamps the edge of a sensor board against a fixed jaw, so that the same
+bloc accepts boards of different sizes without being reprinted. Two versions exist
+(Figure~\ref{fig:blocs}): HBloc holds a board lying flat, and VBloc holds it upright, which
+is how the HC-SR04 faces forward at the front of the robot. A longer HBloc has also been
+designed for the five-channel line sensor. Each bloc is fixed to the plate with a single
+thumb screw.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.48\textwidth]{../CAD/pictures/hbloc/hbloc_iso_front_right.png}\hfill
+  \includegraphics[width=0.48\textwidth]{../CAD/pictures/vbloc/vbloc_iso_front_right.png}
+  \caption[The two blocs, HBloc and VBloc]{HBloc (left) and VBloc (right) with their thumb
+           screw, in their first version. The knob was later given an octagonal shape that is
+           more comfortable to turn, and the fits were adjusted after the first prints
+           (Chapter~\ref{ch:realisation}).}
+  \label{fig:blocs}
+\end{figure}
+
+\paragraph{Designed for printing.} All the parts follow the same rules, drawn from the
+motor brackets as redesigned by an experienced maker (\texttt{CAD/design\_rules.md}): each
+part prints flat on its largest face without support material; a part that would need two
+print directions is split and its pieces are glued; and the clearances of holes and sliding
+parts are chosen from test prints rather than from nominal sizes. The print time, mass and
+cost of each part are given in Chapter~\ref{ch:realisation} (Table~\ref{tab:print-cost}).
+
+\paragraph{The first plate and the new one.} The first waffle plate was printed early in
+the project, before the team had any experience of 3D printing; according to the authors'
+estimate it took about 45~hours and weighs about 200~g. The plates described above replace
+it. They were printed on the university's printers; their surfaces and edge tabs came out
+rough, but they are used as they are. \todo{print time and mass of the new plate, from the
+printer or the slicer used}
 
 \section{Conclusion}
-\plan{Short bridge to Chapter 3 (realisation and tests).}
+This chapter turned the need described at its start into a specification, then into an
+architecture of two boards linked by ESP-NOW: a robot built around an ESP32-S3, a DRV8833
+driver and two TT motors, with wheel encoders, an ultrasonic sensor and an inertial sensor,
+and a handheld controller built around an ESP32, a joystick, four buttons and a screen.
+Each component was presented with the figures that justify its use and the limits that
+follow from it, and the chapter ended with the plate and the blocs that make the platform
+modular. Chapter~\ref{ch:realisation} describes how these parts were wired and programmed,
+the problems met along the way, and the tests of the finished system.
