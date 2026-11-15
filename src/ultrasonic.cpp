@@ -35,6 +35,7 @@ const int SONAR_COUNT = sizeof(sonars) / sizeof(sonars[0]);
 const unsigned long PING_PERIOD_MS = 100 / SONAR_COUNT;
 const uint32_t ECHO_MAX_US = 25000;  // ~4.3 m, longer = no object
 static int current = 0;              // the sensor pinged last
+static bool printing = false;
 
 static void IRAM_ATTR onEcho(void* arg) {
     Sonar* s = (Sonar*)arg;
@@ -78,6 +79,7 @@ void updateUltrasonic() {
         int16_t left = SONAR_COUNT > 1 ? sonars[0].mm : -1;
         DistancePacket p = {ID_DISTANCE, left, sonars[RIGHT].mm};
         radioSend(&p, sizeof(p));
+        if (printing) Serial.printf("left %d mm  right %d mm\n", p.left, p.right);
     }
 
     current = (current + 1) % SONAR_COUNT;
@@ -85,6 +87,10 @@ void updateUltrasonic() {
 }
 
 #else
+static bool printing = false;
 void initUltrasonic() {}
 void updateUltrasonic() {}
 #endif
+
+void setUltrasonicPrint(bool on) { printing = on; }
+bool ultrasonicPrinting() { return printing; }

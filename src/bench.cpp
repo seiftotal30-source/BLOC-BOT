@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "bench.h"
 #include "motor.h"
+#include "ultrasonic.h"
 
 // tt motors are 3-6 V and a full 2S pack is 8.4 V, so cap at ~75 %
 const int MAX_SERIAL_SPEED = 192;
@@ -19,6 +20,7 @@ void printHelp() {
     Serial.println("  x     - stop");
     Serial.println("  + / - - faster / slower");
     Serial.println("  L<n> / R<n> - set left / right motor (-255..255)");
+    Serial.println("  u     - print the front distances on / off");
     Serial.println("  h     - this help");
     Serial.print("Current speed: ");
     Serial.println(currentSpeed);
@@ -69,6 +71,10 @@ static void runCommand(char cmd) {
             break;
         case 'h':
             printHelp();
+            break;
+        case 'u':
+            setUltrasonicPrint(!ultrasonicPrinting());
+            Serial.println(ultrasonicPrinting() ? "Distances on" : "Distances off");
             break;
         case 'L':
         case 'l': {
