@@ -1,8 +1,9 @@
 #ifndef ULTRASONIC_H
 #define ULTRASONIC_H
 
-// hc-sr04 at the front (trig 11, echo 12 through a 1k/2k divider)
+// two hc-sr04 at the front, echo through a 1k/2k divider on each:
+// left trig 39 / echo 10, right trig 11 / echo 12
 void initUltrasonic();
-void updateUltrasonic();  // every 100 ms: send the last distance, fire the next ping
+void updateUltrasonic();  // every 50 ms: read the last ping, fire the other sensor; both sent to con at 10 Hz
 
 #endif

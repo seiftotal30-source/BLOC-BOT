@@ -34,9 +34,11 @@ struct __attribute__((packed)) ImuPacket {
     int16_t gz;
 };
 
+// the two front hc-sr04, mm. -1 = nothing in range
 struct __attribute__((packed)) DistancePacket {
     uint8_t id;
-    int16_t mm;  // -1 = nothing in range
+    int16_t left;   // trig 39 / echo 10
+    int16_t right;  // trig 11 / echo 12
 };
 
 // line sensor state flags (LinePacket.flags)

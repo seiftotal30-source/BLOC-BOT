@@ -26,7 +26,8 @@ static void onReceive(const uint8_t*, const uint8_t* data, int len) {
   } else if (len == sizeof(DistancePacket) && data[0] == ID_DISTANCE) {
     DistancePacket p;
     memcpy(&p, data, sizeof(p));
-    robot.distMm = p.mm;
+    robot.distLeftMm = p.left;
+    robot.distRightMm = p.right;
     robot.distTime = millis();
   } else if (len == sizeof(LinePacket) && data[0] == ID_LINE) {
     LinePacket p;

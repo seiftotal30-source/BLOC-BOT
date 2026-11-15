@@ -9,7 +9,7 @@
 struct RobotData {
   volatile int16_t speedLeft = 0, speedRight = 0;  // mm/s
   volatile unsigned long speedTime = 0;
-  volatile int16_t distMm = -1;  // -1 = nothing in range
+  volatile int16_t distLeftMm = -1, distRightMm = -1;  // front sensors, -1 = nothing in range
   volatile unsigned long distTime = 0;
   volatile float roll = 0, pitch = 0, gx = 0, gy = 0, gz = 0;  // deg, deg/s
   volatile unsigned long imuTime = 0;
