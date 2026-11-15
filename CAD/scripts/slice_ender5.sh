@@ -1,9 +1,10 @@
 #!/bin/sh
-# Slice the four parts of a vise (H bloc or VBloc) for a Creality Ender-5 with the
+# Slice the parts of a vise (H bloc or VBloc) for a Creality Ender-5 with the
 # CuraEngine that ships with UltiMaker Cura 5.13 (PLA, 0.4 mm nozzle).
 #
 # Usage (Git Bash):  sh slice_ender5.sh hbloc   or   sh slice_ender5.sh vbloc
-# Reads   CAD/out/<part>/<part>_{base,slidingjaw,leadscrew,cap}.stl  (already print-oriented)
+# Reads   every CAD/out/<part>/<part>_*.stl  (already print-oriented and placed on the bed;
+#         VBloc has a fifth part, the fixed jaw, since its base was split for gluing)
 # Writes  CAD/out/<part>/<HBloc|VBloc>_Ender5_PLA.gcode
 #
 # The command-line engine only reads default values, so every setting the Cura app
@@ -26,6 +27,13 @@ W() { cygpath -w "$1"; }
 # settings without a default value, plus the bed offset; repeated per mesh
 MESH="-s roofing_layer_count=0 -s flooring_layer_count=0 -s mesh_position_x=-110 -s mesh_position_y=-110"
 
+# one "-l <stl> <mesh settings>" group per part file
+set --
+for f in "$OUT"/${PART}_*.stl; do
+  [ -f "$f" ] || { echo "no STL files in $OUT"; exit 1; }
+  set -- "$@" -l "$(W "$f")" $MESH
+done
+
 "$CURA/CuraEngine.exe" slice -v -m4 -j "$(W "$RES/definitions/creality_ender5.def.json")" \
  -s layer_height=0.16 -s layer_height_0=0.2 -s infill_sparse_thickness=0.16 \
  -s line_width=0.4 -s wall_line_width=0.4 -s wall_line_width_0=0.4 -s wall_line_width_x=0.4 \
@@ -45,6 +53,5 @@ MESH="-s roofing_layer_count=0 -s flooring_layer_count=0 -s mesh_position_x=-110
  -s support_enable=false -s adhesion_type=brim -s brim_width=6 -s brim_line_count=15 \
  -s magic_spiralize=false -s retraction_hop_enabled=false \
  $MESH -e0 \
- -l "$(W "$OUT/${PART}_base.stl")" $MESH -l "$(W "$OUT/${PART}_slidingjaw.stl")" $MESH \
- -l "$(W "$OUT/${PART}_leadscrew.stl")" $MESH -l "$(W "$OUT/${PART}_cap.stl")" $MESH \
+ "$@" \
  -o "$(W "$OUT/${NAME}_Ender5_PLA.gcode")"

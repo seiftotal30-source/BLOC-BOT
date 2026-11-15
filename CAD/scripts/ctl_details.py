@@ -46,10 +46,7 @@ for x, y in SCR:
 
 # ---- switches: pillars from the floor, locating-peg holes from the model
 zs = T - w - pv('cap_flange_t') - pv('cap_gap') - pv('sw_plunger_h')
-dx, dy, dp = pv('dpad_x'), pv('dpad_y'), pv('dpad_pitch')
-SW = {'up': (dx, dy + dp, 'dpad'), 'down': (dx, dy - dp, 'dpad'), 'left': (dx - dp, dy, 'dpad'),
-      'right': (dx + dp, dy, 'dpad'), 'back': (-pv('bf_pitch') / 2, pv('bf_y'), 'bf'),
-      'forward': (pv('bf_pitch') / 2, pv('bf_y'), 'bf')}
+SW = {name: (x, y, 'btn') for name, x, y in buttons()}
 sp = pv('sw_pillar')
 for x, y, _ in SW.values():
     add_b.append(tbox(x - sp / 2, y - sp / 2, floor - 0.5, x + sp / 2, y + sp / 2, zs))
@@ -75,10 +72,11 @@ for mx, my in ((2.4, 48.9), (25.9, 48.9)):         # USB end: press on the PCB a
 x, y = plan(14.15, 12)                               # far end: press on the WROOM can (model top z 4.7)
 add_t.append(tcyl(x, y, ez + 4.7 + 0.2, ceil + 0.5, 4))
 uy, uz = ey + 14.0, ez + (1.36 + 4.3) / 2           # receptacle centre (model x 10..18, z 1.36..4.3)
-cut_b.append(tbox(-W / 2 - 1, uy - pv('usbm_w') / 2 - c, uz - pv('usbm_h') / 2 - c,
-                  -xi + 0.5, uy + pv('usbm_w') / 2 + c, uz + pv('usbm_h') / 2 + c))
-cut_b.append(tbox(-W / 2 - 1, uy - pv('usbm_plug_w') / 2 - c, uz - pv('usbm_plug_h') / 2 - c,
-                  -W / 2 + pv('usb_cb'), uy + pv('usbm_plug_w') / 2 + c, uz + pv('usbm_plug_h') / 2 + c))
+usb_cuts = [tbox(-W / 2 - 1, uy - pv('usbm_w') / 2 - c, uz - pv('usbm_h') / 2 - c,
+                 -xi + 0.5, uy + pv('usbm_w') / 2 + c, uz + pv('usbm_h') / 2 + c),
+            tbox(-W / 2 - 1, uy - pv('usbm_plug_w') / 2 - c, uz - pv('usbm_plug_h') / 2 - c,
+                 -W / 2 + pv('usb_cb'), uy + pv('usbm_plug_w') / 2 + c, uz + pv('usbm_plug_h') / 2 + c)]
+cut_b += usb_cuts; cut_t += [TB.copy(b) for b in usb_cuts]   # the opening may straddle z_split
 
 # ---- TP4056: pads + clips, USB-C opening in the bottom edge
 tcx, tl, tw = pv('tp_cx'), pv('tp_l'), pv('tp_w')
@@ -109,9 +107,10 @@ for a in (mx0 + 2, mx0 + ml - 8):                    # clear of the trimpot over
 # ---- battery holder pocket ribs
 bl, bw = pv('bat_l'), pv('bat_w'); rt, rh = pv('rib_t'), pv('rib_h')
 by1 = -yi + pv('bat_wall_gap') + bw + c
-add_b.append(tbox(-bl / 2 - c - rt, by1, floor - 0.5, bl / 2 + c + rt, by1 + rt, floor + rh))
+bcx = pv('bat_cx')
+add_b.append(tbox(bcx - bl / 2 - c - rt, by1, floor - 0.5, bcx + bl / 2 + c + rt, by1 + rt, floor + rh))
 for s in (-1, 1):
-    add_b.append(tbox(s * (bl / 2 + c), -yi, floor - 0.5, s * (bl / 2 + c + rt), by1 + rt, floor + rh))
+    add_b.append(tbox(bcx + s * (bl / 2 + c), -yi, floor - 0.5, bcx + s * (bl / 2 + c + rt), by1 + rt, floor + rh))
 
 # ---- slide switch: cradle + actuator slot in the top edge wall
 sx, sl, sw_, sh = pv('sl_x'), pv('sl_l'), pv('sl_w'), pv('sl_h')

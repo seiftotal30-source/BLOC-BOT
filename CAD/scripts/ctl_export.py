@@ -52,8 +52,13 @@ def write_stl(parts, path, title):
         os.path.basename(path), len(allT), ext, open_e, bad, bed, os.path.getsize(path)))
 
 
+# ONLY = 'top' / 'bottom' / 'caps' exports one file per call (big exports have hung Fusion)
+ONLY = globals().get('ONLY')
 Cc = occ('Controller_Case').component
-write_stl([mesh(Cc.bRepBodies.itemByName('controller_top'), True)], os.path.join(out, 'controller_top.stl'), 'BLOC-BOT controller top')
-write_stl([mesh(Cc.bRepBodies.itemByName('controller_bottom'), False)], os.path.join(out, 'controller_bottom.stl'), 'BLOC-BOT controller bottom')
-K = occ('Controller_Caps').component
-write_stl([mesh(b, False, i * 16.0) for i, b in enumerate(K.bRepBodies)], os.path.join(out, 'controller_caps.stl'), 'BLOC-BOT controller caps')
+if ONLY in (None, 'top'):
+    write_stl([mesh(Cc.bRepBodies.itemByName('controller_top'), True)], os.path.join(out, 'controller_top.stl'), 'BLOC-BOT controller top')
+if ONLY in (None, 'bottom'):
+    write_stl([mesh(Cc.bRepBodies.itemByName('controller_bottom'), False)], os.path.join(out, 'controller_bottom.stl'), 'BLOC-BOT controller bottom')
+if ONLY in (None, 'caps'):
+    K = occ('Controller_Caps').component
+    write_stl([mesh(b, False, i * 16.0) for i, b in enumerate(K.bRepBodies)], os.path.join(out, 'controller_caps.stl'), 'BLOC-BOT controller caps')

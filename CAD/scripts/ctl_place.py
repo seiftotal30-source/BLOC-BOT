@@ -36,7 +36,8 @@ def standin(name, boxes):
 
 bl, bw, bh = pv('bat_l'), pv('bat_w'), pv('bat_h')
 by0 = -H / 2 + w + pv('bat_wall_gap')
-standin('REF_Battery18650', [(-bl / 2, by0, w, bl / 2, by0 + bw, w + bh)])
+bx = pv('bat_cx')
+standin('REF_Battery18650', [(bx - bl / 2, by0, w, bx + bl / 2, by0 + bw, w + bh)])
 sx, sl, sw_, sh = pv('sl_x'), pv('sl_l'), pv('sl_w'), pv('sl_h')
 yb = H / 2 - w - c
 aw = pv('sl_act_w')
@@ -63,11 +64,9 @@ place(occ('REF_TP4056'), (0, -1, 0), (1, 0, 0), (0, 0, 1), (0, 0, 0),
 place(occ('REF_MT3608'), (1, 0, 0), (0, 0, 1), (0, -1, 0), (0, 0, 0),
       (pv('mt_x'), H / 2 - w - c, w + pv('mt_ledge')))
 
-# switches: UP, DOWN, LEFT, RIGHT, BACK, FWD
+# switches: b1, b2 below the display, then up, down, left, right
 zs = T - w - pv('cap_flange_t') - pv('cap_gap') - pv('sw_plunger_h')
-dx, dy, dp = pv('dpad_x'), pv('dpad_y'), pv('dpad_pitch')
-SW = [(dx, dy + dp), (dx, dy - dp), (dx - dp, dy), (dx + dp, dy),
-      (-pv('bf_pitch') / 2, pv('bf_y')), (pv('bf_pitch') / 2, pv('bf_y'))]
+SW = [(x, y) for _, x, y in buttons()]
 for o, (x, y) in zip(sw_occ, SW):
     place(o, (1, 0, 0), (0, 1, 0), (0, 0, 1), (0, 0, 0), (x, y, zs))
 

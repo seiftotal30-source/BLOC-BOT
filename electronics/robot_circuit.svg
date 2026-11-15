@@ -12,16 +12,14 @@
 <rect x="40" y="212" width="160" height="56" rx="4" fill="#FAECE7" stroke="#993C1D" stroke-width="0.8"/>
 <text x="120.0" y="236.0" text-anchor="middle" class="th" fill="#712B13">Buck converter</text>
 <text x="120.0" y="254.0" text-anchor="middle" class="ts" fill="#993C1D">5 V, 2 A min</text>
-<rect x="40" y="320" width="160" height="56" rx="4" fill="#FAECE7" stroke="#993C1D" stroke-width="0.8"/>
-<text x="120.0" y="344.0" text-anchor="middle" class="th" fill="#712B13">DRV8871 left</text>
-<text x="120.0" y="362.0" text-anchor="middle" class="ts" fill="#993C1D">drives left TT motor</text>
-<rect x="40" y="396" width="160" height="56" rx="4" fill="#FAECE7" stroke="#993C1D" stroke-width="0.8"/>
-<text x="120.0" y="420.0" text-anchor="middle" class="th" fill="#712B13">DRV8871 right</text>
-<text x="120.0" y="438.0" text-anchor="middle" class="ts" fill="#993C1D">drives right TT motor</text>
+<rect x="40" y="320" width="160" height="132" rx="4" fill="#FAECE7" stroke="#993C1D" stroke-width="0.8"/>
+<text x="120.0" y="344.0" text-anchor="middle" class="th" fill="#712B13">DRV8833</text>
+<text x="120.0" y="362.0" text-anchor="middle" class="ts" fill="#993C1D">dual H-bridge, 2.7–10.8 V</text>
+<text x="120.0" y="404.0" text-anchor="middle" class="ts" fill="#993C1D">A: left TT motor</text>
+<text x="120.0" y="428.0" text-anchor="middle" class="ts" fill="#993C1D">B: right TT motor</text>
 <line x1="120" y1="96" x2="120" y2="124" stroke="#D85A30" stroke-width="1.5"  marker-end="url(#a)"/>
 <line x1="120" y1="182" x2="120" y2="210" stroke="#D85A30" stroke-width="1.5"  marker-end="url(#a)"/>
-<path d="M40 154 H22 V424 H38" fill="none" stroke="#D85A30" stroke-width="1.5" marker-end="url(#a)"/>
-<path d="M22 348 H38" fill="none" stroke="#D85A30" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M40 154 H22 V386 H38" fill="none" stroke="#D85A30" stroke-width="1.5" marker-end="url(#a)"/>
 <line x1="200" y1="240" x2="238" y2="240" stroke="#D85A30" stroke-width="1.5"  marker-end="url(#a)"/>
 <line x1="200" y1="68" x2="238" y2="68" stroke="#D85A30" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a)"/>
 <rect x="240" y="40" width="200" height="420" rx="6" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.8"/>
@@ -35,7 +33,8 @@
 <text x="256" y="290" class="ts" fill="#2C2C2A">GPIO 21 · RGB LEDs</text>
 <text x="256" y="318" class="ts" fill="#2C2C2A">GPIO 40 / 41 · encoders</text>
 <text x="256" y="346" class="ts" fill="#2C2C2A">GPIO 47 · buzzer</text>
-<text x="256" y="388" class="ts" fill="#5F5E5A">Spare: 10, 13, 14, 38,</text><text x="256" y="408" class="ts" fill="#5F5E5A">39, 42, + 45 / 46 (careful)</text>
+<text x="256" y="374" class="ts" fill="#2C2C2A">GPIO 13 / 14 · driver fault / sleep</text>
+<text x="256" y="408" class="ts" fill="#5F5E5A">Spare: 10, 38, 39, 42,</text><text x="256" y="428" class="ts" fill="#5F5E5A">+ 45 / 46 (careful)</text>
 <line x1="240" y1="348" x2="202" y2="348" stroke="#1D9E75" stroke-width="1.5"  marker-end="url(#a)"/>
 <line x1="240" y1="424" x2="202" y2="424" stroke="#1D9E75" stroke-width="1.5"  marker-end="url(#a)"/>
 <rect x="480" y="40" width="160" height="50" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.8"/>

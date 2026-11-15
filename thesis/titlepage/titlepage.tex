@@ -1,0 +1,101 @@
+% Title page, following the faculty's 2026 Master's template (Modele Resume Memoire
+% Master 2026) in English, as used by a previous thesis of the same department.
+% Built separately with LuaLaTeX because the header carries Arabic:
+%   cd titlepage && lualatex titlepage.tex
+% The title comes from ../title_main.tex.
+\documentclass[11pt,a4paper]{report}
+\usepackage[a4paper,top=0.8cm,bottom=0.8cm,left=2cm,right=2cm]{geometry}
+\usepackage[bidi=basic]{babel}
+\babelprovide[import, main]{english}
+\babelprovide[import]{arabic}
+\babelfont{rm}{TeX Gyre Heros}
+\babelfont[arabic]{rm}{Amiri}
+\usepackage{graphicx}
+\usepackage{array}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\input{../title_main}
+
+\newcommand{\ar}[1]{\foreignlanguage{arabic}{#1}}
+\newcommand{\dotline}[1]{\makebox[#1]{\dotfill}}
+
+% ======================= FILL IN BEFORE PRINTING ===========================
+% Unknown fields print as dotted lines. Replace them when the department gives them.
+\newcommand{\blank}{\dotline{4.5cm}}
+\newcommand{\reference}{\dotline{3cm}}      % e.g. D23/ESE/DE/2026
+\newcommand{\referencear}{\dotline{3cm}}    % e.g. Arabic form of the same reference
+\newcommand{\defencedate}{\dotline{3cm}}
+%                    name                 grade   university       role
+\newcommand{\juryA}{\blank           &       & Univ. Setif 1 & President}
+\newcommand{\juryB}{Dr. HAMANI Miloud & MCB   & Univ. Setif 1 & Supervisor}
+\newcommand{\juryC}{\blank           &       & Univ. Setif 1 & Examiner}
+\newcommand{\academicyear}{2025--2026}
+% ===========================================================================
+
+\begin{document}
+\centering
+
+{\large\ar{الجمهورية الجزائرية الديمقراطية الشعبية}}\\[1pt]
+{\small People's Democratic Republic of Algeria}\\[3pt]
+{\large\ar{وزارة التعليم العالي والبحث العلمي}}\\[1pt]
+{\small Ministry of Higher Education and Scientific Research}\\[8pt]
+
+\begin{minipage}[c]{0.36\textwidth}
+    \raggedright\small
+    Setif 1 University -- Ferhat Abbas\\
+    Faculty of Technology\\
+    Department of Electronics\\
+    Field of Electronics
+\end{minipage}%
+\begin{minipage}[c]{0.28\textwidth}
+    \centering\includegraphics[width=4cm]{../figures/ufas-logo.jpeg}
+\end{minipage}%
+\begin{minipage}[c]{0.36\textwidth}
+    \raggedleft\small
+    \ar{جامعة سطيف 1 - فرحات عباس}\\
+    \ar{كلية التكنولوجيا}\\
+    \ar{قسم الإلكترونيك}\\
+    \ar{شعبة الإلكترونيك}
+\end{minipage}\\[6pt]
+
+\begin{minipage}{0.5\textwidth}
+    \raggedright\textbf{Ref.:} \reference
+\end{minipage}%
+\begin{minipage}{0.5\textwidth}
+    \raggedleft\ar{\textbf{المرجع:}} \referencear
+\end{minipage}
+
+\vfill
+{\fontsize{24}{28}\selectfont\bfseries Master's Thesis}\\[0.5cm]
+{\Large\bfseries Presented to the}\\[0.25cm]
+\begin{tabular}{>{\raggedleft\bfseries}p{4.2cm}@{\hspace{4pt}}>{\raggedright\arraybackslash}p{7cm}}
+Department: & Electronics\\
+Domain: & Science and Technology\\
+Field: & Electronics\\
+Speciality: & Embedded Systems Electronics
+\end{tabular}
+
+\vfill
+{\Large\bfseries Carried out by:}\\[0.3cm]
+{\large\bfseries Mr. CHETIOUI Wassim}\\[3pt]
+and\\[3pt]
+{\large\bfseries Mr. CHARAD Seif Ali}
+
+\vfill
+{\fontsize{24}{28}\selectfont\bfseries Topic}\\[0.5cm]
+\parbox{12.5cm}{\centering\LARGE\bfseries \thesistitle}\\[0.3cm]
+{\Large \thesissubtitle}
+
+\vfill
+Defended on: \textbf{\defencedate}\\[0.5cm]
+Before the examination committee composed of:\\[0.4cm]
+
+\begin{tabular}{l l l l l}
+Members: & \juryA\\[8pt]
+         & \juryB\\[8pt]
+         & \juryC
+\end{tabular}
+
+\vfill
+{\bfseries Academic Year: \academicyear}
+\end{document}

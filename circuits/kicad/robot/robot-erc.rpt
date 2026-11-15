@@ -1,0 +1,48 @@
+ERC report (2026-10-25T11:05:56, Encoding UTF8)
+Report includes: Errors, Warnings
+
+***** Sheet /
+[lib_symbol_issues]: The current configuration does not include the symbol library 'bloc'
+    ; warning
+    @(45.72 mm, 50.80 mm): Symbol BT1 [Battery_2S]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'bloc'
+    ; warning
+    @(45.72 mm, 76.20 mm): Symbol U7 [Mini360]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'bloc'
+    ; warning
+    @(109.22 mm, 66.04 mm): Symbol U1 [ESP32-S3_board]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'bloc'
+    ; warning
+    @(109.22 mm, 119.38 mm): Symbol U6 [MPU6050_module]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'bloc'
+    ; warning
+    @(180.34 mm, 55.88 mm): Symbol U2 [DRV8833_module]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'bloc'
+    ; warning
+    @(180.34 mm, 99.06 mm): Symbol U3 [LM393_speed_sensor]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'bloc'
+    ; warning
+    @(180.34 mm, 134.62 mm): Symbol U5 [HC-SR04]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'bloc'
+    ; warning
+    @(238.76 mm, 45.72 mm): Symbol M1 [TT_motor]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'bloc'
+    ; warning
+    @(238.76 mm, 66.04 mm): Symbol M2 [TT_motor]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'bloc'
+    ; warning
+    @(238.76 mm, 99.06 mm): Symbol U4 [LM393_speed_sensor]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'bloc'
+    ; warning
+    @(238.76 mm, 129.54 mm): Symbol R1 [R]
+[lib_symbol_issues]: The current configuration does not include the symbol library 'bloc'
+    ; warning
+    @(238.76 mm, 142.24 mm): Symbol R2 [R]
+
+ ** ERC messages: 12  Errors 0  Warnings 12
+
+ ** Ignored checks:
+    - Global label only appears once in the schematic
+    - Four connection points are joined together
+    - SPICE model issue
+    - Assigned footprint doesn't match footprint filters

@@ -1,0 +1,71 @@
+% General Introduction. Sources: the authors' account of ARC 3 and ARC 4 (user, 2026-10-26,
+% including their written feedback to the organisers), Chapter 2 (specification, Table 2.1).
+\chapter*{General Introduction}
+\addcontentsline{toc}{chapter}{General Introduction}
+\markboth{General Introduction}{}
+
+\section*{Context}
+Student robotics competitions have become, for many electronics students, the place where
+the subjects taught separately at university first meet in a single object: a robot
+combines a microcontroller, power electronics, sensors, wireless communication, mechanical
+design and software, and it must work on a given day, on a track it has not seen before. In
+Algeria, the Algerian Robot Cup (ARC) is one of these competitions. Each edition opens with
+a qualification stage, in which the robot must follow a line through a maze, followed by a
+main event whose task changes from one year to the next and is described in a technical
+specification published by the organisers.
+
+\section*{Problem statement}
+The authors took part in two consecutive editions of the ARC, ARC~3 and ARC~4, and in
+several other competitions, without success. The fourth edition illustrates the
+difficulties they met. Initially planned for 14~October~2025, it was held on 5~December~2025.
+The robot was in good working order at the beginning of October; in the weeks that
+followed, parts were added and removed in anticipation of the requirements, and a week
+before the event the ESP32-S3 controlling the robot was damaged and had to be replaced.
+The test day that was to precede the competition was cancelled, so the robot first met the
+real track during the competition itself. On the day, the gripper broke, the arm's yaw servo
+stopped working, the base of the arm cracked and then broke, one motor driver
+behaved erratically and the other was disconnected when the robot was closed. Several
+elements of the track also differed from the technical specification, which had been read
+and prepared in detail beforehand.
+
+Looking back on both editions, the authors trace most of these difficulties to the same
+pattern. For each competition, the robot was largely rebuilt from scratch: chassis, sensor
+mounts and wiring, and in the case of ARC, two robots instead of one. The time this took
+left little for testing, and the uncertainty about the task led to a robot more
+complicated than needed and modified until the last day, with parts that had never been
+tested together. A competition robot built this way is new every time, and so are its
+faults.
+
+This raises the question this work sets out to answer: \emph{can a single, ready-to-use
+mobile robot base, with a standard way of mounting and wiring its sensors, let a team
+reconfigure its robot for each competition instead of rebuilding it?}
+
+\section*{Objectives}
+The answer proposed in this thesis is BLOC-BOT, a modular mobile robot platform. Its
+objectives are:
+\begin{itemize}
+  \item a differential-drive robot based on an ESP32-S3 microcontroller, with wheel
+        encoders, an ultrasonic distance sensor and an inertial sensor, built from
+        components that can be bought locally at low cost;
+  \item a handheld controller, based on an ESP32, that drives the robot over the ESP-NOW
+        wireless protocol without any computer or phone, and displays the data the robot
+        sends back;
+  \item a robot that stops on its own when it no longer receives commands;
+  \item a mechanical standard, a 3D-printed plate with a regular hole pattern and printed
+        holders called \emph{blocs}, so that sensors and modules can be added, moved or
+        exchanged without redesigning the chassis.
+\end{itemize}
+The full list of requirements, and the state of each one at the time of writing, is given
+in Table~\ref{tab:requirements}.
+
+\section*{Organisation of the thesis}
+The thesis is organised in three chapters. Chapter~\ref{ch:generalities} gives the
+background on which the work builds: mobile robots and their locomotion, educational,
+competition and modular robots, microcontrollers, and wireless links between them.
+Chapter~\ref{ch:design} presents the study and design of the system: the specification,
+the overall architecture, and the choice and dimensioning of each component of the robot,
+of the controller and of the wireless link. Chapter~\ref{ch:realisation} describes the
+realisation: the wiring, the firmware of both boards, the problems met during development
+and how they were solved, the tests carried out and the cost of the platform. A general
+conclusion summarises the results and the limits of the work and proposes directions for
+future work.

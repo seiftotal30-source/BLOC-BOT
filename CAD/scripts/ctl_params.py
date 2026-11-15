@@ -14,7 +14,7 @@ P = [
     ('wall', '2', 'wall / floor / top thickness'),
     ('fillet_r', '3', 'outer edge fillet'),
     ('corner_ch', '6', 'plan corner chamfer, GrabCAD RC Transmitter style'),
-    ('z_split', '19', 'parting plane height (both USB openings stay in the bottom shell)'),
+    ('z_split', '14', 'parting plane height (micro-USB in the top shell, USB-C in the bottom)'),
     ('clr', '0.4', 'clearance on every cutout and pocket'),
     # --- OLED 2.42" SSD1309 (model) ---
     ('oled_pcb_w', '72', 'PCB width (model)'),
@@ -38,7 +38,7 @@ P = [
     ('bscrew_pilot', '2.1', 'pilot for M2.5 self-tapping board screws (assumed screw)'),
     # --- KY-023 joystick (model) ---
     ('joy_x', '-59.5', 'stick centre X'),
-    ('joy_y', '-9.5', 'stick centre Y'),
+    ('joy_y', '19.5', 'stick centre Y (top-left, buttons below it)'),
     ('joy_pivot_dz', '4', 'top surface above the gimbal pivot'),
     ('joy_sweep_r', '13.65', 'cap skirt sphere radius about the pivot (model torus 12.48+1.17)'),
     ('joy_tilt', '29', 'deg, max tilt before the cap touches the module case (model)'),
@@ -62,25 +62,26 @@ P = [
     ('cap_gap', '0.1', 'free play between cap and plunger at rest'),
     ('cap_flange_t', '1.2', 'flange thickness'),
     ('cap_protrude', '2', 'cap height above the top surface'),
-    ('dpad_cap_d', '9', 'D-pad cap dia'),
-    ('bf_cap_d', '8', 'BACK/FORWARD cap dia'),
+    ('btn_cap_d', '9', 'button cap dia'),
     ('cap_flange_d', '13', 'flange dia'),
-    ('dpad_x', '-joy_x', 'D-pad centre X'),
-    ('dpad_y', 'joy_y', 'D-pad centre Y'),
-    ('dpad_pitch', '20', 'D-pad switch spacing from centre'),
-    ('bf_y', '-11', 'BACK/FORWARD centre Y'),
-    ('bf_pitch', '15', 'BACK/FORWARD spacing'),
+    ('btn_n', '2', 'buttons in the row below the display'),
+    ('btn_x0', 'joy_x - btn_pitch/2', 'centre X of the left button (pair centred under the stick)'),
+    ('btn_pitch', '16', 'button spacing along the row'),
+    ('btn_y', '-1.3', 'button pair centre Y (below the stick, above the ESP32)'),
+    ('dpad_x', '57.5', 'directional cross centre X (right thumb; RIGHT flange clears the inner rim chamfer)'),
+    ('dpad_y', '-9.5', 'directional cross centre Y'),
+    ('dpad_pitch', '20', 'cross: switch distance from its centre'),
     # --- ESP32 DevKit V1 30-pin (model) ---
     ('esp_l', '51.2', 'PCB length (model)'),
     ('esp_w', '28.3', 'PCB width (model)'),
     ('esp_t', '1.6', 'PCB thickness (model)'),
     ('esp_pin_below', '8.2', 'header pins below PCB (model)'),
-    ('esp_standoff', '9', 'PCB underside above floor (pins + clearance = wiring space)'),
+    ('esp_standoff', '14.8', 'PCB underside above floor (header pins clear the TP4056 below)'),
     ('esp_hole_d', '2.9', 'hole dia (model)'),
     ('esp_post_d', '3.2', 'standoff dia (clears header pins by 0.4)'),
     ('esp_peg_d', 'esp_hole_d - clr', 'locating peg dia'),
     ('esp_x', '-case_w/2 + wall + clr + esp_l', 'plan X of the PCB end away from USB'),
-    ('esp_y', '3.3', 'plan Y of the PCB lower edge'),
+    ('esp_y', '-36.2', 'plan Y of the PCB lower edge (bottom-left, clear of the chamfered corner)'),
     ('usbm_w', '7.98', 'micro-USB receptacle width (model)'),
     ('usbm_h', '2.94', 'micro-USB receptacle height (model)'),
     ('usbm_plug_w', '11', 'micro-USB plug overmold width (assumed)'),
@@ -91,7 +92,7 @@ P = [
     ('tp_w', '17.4', 'PCB width (model)'),
     ('tp_t', '1.5', 'PCB thickness (model)'),
     ('tp_cx', '-58.3', 'PCB centre X (between the joystick posts)'),
-    ('tp_ledge', '1', 'PCB underside above floor'),
+    ('tp_ledge', '2', 'PCB underside above floor (clears the inner rim chamfer)'),
     ('usbc_w', '8.42', 'USB-C receptacle width (model)'),
     ('usbc_h', '2.79', 'USB-C receptacle height (model)'),
     ('usbc_plug_w', '12.4', 'USB-C plug overmold width (assumed)'),
@@ -102,12 +103,13 @@ P = [
     ('mt_t', '1.52', 'PCB thickness (model)'),
     ('mt_h', '6.45', 'height incl. inductor (model)'),
     ('mt_x', '44.4', 'PCB left edge X'),
-    ('mt_ledge', '1', 'PCB underside above floor'),
+    ('mt_ledge', '2', 'PCB underside above floor (clears the inner rim chamfer)'),
     # --- 18650 holder (assumed, no model) ---
     ('bat_l', '77', 'holder length (assumed)'),
     ('bat_w', '21', 'holder width (assumed)'),
     ('bat_h', '20', 'holder height (assumed)'),
-    ('bat_wall_gap', '1', 'holder to wall gap (clears the 1 mm inner corner fillet)'),
+    ('bat_wall_gap', '2.4', 'holder to wall gap (clears the inner 45 deg rim chamfer)'),
+    ('bat_cx', '3.6', 'holder centre X (clear of the ESP32)'),
     ('rib_t', '1.2', 'pocket rib / clip thickness'),
     ('rib_h', '6', 'battery pocket rib height'),
     # --- slide switch (assumed, no model) ---
@@ -115,7 +117,7 @@ P = [
     ('sl_w', '6', 'body depth (assumed)'),
     ('sl_h', '6.5', 'body height (assumed)'),
     ('sl_x', '36.4', 'centre X'),
-    ('sl_base', '1', 'pad under the switch (clears the inner corner fillet)'),
+    ('sl_base', '2', 'pad under the switch (clears the inner rim chamfer)'),
     ('sl_act_w', '2', 'actuator width (assumed)'),
     ('sl_act_out', '4', 'actuator length out of the body (assumed)'),
     ('sl_slot_w', '7', 'actuator slot length incl. throw'),
@@ -129,14 +131,14 @@ P = [
     ('m3_bboss_d', '9', 'bottom-shell boss dia'),
     ('scr1_x', '-80', ''), ('scr1_y', '36.5', ''),
     ('scr2_x', '80', ''), ('scr2_y', '12', ''),
-    ('scr3_x', '-80', ''), ('scr3_y', '-35', ''),
+    ('scr3_x', '-82', ''), ('scr3_y', '-1', ''),
     ('scr4_x', '80', ''), ('scr4_y', '-35', ''),
 ]
 for n, e, c in P:
-    setp(n, e, c, '' if n == 'joy_tilt' else 'mm')
+    setp(n, e, c, '' if n in ('joy_tilt', 'btn_n') else 'mm')
 print('%d parameters set' % len(P))
 for n in ('oled_cy', 'joy_open_d', 'esp_x'):
     print(n, round(pv(n), 3))
-for n in ('joy_boss_d',):  # retired: the joystick now sits on posts from the bottom shell
+for n in ('joy_boss_d', 'dpad_cap_d', 'bf_cap_d', 'bf_y', 'bf_pitch'):  # retired layouts
     p = des.userParameters.itemByName(n)
     if p: p.deleteMe()

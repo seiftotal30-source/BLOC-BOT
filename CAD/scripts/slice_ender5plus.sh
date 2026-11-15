@@ -1,0 +1,3 @@
+#!/bin/sh
+# Kept for the old name: same as  sh slice_pro.sh ender5plus <output.gcode> <layer> <skirt|brim> <part.stl>...
+exec sh "$(dirname "$0")/slice_pro.sh" ender5plus "$@"

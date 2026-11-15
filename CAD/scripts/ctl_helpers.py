@@ -72,3 +72,12 @@ def run(_context=None):
     # The Fusion MCP wrapper calls run() after exec'ing a script; a missing run() raises and
     # rolls the whole script's transaction back, so every script gets this no-op.
     pass
+
+
+def buttons():
+    """[(name, x, y)]: the row below the display (b1, b2 left to right), then the directional
+    cross under the right thumb (up, down, left, right)."""
+    n = int(round(des.userParameters.itemByName('btn_n').value))
+    row = [('b%d' % (i + 1), pv('btn_x0') + i * pv('btn_pitch'), pv('btn_y')) for i in range(n)]
+    dx, dy, dp = pv('dpad_x'), pv('dpad_y'), pv('dpad_pitch')
+    return row + [('up', dx, dy + dp), ('down', dx, dy - dp), ('left', dx - dp, dy), ('right', dx + dp, dy)]
