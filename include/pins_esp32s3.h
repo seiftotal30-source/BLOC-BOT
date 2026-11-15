@@ -24,6 +24,11 @@
 #define ULTRASONIC_TRIG_PIN  11
 #define ULTRASONIC_ECHO_PIN  12
 
+// second hc-sr04 at the front, same wiring: echo -> 1k -> gpio 10, gpio 10 -> 2k -> gnd.
+// wired, not read by the firmware yet
+#define ULTRASONIC2_TRIG_PIN  39
+#define ULTRASONIC2_ECHO_PIN  10
+
 // 5-channel line sensor bar (analog outputs), powered from 3.3 V. adc1 only: wi-fi blocks adc2
 #define LINE_PIN_1  2  // far left
 #define LINE_PIN_2  4

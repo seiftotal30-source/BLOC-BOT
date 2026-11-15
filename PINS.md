@@ -5,6 +5,7 @@ wiring anything new, and update this file in the same commit when a pin changes.
 
 - **In code**: used by the firmware on `main`.
 - **Planned**: in `electronics/README.md` or tested on the bench, not in the robot firmware yet.
+- **Wired**: connected on the robot and defined in the pin file, but the firmware does not use it yet.
 
 ## Bloc-Con: controller (ESP32 DevKit V1, `Bloc-Con/src/main.cpp`)
 
@@ -40,13 +41,14 @@ reads only work on ADC1: 32–39.
 | 1 | battery sense | planned | ADC1, through the 100k / 33k divider |
 | 2, 4, 5, 6, 7 | 5-channel line sensor bar (analog) | in code | left to right; bar on 3V3 so the outputs stay 3.3 V; ADC1; raw values sent to Con at 20 Hz |
 | 11 / 12 | HC-SR04 TRIG / ECHO | in code | ECHO -> 1k -> 12, 12 -> 2k -> GND; VCC on 5V; distance sent to Con at 10 Hz |
+| 39 / 10 | second HC-SR04 TRIG / ECHO (front) | wired | same wiring as the first: ECHO -> 1k -> 10, 10 -> 2k -> GND; VCC on 5V. Fire the two sensors at different times so they do not hear each other's ping |
 | 21 | WS2812 data | planned | |
 | 47 | passive buzzer | planned | |
 
 DRV8833 STBY (nSLEEP) goes straight to 3.3 V and nFAULT is not connected, so the 13 / 14
 entries for them in `electronics/README.md` no longer apply (13 is now AIN1).
 
-Free after everything planned: 10, 39, 42, and 38 (if the RGB LED is on 48); 45 / 46 only with
+Free after everything planned: 42, and 38 (if the RGB LED is on 48); 45 / 46 only with
 care. The Flying Fish IR sensor still needs one of these.
 
 Avoid: 0, 3, 45, 46 (strapping), 19 / 20 (native USB), 43 / 44 (UART0), 35–37 (octal PSRAM on
