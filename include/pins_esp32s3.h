@@ -20,9 +20,13 @@
 #define I2C_SDA_PIN  8
 #define I2C_SCL_PIN  9
 
-// hc-sr04 on 5 V. echo -> 1k -> gpio 12, gpio 12 -> 2k -> gnd (5 V to 3.3 V)
+// front right hc-sr04 on 5 V. echo -> 1k -> gpio 12, gpio 12 -> 2k -> gnd (5 V to 3.3 V)
 #define ULTRASONIC_TRIG_PIN  11
 #define ULTRASONIC_ECHO_PIN  12
+
+// front left hc-sr04, same wiring: echo -> 1k -> gpio 10, gpio 10 -> 2k -> gnd
+#define ULTRASONIC2_TRIG_PIN  39
+#define ULTRASONIC2_ECHO_PIN  10
 
 // 5-channel line sensor bar (analog outputs), powered from 3.3 V. adc1 only: wi-fi blocks adc2
 #define LINE_PIN_1  2  // far left
