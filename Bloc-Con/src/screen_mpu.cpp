@@ -4,7 +4,7 @@
 #include "radio.h"
 #include "screens.h"
 
-// mpu6050 wired to the controller's i2c (sda 21, scl 22), bench-test fallback only.
+// mpu6050 on the controller's i2c bus (sda OLED_SDA, scl OLED_SCL), bench-test fallback only.
 // normally the data comes from the robot over esp-now.
 static const uint8_t MPU_ADDR = 0x68;
 static bool mpuOk = false;

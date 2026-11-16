@@ -10,9 +10,18 @@ wiring anything new, and update this file in the same commit when a pin changes.
 
 Board labels: D21 = GPIO 21, VP = GPIO 36, VN = GPIO 39.
 
+The board is a 30-pin DevKit V1 with USB-C and a CP2102, read off the board in
+`tools and components irl/components/controller_esp32_board.jpg`. Pin rows, from the antenna end
+to the USB end:
+
+- One edge: EN, VP, VN, 34, 35, 32, 33, 25, 26, 27, 14, 12, 13, GND, VIN. In the case this
+  edge faces the OLED and the right-hand buttons.
+- Other edge: 23, 22, TX0, RX0, 21, 19, 18, 5, TX2, RX2, 4, 2, 15, GND, 3V3. In the case this
+  edge faces the joystick.
+
 | GPIO | Use | Status | Notes |
 |---|---|---|---|
-| 21 / 22 | OLED SDA / SCL | in code | I2C (default pins); 0.96" SSD1306 now, 2.42" SSD1309 later (`USE_SSD1309`) |
+| 25 / 26 | OLED SDA / SCL | in code | I2C (`OLED_SDA` / `OLED_SCL`), moved from 21 / 22 so the OLED wires stay on the OLED's side of the board; 1.3" SH1106 now; 0.96" SSD1306 / 2.42" SSD1309 also supported (`OLED_TYPE` in `Bloc-Con/include/config.h`) |
 | 5 | HC-SR04 TRIG | in code | strapping pin, fine as an output |
 | 18 | HC-SR04 ECHO | in code | through a 1 kΩ / 2 kΩ divider (ECHO is 5 V); HC-SR04 VCC on VIN (5 V) |
 | 34 / 35 | joystick X / Y | in code | ADC1, input-only |
@@ -20,9 +29,9 @@ Board labels: D21 = GPIO 21, VP = GPIO 36, VN = GPIO 39.
 | 13 | button DOWN | in code | to GND, `INPUT_PULLUP` |
 | 14 | button FORWARD | in code | to GND, `INPUT_PULLUP` |
 | 27 | button BACK | in code | to GND, `INPUT_PULLUP` |
-| 21 / 22 | MPU6050 fallback (bench test) | in code | only used when no data comes from Bloc; the MPU now lives on Bloc GPIO 8 / 9 |
+| 25 / 26 | MPU6050 fallback (bench test) | in code | same I2C bus as the OLED; only used when no data comes from Bloc; the MPU now lives on Bloc GPIO 8 / 9 |
 
-Free: 4, 16, 17, 19, 23, 25, 26, 32, 33, 36 (VP), 39 (VN). Suggested: 36 for battery sense
+Free: 4, 16, 17, 19, 21, 22, 23, 32, 33, 36 (VP), 39 (VN). Suggested: 36 for battery sense
 (input-only ADC1), 32 for the joystick button.
 
 Avoid: 0, 2, 15 (strapping), 6–11 (flash), 1 / 3 (USB serial). With ESP-NOW on, analog

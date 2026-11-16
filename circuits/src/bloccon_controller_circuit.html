@@ -82,7 +82,7 @@ td.pin { font-family: var(--font-mono); font-variant-numeric: tabular-nums; whit
     <p class="lede">One 18650 cell feeds a TP4056 charger and an MT3608 boost set to 5&nbsp;V, which powers the ESP32. The OLED and joystick run from the ESP32's 3.3&nbsp;V pin. The four buttons pull their GPIO to GND (internal pull-ups). Pins match <code>Bloc-Con/src/main.cpp</code>.</p>
   </header>
 
-  <div class="sheet" role="img" aria-label="Wiring diagram: 18650 cell to TP4056 B+ and B−; TP4056 OUT+ through a switch to MT3608 VIN+; MT3608 5 V output to ESP32 5V pin and GND. OLED SDA to GPIO 21, SCL to 22, powered from 3.3 V. Joystick VRx to GPIO 34, VRy to 35, powered from 3.3 V, SW unused. HC-SR04 TRIG to GPIO 5, ECHO to 18, powered from 5 V. Buttons UP, DOWN, FORWARD, BACK on GPIO 12, 13, 14, 27, each to GND.">
+  <div class="sheet" role="img" aria-label="Wiring diagram: 18650 cell to TP4056 B+ and B−; TP4056 OUT+ through a switch to MT3608 VIN+; MT3608 5 V output to ESP32 5V pin and GND. OLED SDA to GPIO 25, SCL to 26, powered from 3.3 V. Joystick VRx to GPIO 34, VRy to 35, powered from 3.3 V, SW unused. HC-SR04 TRIG to GPIO 5, ECHO to 18, powered from 5 V. Buttons UP, DOWN, FORWARD, BACK on GPIO 12, 13, 14, 27, each to GND.">
     <svg viewBox="0 0 1100 760" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -207,8 +207,8 @@ td.pin { font-family: var(--font-mono); font-variant-numeric: tabular-nums; whit
         <text x="440" y="280" text-anchor="middle" class="onpcb">3V3</text>
         <text x="600" y="280" text-anchor="middle" class="onpcb">GND</text>
         <text x="660" y="280" text-anchor="middle" class="onpcb">5V</text>
-        <text x="390" y="324" class="onpcb">21</text>
-        <text x="390" y="364" class="onpcb">22</text>
+        <text x="390" y="324" class="onpcb">25</text>
+        <text x="390" y="364" class="onpcb">26</text>
         <text x="390" y="514" class="onpcb">34</text>
         <text x="390" y="549" class="onpcb">35</text>
         <text x="710" y="344" text-anchor="end" class="onpcb">5</text>
@@ -280,8 +280,8 @@ td.pin { font-family: var(--font-mono); font-variant-numeric: tabular-nums; whit
           <thead><tr><th>Part · pin</th><th>ESP32 pin</th></tr></thead>
           <tbody>
             <tr><td class="pin">MT3608 VOUT+ / VOUT−</td><td>5V (VIN) / GND</td></tr>
-            <tr><td class="pin"><i class="dot" style="background:var(--w-green)"></i>OLED SDA</td><td class="pin">21</td></tr>
-            <tr><td class="pin"><i class="dot" style="background:var(--w-yellow)"></i>OLED SCL</td><td class="pin">22</td></tr>
+            <tr><td class="pin"><i class="dot" style="background:var(--w-green)"></i>OLED SDA</td><td class="pin">25</td></tr>
+            <tr><td class="pin"><i class="dot" style="background:var(--w-yellow)"></i>OLED SCL</td><td class="pin">26</td></tr>
             <tr><td class="pin">OLED VCC / GND</td><td>3V3 / GND</td></tr>
             <tr><td class="pin"><i class="dot" style="background:var(--w-orange)"></i>Joystick VRx</td><td class="pin">34</td></tr>
             <tr><td class="pin"><i class="dot" style="background:var(--w-purple)"></i>Joystick VRy</td><td class="pin">35</td></tr>
@@ -306,7 +306,7 @@ td.pin { font-family: var(--font-mono); font-variant-numeric: tabular-nums; whit
           </tbody>
         </table>
       </div>
-      <p style="margin:0;color:var(--muted);font-size:14px">No resistors needed: the firmware uses <code>INPUT_PULLUP</code>, so a pressed button reads LOW. On 4-leg tactile switches, use two diagonal legs. The 2.42" SSD1309 (I²C version) uses the same four OLED wires, with <code>USE_SSD1309 1</code>.</p>
+      <p style="margin:0;color:var(--muted);font-size:14px">No resistors needed: the firmware uses <code>INPUT_PULLUP</code>, so a pressed button reads LOW. On 4-leg tactile switches, use two diagonal legs. The 1.3" SH1106 (fitted now), the 0.96" SSD1306 and the 2.42" SSD1309 all use the same four OLED wires; pick the one fitted with <code>OLED_TYPE</code> in <code>config.h</code> (2, 0 or 1).</p>
     </section>
   </div>
 </div>

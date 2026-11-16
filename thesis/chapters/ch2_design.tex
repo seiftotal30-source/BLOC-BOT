@@ -753,7 +753,7 @@ be enough and is left as a possible improvement.
     34, 35 & joystick X, Y & ADC1, input-only pins \\
     12, 13, 14, 27 & buttons UP, DOWN, FORWARD, BACK & to ground, internal pull-ups;
                      12 is a strapping pin (see text) \\
-    21, 22 & OLED SDA, SCL & I\textsuperscript{2}C \\
+    25, 26 & OLED SDA, SCL & I\textsuperscript{2}C \\
     \bottomrule
   \end{tabularx}
 \end{table}
@@ -787,7 +787,7 @@ pressed one reads low.
 
 \paragraph{Display.} The screen is a 0.96-inch monochrome OLED of 128 \(\times\) 64 pixels,
 driven by a Solomon Systech SSD1306 controller. It is connected over
-I\textsuperscript{2}C on GPIO~21 (SDA) and GPIO~22 (SCL), at the address 0x3C, the one the
+I\textsuperscript{2}C on GPIO~25 (SDA) and GPIO~26 (SCL), at the address 0x3C, the one the
 SSD1306 answers to when its address-select pin is low \cite{ssd1306_datasheet}, and is
 powered from 3.3~V, within the controller's 1.65 to 3.3~V logic supply range
 \cite{ssd1306_datasheet}. The firmware draws each screen in a frame buffer in the ESP32's

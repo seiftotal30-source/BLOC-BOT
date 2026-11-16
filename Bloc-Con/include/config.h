@@ -3,9 +3,12 @@
 
 // controller pins, esp32 devkit (see PINS.md)
 
-// oled on the default i2c pins (sda 21, scl 22)
-// 0 = 0.96" ssd1306 (fitted now), 1 = 2.42" ssd1309 (planned)
-#define USE_SSD1309 0
+// oled i2c on 25 / 26: same edge of the board as the oled in the case
+// (21 / 22 sit on the far edge, next to the joystick)
+// 0 = 0.96" ssd1306, 1 = 2.42" ssd1309, 2 = 1.3" sh1106 (fitted now)
+#define OLED_TYPE 2
+#define OLED_SDA 25
+#define OLED_SCL 26
 
 // buttons to gnd, internal pull-ups
 // gpio 12 is a strapping pin: never add an external pull-up on it
