@@ -5,7 +5,7 @@
 \markboth{General Introduction}{}
 
 \section*{Context}
-Student robotics competitions have become, for many electronics students, the place where
+Robotics competitions have become, for many electronics students, the place where
 the subjects taught separately at university first meet in a single object: a robot
 combines a microcontroller, power electronics, sensors, wireless communication, mechanical
 design and software, and it must work on a given day, on a track it has not seen before. In
@@ -39,6 +39,18 @@ faults.
 This raises the question this work sets out to answer: \emph{can a single, ready-to-use
 mobile robot base, with a standard way of mounting and wiring its sensors, let a team
 reconfigure its robot for each competition instead of rebuilding it?}
+
+The flexibility sought here lies in the robot's functions rather than in its shape. The
+competitions the authors took part in combine a small number of recurring functions:
+moving under control, following a line, as in the ARC qualification stage, measuring the
+distance to an obstacle or a wall, and, in some main events, handling objects. On BLOC-BOT
+the part common to all of them stays the same from one competition to the next: the
+drive train, the power supply, the microcontroller and the wireless link to the
+controller. What changes is the set of sensors and modules fixed on the robot's plate. A
+line sensor is held under the front of the robot for line following, an ultrasonic sensor
+faces forward to measure distances, and a module that the task calls for is fixed to the
+same plate in the same way. Preparing for a new competition then means choosing and
+placing these modules and writing the program for the task, not building a new robot.
 
 \section*{Objectives}
 The answer proposed in this thesis is BLOC-BOT, a modular mobile robot platform. Its
