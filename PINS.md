@@ -21,7 +21,7 @@ to the USB end:
 
 | GPIO | Use | Status | Notes |
 |---|---|---|---|
-| 25 / 26 | OLED SDA / SCL | in code | I2C (`OLED_SDA` / `OLED_SCL`), moved from 21 / 22 so the OLED wires stay on the OLED's side of the board; 1.3" SH1106 now; 0.96" SSD1306 / 2.42" SSD1309 also supported (`OLED_TYPE` in `Bloc-Con/include/config.h`) |
+| 25 / 26 | OLED SDA / SCL | in code | I2C (`OLED_SDA` / `OLED_SCL`), moved from 21 / 22 so the OLED wires stay on the OLED's side of the board; 1.3" SH1106 now; 0.96" SSD1306 / 2.42" SSD1309 also supported (`OLED_TYPE` in `Bloc-Con/include/config.h`). A Con with the OLED still on 21 / 22 builds with `pio run -e con_oled_21_22` |
 | 5 | HC-SR04 TRIG | in code | strapping pin, fine as an output |
 | 18 | HC-SR04 ECHO | in code | through a 1 kΩ / 2 kΩ divider (ECHO is 5 V); HC-SR04 VCC on VIN (5 V) |
 | 34 / 35 | joystick X / Y | in code | ADC1, input-only |
