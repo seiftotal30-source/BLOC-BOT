@@ -35,25 +35,25 @@ protection of Section~\ref{sec:con-power} covers the whole controller. The power
 sits between that output and the MT3608, and the four buttons go straight from their GPIO
 to ground.
 
-\begin{sidewaysfigure}
+\begin{figure}[htbp]
   \centering
-  \includegraphics[width=\textheight]{../circuits/kicad/robot/robot.pdf}
+  \includegraphics[width=\textwidth]{../circuits/kicad/robot/robot.pdf}
   \caption[Schematic of the robot]{Schematic of the robot, drawn in KiCad. Modules are drawn as boxes with their
            header pins; pins carrying the same net name are connected. Only the
            ESP32-S3 pins in use are shown. Not shown: the main switch, a BMS and a fuse,
            which are not fitted yet.}
   \label{fig:sch-robot}
-\end{sidewaysfigure}
+\end{figure}
 
-\begin{sidewaysfigure}
+\begin{figure}[htbp]
   \centering
-  \includegraphics[width=\textheight]{../circuits/kicad/controller/controller.pdf}
+  \includegraphics[width=\textwidth]{../circuits/kicad/controller/controller.pdf}
   \caption[Schematic of the controller]{Schematic of the controller, drawn in KiCad, with the same conventions as
            Figure~\ref{fig:sch-robot}. The joystick is powered from 3.3~V although its
            pin is labelled +5V. The HC-SR04 wired to the controller during bench tests is
            not shown, since the sensor now sits on the robot.}
   \label{fig:sch-con}
-\end{sidewaysfigure}
+\end{figure}
 
 \plan{Photos of the wired robot and controller. \todo{photos}}
 
@@ -351,7 +351,7 @@ then smoothing the result, removed the steps (Section~\ref{sec:encoders}).
 Counting them on the robot gave 20, so every distance and speed was overestimated by
 \(20/16 = 1.25\). The constant was corrected. This explains part of the speeds of up to
 about 10~km/h seen on the controller during early tests, which were far above what the
-motors can reach (Section~2.4.3); the rest is examined in test T1
+motors can reach (Section~\ref{sec:ttmotor}); the rest is examined in test T1
 (Section~\ref{sec:tests}).
 
 \paragraph{Full speed too early on the joystick.} The controller first reached the full
@@ -379,7 +379,7 @@ driven straight at full command. The time between the two marks is taken from a 
 video, three runs in a row, and the speed displayed on the controller is noted during
 each run. The measured speed is \(v = 2~\text{m} / t\).
 \paragraph{Expected.} A speed below about 3~km/h, the no-load figure of the motors
-(Section~2.4.3), and a displayed speed that agrees with it within the resolution of the
+(Section~\ref{sec:ttmotor}), and a displayed speed that agrees with it within the resolution of the
 encoders.
 \paragraph{Results.} \todo{three times, the three displayed speeds, table and comment}
 

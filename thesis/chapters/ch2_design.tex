@@ -5,9 +5,15 @@
 \label{ch:design}
 
 \section{Introduction}
-\plan{Half a page. What this chapter does: turn the problem from the general introduction
-into a specification, show the system architecture, then present every electronic component
-with its working principle and the reason it was chosen. The modular platform comes last.}
+This chapter turns the problem stated in the general introduction into a design. It
+first sets out the specification of BLOC-BOT: where the need comes from, who the platform
+is for, what it must do and under which constraints. It then presents the system
+architecture: an overview of the two boards and of the signals between them, followed by
+the hardware of the robot, the hardware of the controller and the wireless link that
+joins them. Each electronic component is described with its working principle, the
+figures that matter for this project and the reason it was chosen. The last section
+presents the modular platform itself, the printed plate and the blocs that hold the
+sensors.
 
 \section{Specification}
 \label{sec:spec}
@@ -98,30 +104,39 @@ Besides what the system does, four conditions shaped how it was built.
 
 \section{System architecture}
 \label{sec:architecture}
+\subsection{Overview}
 BLOC-BOT is made of two separate boards that share no wire: a handheld controller and the
 robot itself. Each has its own microcontroller and its own battery, and the two talk
-only over a wireless ESP-NOW link (Section~\ref{sec:espnow}). Figure~\ref{fig:architecture}
-shows both, with the main signals between their parts.
+only over a wireless ESP-NOW link \cite{espnow_idf} (Section~\ref{sec:espnow}).
+Figure~\ref{fig:architecture} shows both, with the main signals between their parts.
+\todo{photo of the robot and the controller as built, next to the diagram}
 
-The \textbf{controller} is the human side of the system. It reads the joystick and the
-four buttons, shows a menu and the robot's state on a small OLED screen, and sends drive
-commands to the robot every 50~ms while its Drive screen is open.
+The \textbf{controller} is the human side of the system. Built around an ESP32
+\cite{esp32_datasheet}, it reads the joystick and the four buttons, shows a menu and the
+robot's state on a small OLED screen, and sends drive commands to the robot every 50~ms
+while its Drive screen is open.
 
-The \textbf{robot} turns each drive command into a speed for each wheel and drives the two
-TT gearmotors through a DRV8833 dual H-bridge. Two LM393 slotted sensors count the turns
-of the wheels, and every 100~ms the robot sends the measured wheel speeds back to the
-controller, which displays them. If drive commands stop arriving, the robot stops its
-motors on its own, which meets requirement FR3. The robot also carries an HC-SR04
-ultrasonic sensor at its front, which measures the distance to obstacles, and an MPU6050
-inertial sensor, which measures its tilt and rotation. Both readings are sent to the
+The \textbf{robot} is a differential-drive vehicle \cite{siegwart2004} controlled by an ESP32-S3 \cite{esp32s3_datasheet}. It
+turns each drive command into a speed for each wheel and drives the two TT gearmotors
+through a DRV8833 dual H-bridge \cite{drv8833_datasheet}. Two LM393 slotted sensors
+\cite{lm393_datasheet} count the turns of the wheels, and every 100~ms the robot sends the
+measured wheel speeds back to the controller, which displays them. If drive commands stop
+arriving, the robot stops its motors on its own, which meets requirement FR3. The robot
+also carries an HC-SR04 ultrasonic sensor \cite{hcsr04_datasheet} at its front, which
+measures the distance to obstacles, and an MPU6050 inertial sensor \cite{mpu6000_ps},
+which measures its tilt and rotation. Both readings are sent to the
 controller, the distance every 100~ms and the tilt every 50~ms, and shown on their own
 screens.
 
 The two power chains are independent. The robot runs from a 2S lithium-ion pack that
 feeds the motor driver directly and the microcontroller through a 5~V step-down
 converter. The controller runs from a single lithium-ion cell with its own charger and a
-5~V step-up converter. Both are detailed in Sections~\ref{sec:robot}
-and~\ref{sec:controller}.
+5~V step-up converter. Both are detailed in Sections~\ref{sec:robot-power}
+and~\ref{sec:con-power}.
+
+The rest of this section follows the same division: the hardware of the robot
+(Section~\ref{sec:robot}), the hardware of the controller (Section~\ref{sec:controller}),
+and the wireless link between them (Section~\ref{sec:espnow}).
 
 \begin{figure}[htbp]
   \centering
@@ -204,10 +219,16 @@ and~\ref{sec:controller}.
   \label{fig:architecture}
 \end{figure}
 
-\section{The robot}
+\subsection{Robot hardware}
 \label{sec:robot}
+This subsection presents the parts of the robot one by one: the microcontroller that runs
+its firmware, the motor driver and the motors that move it, the three sensors that measure
+its motion and its surroundings, and its power supply. For each part it gives the working
+principle, the figures that matter for BLOC-BOT, and the reason the part was chosen. The
+parts appear in the lower half of Figure~\ref{fig:architecture}, and the pins they use on
+the microcontroller are listed in Table~\ref{tab:robot-pins}.
 
-\subsection{Microcontroller: ESP32-S3 (N16R8)}
+\subsubsection{Microcontroller: ESP32-S3 (N16R8)}
 The robot is controlled by an ESP32-S3, a system on a chip (SoC) from Espressif that
 combines a microcontroller with a 2.4~GHz radio. Its main features are summarised in
 Table~\ref{tab:esp32s3}. The chip has a dual-core Xtensa LX7 processor running at up to
@@ -291,7 +312,7 @@ DRV8833's sleep input is tied to 3.3~V, so the driver is always enabled and need
   \end{tabularx}
 \end{table}
 
-\subsection{Motor driver: DRV8833}
+\subsubsection{Motor driver: DRV8833}
 \label{sec:drv8833}
 A microcontroller pin can supply only a few milliamperes, far less than a motor draws,
 and it cannot reverse the polarity of the voltage across the motor. Both jobs are done by
@@ -406,7 +427,8 @@ and draws a surge of current. A partly discharged pack could therefore keep the 
 at or below its lockout threshold. The DRV8833, whose lockout is at 2.6~V, has no such
 problem with 2S.
 
-\subsection{Motors: TT gearmotors}
+\subsubsection{Motors: TT gearmotors}
+\label{sec:ttmotor}
 Each wheel is driven by a TT gearmotor, the yellow plastic motor found in most
 hobby robot kits. It combines a small brushed DC motor with a plastic gearbox that
 reduces the speed and multiplies the torque, and has an output shaft on both sides of
@@ -465,7 +487,7 @@ of the robot the real speed is lower, so the robot should not go much faster tha
 directly, cheap, easy to mount, and the dual shaft leaves room for an encoder. Above
 all they were the motors available.
 
-\subsection{Wheel speed sensors: LM393 slotted encoders}
+\subsubsection{Wheel speed sensors: LM393 slotted encoders}
 \label{sec:encoders}
 To report the speed of each wheel, the robot uses one slotted speed sensor per motor:
 a small board with a U-shaped optical fork, an LM393 comparator and a digital output.
@@ -541,7 +563,7 @@ previous one on the same wheel. At the TT motor's no-load speed of 250~rpm
 motor's second shaft, the sensors cost little, and they were already at hand. They give
 speed, not position or direction; a quadrature encoder would give both, at a higher cost.
 
-\subsection{Ultrasonic sensor: HC-SR04}
+\subsubsection{Ultrasonic sensor: HC-SR04}
 \label{sec:hcsr04}
 At the front of the robot, an HC-SR04 ultrasonic module measures the distance to
 the nearest obstacle. It is mounted in a VBloc on the upper plate, facing forward.
@@ -615,7 +637,7 @@ with two pins, and it was available. Its limits are stated by the manufacturer: 
 spreads over about 15\textdegree, and reliable readings need a target of at least
 0.5~m\(^2\) with a fairly smooth surface \cite{hcsr04_datasheet}.
 
-\subsection{Inertial sensor: MPU6050}
+\subsubsection{Inertial sensor: MPU6050}
 \label{sec:mpu6050}
 The robot also carries an MPU6050 inertial measurement unit (IMU), which tells it how it
 is tilted and how fast it turns. At this stage the data is sent to the controller and
@@ -664,7 +686,7 @@ wires, and it was available. The yaw angle, the heading, cannot be corrected the
 same way, because gravity gives no reference for it; it would need a magnetometer, and
 the firmware does not compute it.
 
-\subsection{Power supply}
+\subsubsection{Power supply}
 \label{sec:robot-power}
 \paragraph{The battery.} The robot runs from two 18650 lithium-ion cells, the
 cylindrical 18~mm by 65~mm format used in laptop packs and power banks. The cells used
@@ -717,7 +739,7 @@ capacitors often soldered across a DC motor's terminals to absorb the noise of i
 brushes. Both are cheap to add: a 470~\textmu F, 16~V electrolytic capacitor across the
 driver's \(V_M\) and GND pins, and a 0.1~\textmu F capacitor on each motor.
 
-\section{The controller}
+\subsection{Controller hardware}
 \label{sec:controller}
 
 The controller is the handheld unit the user drives the robot with. It reads a joystick
@@ -725,7 +747,7 @@ and four buttons, shows menus and the robot's data on a small screen, and talks 
 robot over ESP-NOW. Its parts are shown in the upper half of
 Figure~\ref{fig:architecture}, and its pin assignment in Table~\ref{tab:con-pins}.
 
-\subsection{Microcontroller: ESP32 DevKit}
+\subsubsection{Microcontroller: ESP32 DevKit}
 The controller uses a classic ESP32, the predecessor of the chip on the robot. Its main
 figures are a dual-core Xtensa LX6 processor at up to 240~MHz, 520~KB of SRAM, 2.4~GHz
 Wi-Fi (IEEE 802.11b/g/n), Bluetooth~4.2, two 12-bit analog-to-digital converters and 34
@@ -766,7 +788,7 @@ can only pull the pin to ground and the firmware enables the internal pull-up on
 boot. An external pull-up on this pin, however, could select the wrong flash voltage and
 stop the board from starting.
 
-\subsection{Human interface: joystick, buttons and display}
+\subsubsection{Human interface: joystick, buttons and display}
 
 \paragraph{Joystick.} The KY-023 module is a two-axis thumb joystick: each axis moves the
 wiper of a potentiometer connected between the supply and ground, so the wiper voltage
@@ -797,7 +819,7 @@ length, so a larger 2.42-inch display of the same resolution, driven by the clos
 related SSD1309, is planned. The firmware already supports it through a single
 compile-time switch (\texttt{USE\_SSD1309}), and the wiring is the same.
 
-\subsection{Power supply}
+\subsubsection{Power supply}
 \label{sec:con-power}
 The controller is powered by a single 18650 cell, a QHTC cell labelled 2000~mAh and
 4.2~V. It is a cheaper cell than the robot's, which is acceptable because the controller
@@ -836,7 +858,7 @@ boost converter draws more current from the cell than it delivers, by the ratio 
 voltages and its efficiency, so the controller's runtime on one charge is measured
 rather than estimated (Chapter~3).
 
-\section{Wireless link: ESP-NOW}
+\subsection{Wireless link: ESP-NOW}
 \label{sec:espnow}
 The controller and the robot communicate over ESP-NOW. This section explains what the
 protocol is, why it was chosen, and what its use in BLOC-BOT does and does not guarantee.
