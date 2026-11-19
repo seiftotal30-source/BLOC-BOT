@@ -6,9 +6,16 @@
 // oled i2c on 25 / 26: same edge of the board as the oled in the case
 // (21 / 22 sit on the far edge, next to the joystick)
 // 0 = 0.96" ssd1306, 1 = 2.42" ssd1309, 2 = 1.3" sh1106 (fitted now)
+// a con wired differently overrides these from platformio.ini (env:con_oled_21_22)
+#ifndef OLED_TYPE
 #define OLED_TYPE 2
+#endif
+#ifndef OLED_SDA
 #define OLED_SDA 25
+#endif
+#ifndef OLED_SCL
 #define OLED_SCL 26
+#endif
 
 // buttons to gnd, internal pull-ups
 // gpio 12 is a strapping pin: never add an external pull-up on it
