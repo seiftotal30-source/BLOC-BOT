@@ -4,13 +4,15 @@
 // robot pins, esp32-s3 n16r8 (see PINS.md)
 // do not use 35-37 (octal psram), 0/3/45/46 (strapping), 19/20 (usb), 43/44 (uart0)
 
-// drv8833, left motor on bridge a
-#define MOTOR_LEFT_IN1   13  // was 15, that was a bad jumper wire
-#define MOTOR_LEFT_IN2   16
+// drv8833, left motor on bridge a (13 wired to AIN1, 16 to AIN2; 13 was 15, a bad jumper wire)
+// IN1 is the pin that gets pwm for forward. the motors are wired so forward is AIN2 / BIN2,
+// so IN1 / IN2 are swapped here: a + speed now turns the wheels forward
+#define MOTOR_LEFT_IN1   16
+#define MOTOR_LEFT_IN2   13
 
-// drv8833, right motor on bridge b
-#define MOTOR_RIGHT_IN1  18  // 17/18 swapped so both wheels go forward together
-#define MOTOR_RIGHT_IN2  17
+// drv8833, right motor on bridge b (18 wired to BIN1, 17 to BIN2)
+#define MOTOR_RIGHT_IN1  17
+#define MOTOR_RIGHT_IN2  18
 
 // lm393 slot sensors, powered from 3.3 V
 #define ENCODER_LEFT_PIN   40

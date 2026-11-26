@@ -21,15 +21,17 @@ void drawDriveScreen() {
   readJoystick(joyX, joyY);
 
   // JOY_FULL = full command (100), clipped in sendDrive. stick up = forward, right = turn right
+  // (joyY is + with the stick up, see joystick.h)
   if (millis() - lastSend >= SEND_MS) {
     lastSend = millis();
-    sendDrive(-joyY * 100 / JOY_FULL, joyX * 100 / JOY_FULL);
+    sendDrive(joyY * 100 / JOY_FULL, joyX * 100 / JOY_FULL);
   }
 
   // circle with a dot that follows the stick, edge = full speed
   const int cx = 64, cy = 32;
   const float maxRadius = 30.0;
-  float fx = joyX * maxRadius / JOY_FULL, fy = joyY * maxRadius / JOY_FULL;
+  // screen y grows downward, so stick up moves the dot up
+  float fx = joyX * maxRadius / JOY_FULL, fy = -joyY * maxRadius / JOY_FULL;
   float mag = sqrt(fx * fx + fy * fy);
   if (mag > maxRadius) {
     fx = fx / mag * maxRadius;

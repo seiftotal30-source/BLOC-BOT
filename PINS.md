@@ -21,7 +21,7 @@ to the USB end:
 
 | GPIO | Use | Status | Notes |
 |---|---|---|---|
-| 25 / 26 | OLED SDA / SCL | in code | I2C (`OLED_SDA` / `OLED_SCL`), moved from 21 / 22 so the OLED wires stay on the OLED's side of the board; 1.3" SH1106 now; 0.96" SSD1306 / 2.42" SSD1309 also supported (`OLED_TYPE` in `Bloc-Con/include/config.h`) |
+| 25 / 26 | OLED SDA / SCL | in code | I2C (`OLED_SDA` / `OLED_SCL`), moved from 21 / 22 so the OLED wires stay on the OLED's side of the board; 1.3" SH1106 now; 0.96" SSD1306 / 2.42" SSD1309 also supported (`OLED_TYPE` in `Bloc-Con/include/config.h`). A Con with the OLED still on 21 / 22 builds with `pio run -e con_oled_21_22` |
 | 5 | HC-SR04 TRIG | in code | strapping pin, fine as an output |
 | 18 | HC-SR04 ECHO | in code | through a 1 kΩ / 2 kΩ divider (ECHO is 5 V); HC-SR04 VCC on VIN (5 V) |
 | 34 / 35 | joystick X / Y | in code | ADC1, input-only |
@@ -41,8 +41,8 @@ reads only work on ADC1: 32–39.
 
 | GPIO | Use | Status | Notes |
 |---|---|---|---|
-| 13 / 16 | DRV8833 AIN1 / AIN2, left motor | in code | 13 replaced 15, which kept failing on forward |
-| 18 / 17 | DRV8833 BIN1 / BIN2, right motor | in code | swapped so the right motor turns the right way |
+| 13 / 16 | DRV8833 AIN1 / AIN2, left motor | in code | 13 replaced 15, which kept failing on forward. Forward is pwm on 16 (`MOTOR_LEFT_IN1` = 16), so a + speed turns the wheel forward |
+| 18 / 17 | DRV8833 BIN1 / BIN2, right motor | in code | forward is pwm on 17 (`MOTOR_RIGHT_IN1` = 17) |
 | 40 / 41 | LM393 encoders left / right | in code | sensors on 3.3 V, D0 to the pin, A0 unused |
 | 48 | onboard RGB LED: green while Con is connected | in code | `RGB_BUILTIN` in the Arduino core (some DevKitC v1.1 boards wire it to 38) |
 | 8 / 9 | I2C SDA / SCL: MPU6050 (0x68) | in code | data sent to Con at 20 Hz; later also the OLED face and TCS34725 |
