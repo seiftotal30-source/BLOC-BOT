@@ -41,8 +41,8 @@ reads only work on ADC1: 32–39.
 
 | GPIO | Use | Status | Notes |
 |---|---|---|---|
-| 13 / 16 | DRV8833 AIN1 / AIN2, left motor | in code | 13 replaced 15, which kept failing on forward |
-| 18 / 17 | DRV8833 BIN1 / BIN2, right motor | in code | swapped so the right motor turns the right way |
+| 13 / 16 | DRV8833 AIN1 / AIN2, left motor | in code | 13 replaced 15, which kept failing on forward. Forward is pwm on 16 (`MOTOR_LEFT_IN1` = 16), so a + speed turns the wheel forward |
+| 18 / 17 | DRV8833 BIN1 / BIN2, right motor | in code | forward is pwm on 17 (`MOTOR_RIGHT_IN1` = 17) |
 | 40 / 41 | LM393 encoders left / right | in code | sensors on 3.3 V, D0 to the pin, A0 unused |
 | 48 | onboard RGB LED: green while Con is connected | in code | `RGB_BUILTIN` in the Arduino core (some DevKitC v1.1 boards wire it to 38) |
 | 8 / 9 | I2C SDA / SCL: MPU6050 (0x68) | in code | data sent to Con at 20 Hz; later also the OLED face and TCS34725 |
