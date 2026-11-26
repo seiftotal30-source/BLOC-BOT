@@ -20,13 +20,16 @@ would cross. Only the microcontroller pins in use are shown. The robot's schemat
 given in Figure~\ref{fig:sch-robot} and the controller's in Figure~\ref{fig:sch-con}; their
 pin assignments are those of Tables~\ref{tab:robot-pins} and~\ref{tab:con-pins}. KiCad's
 electrical rules check reports no unconnected pin or dangling net on either sheet.
+\todo{update both schematics: second HC-SR04 on GPIO 39/10 (robot), SH1106 OLED on GPIO
+25/26 (controller); re-lay them out upright}
 
 Three points of the robot's wiring deserve a comment. The DRV8833's \texttt{STBY} pin is
 tied to 3.3~V, so the driver is always enabled and no GPIO is spent on it, and its three
 NC pins, kept from the TB6612FNG board layout, are left open. The right motor's inputs
 are wired to GPIO~17 and~18 in that order but swapped in the firmware, so that both
 wheels turn forward for the same command; changing two constants was simpler than
-rewiring. Finally, the HC-SR04's \texttt{ECHO} line reaches GPIO~12 through the
+rewiring. Finally, the \texttt{ECHO} lines of the two HC-SR04 sensors reach GPIO~12
+(right) and GPIO~10 (left), each through its own
 1~k\(\Omega\)/2~k\(\Omega\) divider of Section~\ref{sec:hcsr04}.
 
 On the controller, the cell is connected to the battery terminals (B+, B$-$) of the
@@ -93,7 +96,7 @@ both projects so that the two ends always agree on them.
     \texttt{drive} & drive commands: reception, mixing, link indicator \\
     \texttt{motor} & PWM output, soft start, failsafe \\
     \texttt{encoders} & wheel-speed measurement \\
-    \texttt{ultrasonic} & HC-SR04, echo timed by interrupt \\
+    \texttt{ultrasonic} & the two HC-SR04, pinged in turn, echoes timed by interrupt \\
     \texttt{imu} & MPU6050 and the complementary filter \\
     \texttt{bench} & serial commands for bench tests \\
     \texttt{pins\_esp32s3.h} & pin assignment \\
@@ -136,8 +139,8 @@ millimetres and angles in tenths of a degree.
          & 5~B & 100~ms \\
     0xB4 & Bloc \(\to\) Con & roll and pitch (0.1\textdegree), angular rates about
          x, y, z (0.1\textdegree/s) & 11~B & 50~ms \\
-    0xB5 & Bloc \(\to\) Con & distance in mm, \(-1\) when no object is in range
-         & 3~B & 100~ms \\
+    0xB5 & Bloc \(\to\) Con & left and right distances in mm, \(-1\) when no object is
+         in range & 5~B & 100~ms \\
     \bottomrule
   \end{tabularx}
 \end{table}
@@ -153,11 +156,11 @@ or a waiting message.
 
 \paragraph{Structure.} The robot's firmware is a single loop that runs every 10~ms
 (Figure~\ref{fig:robot-loop}). Each pass handles the bench-test serial commands, applies the
-latest drive command, sends the wheel speeds, the inertial data and the distance when their
+latest drive command, sends the wheel speeds, the inertial data and the distances when their
 period has elapsed, and finally updates the motors. Work that cannot wait for the loop is
 done in interrupt routines: the radio callback stores each drive command as it arrives,
 the two encoder interrupts time the wheel pulses (Section~\ref{sec:encoders}), and the
-echo interrupt times the ultrasonic pulse (Section~\ref{sec:hcsr04}). No function in the
+echo interrupts time the ultrasonic pulses (Section~\ref{sec:hcsr04}). No function in the
 loop waits for a sensor, so the motor ramp and the failsafe always run on time.
 
 \begin{figure}[htbp]
@@ -172,15 +175,15 @@ loop waits for a sensor, so the motor ramp and the failsafe always run on time.
       node distance=3.5mm]
     \node[term] (start) {Power on};
     \node[stp, below=of start] (init) {Set up motors (PWM 20~kHz), ESP-NOW, encoders,
-      MPU6050 (zero the gyroscope), HC-SR04};
+      MPU6050 (zero the gyroscope), two HC-SR04};
     \node[stp, below=of init] (serial) {Read a serial bench-test command, if any};
     \node[stp, below=of serial] (apply) {New drive command? Mix it into left and right
       targets};
     \node[stp, below=of apply] (speed) {Every 100~ms: compute and send wheel speeds};
     \node[stp, below=of speed] (imu) {Read the MPU6050, update the tilt;
       every 50~ms: send it};
-    \node[stp, below=of imu] (us) {Every 100~ms: send the last distance, fire the next
-      ping};
+    \node[stp, below=of imu] (us) {Every 50~ms: read the last ping, fire the other HC-SR04;
+      every 100~ms: send both distances};
     \node[stp, below=of us] (motors) {Failsafe check (300~ms), then ramp each motor
       towards its target};
     \node[stp, below=of motors] (wait) {Wait 10~ms};
@@ -196,7 +199,7 @@ loop waits for a sensor, so the motor ramp and the failsafe always run on time.
     \node[isr, right=8mm of apply, yshift=-4mm] (isr) {\textbf{Interrupts, any time}\\
       radio: store drive command and its time\\
       encoders: time each wheel pulse\\
-      echo: time the ultrasonic pulse};
+      echoes: time the ultrasonic pulses};
   \end{tikzpicture}
   \caption[Main loop of the robot firmware]{Main loop of the robot firmware. Dashed: work done in interrupt routines,
            outside the loop.}
@@ -301,11 +304,12 @@ stick, the scaled X and Y values, and the robot's speed in kilometres per hour: 
 average of the two wheel speeds received from the robot, converted from mm/s by the
 factor 0.0036.
 
-\paragraph{Ultrasonic and MPU6050 screens.} The Ultrasonic screen prints the distance
-received from the robot and draws a radar-style view, in which the obstacle appears as a
-dot at the measured distance. The sweeping line of this view is only an animation: the
-sensor itself does not turn, so the angle at which the dot appears carries no
-information. The MPU6050 screen prints the roll, the pitch and the three angular rates,
+\paragraph{Ultrasonic and MPU6050 screens.} The Ultrasonic screen prints the left and right
+distances received from the robot and draws a radar-style view, in which each obstacle
+appears as a dot at the measured distance, the left sensor's dot to the left of the
+centre line and the right sensor's to the right. The sweeping line of this view is only
+an animation: the sensors do not turn, so the dots only show on which side an obstacle
+is, not its exact direction. The MPU6050 screen prints the roll, the pitch and the three angular rates,
 and draws a spirit level whose dot moves with the tilt. Both screens can also read a
 sensor wired directly to the controller, a fallback kept from bench testing that is used
 only when no data arrives from the robot; each screen shows in a corner which source it is
@@ -483,12 +487,12 @@ line sensor (800~DA) and the Flying Fish infrared sensor (500~DA), are not count
     DRV8833 module & 500 & 1 & 500 \\
     Mini360 buck converter & 400 & 1 & 400 \\
     LM393 slotted speed sensor & 500 & 2 & 1000 \\
-    HC-SR04 & 600 & 1 & 600 \\
+    HC-SR04 & 600 & 2 & 1200 \\
     MPU6050 module & 600 & 1 & 600 \\
     Two-cell 18650 holder & 400 & 1 & 400 \\
     18650 cell, 2500~mAh & 1000 & 2 & 2000 \\
     Caster wheel & 300 & 1 & 300 \\
-    \textbf{Robot total} & & & \textbf{9400} \\
+    \textbf{Robot total} & & & \textbf{10000} \\
     \midrule
     \multicolumn{4}{@{}l}{\textit{Controller}} \\
     ESP32 DevKit & 1600 & 1 & 1600 \\
@@ -496,19 +500,19 @@ line sensor (800~DA) and the Flying Fish infrared sensor (500~DA), are not count
     Push button & 50 & 4 & 200 \\
     TP4056 module & 200 & 1 & 200 \\
     Single 18650 holder & 200 & 1 & 200 \\
-    OLED 0.96'' & 800 & 1 & 800 \\
+    OLED 1.3'' (SH1106) & \todo{?} & 1 & \todo{?} \\
     MT3608 boost converter & \todo{?} & 1 & \todo{?} \\
     18650 cell, 2000~mAh & 250 & 1 & 250 \\
     Power switch\textsuperscript{a} & 50--200 & 1 & 50--200 \\
-    \textbf{Controller total}\textsuperscript{b} & & & \textbf{3800--3950} \\
+    \textbf{Controller total}\textsuperscript{b} & & & \textbf{3000--3150} \\
     \bottomrule
     \multicolumn{4}{@{}l}{\footnotesize \textsuperscript{a} Exact price not remembered.
-      \textsuperscript{b} Without the MT3608.}
+      \textsuperscript{b} Without the MT3608 and the OLED.}
   \end{tabularx}
 \end{table}
 
-The electronics of one robot cost 9400~DA, and those of the controller about 3800 to
-3950~DA, to which the printed parts of Table~\ref{tab:print-cost} add about 1230 to 1290~DA
+The electronics of one robot cost 10000~DA, and those of the controller about 3000 to
+3150~DA without the screen and the boost converter, to which the printed parts of Table~\ref{tab:print-cost} add about 1230 to 1290~DA
 of PETG.
 
 \section{Conclusion}

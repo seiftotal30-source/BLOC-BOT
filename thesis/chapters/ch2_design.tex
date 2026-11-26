@@ -122,8 +122,8 @@ through a DRV8833 dual H-bridge \cite{drv8833_datasheet}. Two LM393 slotted sens
 \cite{lm393_datasheet} count the turns of the wheels, and every 100~ms the robot sends the
 measured wheel speeds back to the controller, which displays them. If drive commands stop
 arriving, the robot stops its motors on its own, which meets requirement FR3. The robot
-also carries an HC-SR04 ultrasonic sensor \cite{hcsr04_datasheet} at its front, which
-measures the distance to obstacles, and an MPU6050 inertial sensor \cite{mpu6000_ps},
+also carries two HC-SR04 ultrasonic sensors \cite{hcsr04_datasheet} at its front, on the
+left and on the right, which measure the distance to obstacles, and an MPU6050 inertial sensor \cite{mpu6000_ps},
 which measures its tilt and rotation. Both readings are sent to the
 controller, the distance every 100~ms and the tilt every 50~ms, and shown on their own
 screens.
@@ -155,7 +155,7 @@ and the wireless link between them (Section~\ref{sec:espnow}).
     \node[mcu] (mcuC) at (0,0) {\textbf{ESP32 DevKit}\\controller};
     \node[block] (joy) at (-5,0.6) {KY-023 joystick};
     \node[block] (btn) at (-5,-0.6) {4 push buttons};
-    \node[block] (oled) at (5,0) {OLED 0.96'' 128$\times$64};
+    \node[block] (oled) at (5,0) {OLED 1.3'' 128$\times$64};
     \node[pwr, minimum width=20mm] (cellC) at (-5.4,2.3) {18650 cell};
     \node[pwr, minimum width=22mm] (tp) at (-2.6,2.3) {TP4056 charger};
     \node[pwr, minimum width=12mm] (sw) at (-0.45,2.3) {switch};
@@ -178,7 +178,7 @@ and the wireless link between them (Section~\ref{sec:espnow}).
     % ---------------- robot ----------------
     \node[mcu] (mcuR) at (0,-5.8) {\textbf{ESP32-S3}\\robot};
     \node[block, minimum height=7mm] (enc) at (-4.6,-4.9) {2 $\times$ LM393 slotted};
-    \node[block, minimum height=7mm] (us) at (-4.6,-5.85) {HC-SR04};
+    \node[block, minimum height=7mm] (us) at (-4.6,-5.85) {2 $\times$ HC-SR04};
     \node[block, minimum height=7mm] (mpu) at (-4.6,-6.8) {MPU6050 IMU};
     \node[future] (line) at (-4.6,-8.0) {TCRT5000 line\\sensor (in progress)};
     \node[block] (drv) at (4.5,-5.8) {DRV8833\\dual H-bridge};
@@ -207,14 +207,14 @@ and the wireless link between them (Section~\ref{sec:espnow}).
     \draw[->, very thick, blue!60!black] ([xshift=-5mm]mcuC.south) -- ([xshift=-5mm]mcuR.north)
       node[midway, left, align=right, font=\scriptsize] {drive commands\\every 50 ms};
     \draw[<-, very thick, blue!60!black] ([xshift=5mm]mcuC.south) -- ([xshift=5mm]mcuR.north)
-      node[midway, right, align=left, font=\scriptsize] {wheel speeds, distance:\\every 100 ms\\
+      node[midway, right, align=left, font=\scriptsize] {wheel speeds, distances:\\every 100 ms\\
         tilt (IMU): every 50 ms};
     \node[font=\small\bfseries, blue!60!black, align=center]
       at ($(mcuC.south)!0.5!(mcuR.north) + (-4.4,0)$) {ESP-NOW\\wireless link};
   \end{tikzpicture}
   \caption[System architecture]{System architecture. The controller (top) and the robot (bottom) share no
            wire; over ESP-NOW the controller sends drive commands and the robot sends back
-           its wheel speeds, the measured distance and its tilt. Red arrows
+           its wheel speeds, the two measured distances and its tilt. Red arrows
            are power, black arrows are signals, and the dashed block is in progress.}
   \label{fig:architecture}
 \end{figure}
@@ -302,9 +302,10 @@ DRV8833's sleep input is tied to 3.3~V, so the driver is always enabled and need
                                    that both wheels turn forward together \\
     40 & left LM393 sensor & digital pulses, read by interrupt \\
     41 & right LM393 sensor & digital pulses, read by interrupt \\
-    11 & HC-SR04 TRIG & 10~\textmu s trigger pulse \\
-    12 & HC-SR04 ECHO & through a 1~k\(\Omega\)/2~k\(\Omega\) divider
-                         (Section~\ref{sec:hcsr04}), timed by interrupt \\
+    11, 12 & right HC-SR04 TRIG, ECHO & 10~\textmu s trigger pulse; echo through a
+                         1~k\(\Omega\)/2~k\(\Omega\) divider (Section~\ref{sec:hcsr04}),
+                         timed by interrupt \\
+    39, 10 & left HC-SR04 TRIG, ECHO & same as the right sensor \\
     8, 9 & I\textsuperscript{2}C SDA, SCL & MPU6050 at 0x68
                          (Section~\ref{sec:mpu6050}); reserved for more
                          I\textsuperscript{2}C sensors \\
@@ -565,8 +566,11 @@ speed, not position or direction; a quadrature encoder would give both, at a hig
 
 \subsubsection{Ultrasonic sensor: HC-SR04}
 \label{sec:hcsr04}
-At the front of the robot, an HC-SR04 ultrasonic module measures the distance to
-the nearest obstacle. It is mounted in a VBloc on the upper plate, facing forward.
+At the front of the robot, two HC-SR04 ultrasonic modules, one on the left and one on the
+right, measure the distance to the nearest obstacle on each side. They face forward from
+the upper plate, held in VBlocs. \todo{confirm both sensors are held in VBlocs, and their
+spacing} With two sensors, the robot can tell on which side an obstacle is, which the
+planned obstacle avoidance needs.
 
 \paragraph{Working principle.} The HC-SR04 measures distance by time of flight. When its
 \texttt{TRIG} input receives a pulse of at least 10~\textmu s, its transmitter sends a
@@ -608,20 +612,27 @@ assumed. Table~\ref{tab:hcsr04} lists the module's main figures.
 take: for an obstacle at 4~m the sound travels 8~m, which takes about
 \(8 / 340 \approx 24\)~ms. A simple program would wait for the \texttt{ECHO} pulse to end,
 but waiting up to 25~ms in the main loop would delay the motor ramp and the failsafe,
-which run every 10~ms. The robot's firmware therefore times the echo with an interrupt
-on GPIO~12: the rising edge stores the start time, the falling edge the pulse width,
-and the loop never waits. Every 100~ms the firmware converts the last pulse width into a
-distance with Equation~\eqref{eq:tof}, using \(v = 343\)~m/s (0.343~mm/\textmu s), sends
-it to the controller in millimetres, and fires the next ping. A pulse longer than
-25~ms, about 4.3~m, is reported as ``no object''. The 100~ms spacing also respects the
-datasheet's advice to leave at least 60~ms between measurements, so that a late echo is
-not mistaken for the next one.
+which run every 10~ms. The robot's firmware therefore times each echo with an interrupt,
+on GPIO~10 for the left sensor and GPIO~12 for the right one: the rising edge stores the
+start time, the falling edge the pulse width, and the loop never waits.
+
+The two sensors use the same frequency, so a sensor can receive the burst sent by the
+other and report a false distance. To avoid this, they never ping at the same time but
+take turns. Every 50~ms the firmware converts the last pulse width into a distance with
+Equation~\eqref{eq:tof}, using \(v = 343\)~m/s (0.343~mm/\textmu s), then fires the other
+sensor. Each sensor is therefore read every 100~ms, and both distances are sent to the
+controller together, in millimetres, every 100~ms. A pulse longer than 25~ms, about
+4.3~m, is reported as ``no object''; since a ping is fired only 50~ms after the previous
+one, its echo has always ended before the other sensor starts. Each sensor's 100~ms
+cycle also respects the datasheet's advice to leave at least 60~ms between measurements,
+so that a late echo is not mistaken for the next one.
 
 \paragraph{Level shifting.} The HC-SR04 runs from 5~V, and its \texttt{ECHO} output
 swings to that supply. The ESP32-S3, however, accepts at most its own supply plus
 0.3~V on an input, about 3.6~V \cite{esp32s3_datasheet}, so \texttt{ECHO} cannot be
-connected directly. A voltage divider of two resistors brings it down: \(R_1\) in series
-between \texttt{ECHO} and GPIO~12, and \(R_2\) from GPIO~12 to ground. The pin then sees
+connected directly. On each sensor, a voltage divider of two resistors brings it down:
+\(R_1\) in series between \texttt{ECHO} and the GPIO (12 or 10), and \(R_2\) from that
+GPIO to ground. The pin then sees
 \begin{equation}
   V_{\text{GPIO}} = V_{\text{ECHO}} \, \frac{R_2}{R_1 + R_2}.
 \end{equation}
@@ -630,7 +641,8 @@ within the input limit and well above the \(0.75 \times V_{DD}\), about 2.5~V, t
 ESP32-S3 needs to read a high level \cite{esp32s3_datasheet}. The \texttt{TRIG} input is
 left without conversion. The datasheet only asks for a ``TTL pulse''
 \cite{hcsr04_datasheet} and gives no threshold, but in practice the module triggers
-reliably on the 3.3~V pulse from GPIO~11.
+reliably on the 3.3~V pulse from GPIO~11; the left sensor is driven the same way from
+GPIO~39.
 
 \paragraph{Why the HC-SR04.} It is a cheap, widely sold module that is easy to drive
 with two pins, and it was available. Its limits are stated by the manufacturer: the beam
@@ -708,7 +720,7 @@ Figure~\ref{fig:architecture}. The first goes straight to the motor supply pin
 \(V_M\) of the DRV8833, whose 2.7 to 10.8~V range covers the whole 2S range
 (Section~\ref{sec:drv8833}). The second goes to a step-down converter that produces the
 5~V for the ESP32-S3 board, whose own regulator then makes the 3.3~V the module and the
-LM393 sensors use. The HC-SR04, which needs 5~V, takes it from the board's 5~V pin, that
+LM393 sensors use. The two HC-SR04 sensors, which need 5~V, take it from the board's 5~V pin, that
 is from the converter's output (\texttt{pins\_esp32s3.h}).
 
 \paragraph{The step-down converter.} A pack that reaches 8.4~V cannot be connected to the
@@ -807,17 +819,25 @@ menus. Each connects its GPIO to ground when pressed. The pins use the ESP32's i
 pull-up resistors, so no external resistor is needed: a released button reads high, a
 pressed one reads low.
 
-\paragraph{Display.} The screen is a 0.96-inch monochrome OLED of 128 \(\times\) 64 pixels,
-driven by a Solomon Systech SSD1306 controller. It is connected over
-I\textsuperscript{2}C on GPIO~25 (SDA) and GPIO~26 (SCL), at the address 0x3C, the one the
-SSD1306 answers to when its address-select pin is low \cite{ssd1306_datasheet}, and is
-powered from 3.3~V, within the controller's 1.65 to 3.3~V logic supply range
-\cite{ssd1306_datasheet}. The firmware draws each screen in a frame buffer in the ESP32's
-memory, \(128 \times 64 / 8 = 1024\) bytes, and sends it to the display in one transfer.
-OLED pixels emit their own light, so the screen needs no backlight. During development the small 0.96-inch screens proved hard to read at arm's
-length, so a larger 2.42-inch display of the same resolution, driven by the closely
-related SSD1309, is planned. The firmware already supports it through a single
-compile-time switch (\texttt{USE\_SSD1309}), and the wiring is the same.
+\paragraph{Display.} The screen is a 1.3-inch monochrome OLED of 128 \(\times\) 64 pixels,
+driven by a Sino Wealth SH1106 controller. The SH1106 holds a \(132 \times 64\)-bit
+display memory, slightly wider than the panel, and accepts a logic supply of 1.65 to
+3.5~V \cite{sh1106_datasheet}; the module is powered from 3.3~V. It is connected over
+I\textsuperscript{2}C on GPIO~25 (SDA) and GPIO~26 (SCL), at the address 0x3C (binary
+0111100), the one of its two reserved addresses selected when its SA0 input is low
+\cite{sh1106_datasheet}. These two pins were chosen instead of the ESP32's default
+I\textsuperscript{2}C pins, GPIO~21 and~22, because they sit on the edge of the board that
+faces the screen inside the case, which keeps the display wires short. The firmware draws
+each screen in a frame buffer in the ESP32's memory, \(128 \times 64 / 8 = 1024\) bytes,
+and sends it to the display in one transfer. OLED pixels emit their own light, so the
+screen needs no backlight.
+
+The display was changed during development. The first one was a 0.96-inch module driven
+by an SSD1306 \cite{ssd1306_datasheet}, which proved hard to read at arm's length; a
+2.42-inch module driven by the related SSD1309 was also considered. The 1.3-inch SH1106
+module fitted now has the same resolution. The firmware supports all three through a
+single compile-time setting (\texttt{OLED\_TYPE} in \texttt{config.h}), so changing the
+screen needs no change to the drawing code.
 
 \subsubsection{Power supply}
 \label{sec:con-power}
@@ -901,7 +921,7 @@ pairing and without encryption, on the radio's current channel. Every packet sta
 one-byte identifier, and the receiver accepts a packet only if both this identifier and
 the packet's length match what it expects; anything else is ignored. The controller sends
 drive commands every 50~ms while its Drive screen is open, and the robot sends its wheel
-speeds and the measured distance every 100~ms and its tilt every 50~ms.
+speeds and the two measured distances every 100~ms and its tilt every 50~ms.
 
 \paragraph{What the link does not guarantee.} Three limits follow from these choices. The
 first is handled by the design; the other two remain open.
@@ -951,7 +971,7 @@ without any change to the bloc or to the plate.
 
 \paragraph{Two plates.} The robot uses two identical plates, one above the other. The lower
 plate carries the motors, through their brackets, and the caster; the upper plate carries
-the sensors that must see over the robot, such as the HC-SR04 at the front. The 16 edge
+the sensors that must see over the robot, such as the two HC-SR04 sensors at the front. The 16 edge
 tabs were designed to receive printed hexagonal pillars joining the two plates. On the
 robot as built, M6 screws about 60~mm long, passed through the tab holes and held by
 nuts, are used instead of the pillars. \todo{measure the screw length; distance between the two plates on the robot as built}
@@ -960,7 +980,7 @@ nuts, are used instead of the pillars. \todo{measure the screw length; distance 
 turned with a knob, clamps the edge of a sensor board against a fixed jaw, so that the same
 bloc accepts boards of different sizes without being reprinted. Two versions exist
 (Figure~\ref{fig:blocs}): HBloc holds a board lying flat, and VBloc holds it upright, which
-is how the HC-SR04 faces forward at the front of the robot. A longer HBloc has also been
+is how the HC-SR04 sensors face forward at the front of the robot. A longer HBloc has also been
 designed for the five-channel line sensor. Each bloc is fixed to the plate with a single
 thumb screw.
 
@@ -992,7 +1012,7 @@ printer or the slicer used}
 \section{Conclusion}
 This chapter turned the need described at its start into a specification, then into an
 architecture of two boards linked by ESP-NOW: a robot built around an ESP32-S3, a DRV8833
-driver and two TT motors, with wheel encoders, an ultrasonic sensor and an inertial sensor,
+driver and two TT motors, with wheel encoders, two ultrasonic sensors and an inertial sensor,
 and a handheld controller built around an ESP32, a joystick, four buttons and a screen.
 Each component was presented with the figures that justify its use and the limits that
 follow from it, and the chapter ended with the plate and the blocs that make the platform
